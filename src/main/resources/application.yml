@@ -1,1 +1,21 @@
-spring.application.name=gachagacha
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/gachagacha
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+springdoc:
+  packages-to-scan: gachagacha.gachagacha
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    disable-swagger-default-url: true
+    display-request-duration: true
+    operations-sorter: alph
+    path: /
