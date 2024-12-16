@@ -16,8 +16,8 @@ public class Item extends BaseEntity {
     @Column(nullable = false)
     private ItemType itemType;
 
-    @Column(nullable = false)
-    private int level;
+//    @Column(nullable = false)
+//    private int level;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

@@ -1,10 +1,10 @@
 package gachagacha.gachagacha.user.service;
 
-import gachagacha.gachagacha.*;
 import gachagacha.gachagacha.exception.ErrorCode;
 import gachagacha.gachagacha.exception.customException.BusinessException;
 import gachagacha.gachagacha.auth.jwt.JwtDto;
 import gachagacha.gachagacha.auth.jwt.JwtUtils;
+import gachagacha.gachagacha.minihome.entity.Minihome;
 import gachagacha.gachagacha.user.entity.LoginType;
 import gachagacha.gachagacha.user.dto.JoinRequest;
 import gachagacha.gachagacha.user.entity.User;
@@ -25,7 +25,7 @@ public class UserService {
         validateDuplicatedUser(loginType, joinRequest.getLoginId());
         validateDuplicatedNickname(joinRequest.getNickname());
 
-        User user = User.create(loginType, joinRequest.getLoginId(), joinRequest.getNickname(), MiniHome.create());
+        User user = User.create(loginType, joinRequest.getLoginId(), joinRequest.getNickname(), Minihome.create());
         userRepository.save(user);
         return jwtUtils.generateJwt(user.getNickname());
     }

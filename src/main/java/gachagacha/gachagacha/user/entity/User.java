@@ -1,6 +1,7 @@
 package gachagacha.gachagacha.user.entity;
 
 import gachagacha.gachagacha.*;
+import gachagacha.gachagacha.minihome.entity.Minihome;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -29,9 +30,9 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private int coin;
 
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "home_id", nullable = false)
-    private MiniHome miniHome;
+    private Minihome miniHome;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Item> items = new ArrayList<>();
@@ -57,7 +58,7 @@ public class User extends BaseEntity {
         trade.setUser(this);
     }
 
-    public static User create(LoginType loginType, Long loginId, String nickname, MiniHome miniHome) {
+    public static User create(LoginType loginType, Long loginId, String nickname, Minihome miniHome) {
         User user = new User();
         user.loginType = loginType;
         user.loginId = loginId;
