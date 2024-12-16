@@ -10,7 +10,12 @@ public enum ErrorCode {
 
     INVALID_LOGIN_TYPE(HttpStatus.BAD_REQUEST, "잘못된 loginType 입니다."),
     DUPLICATED_USER_REGISTRATION(HttpStatus.BAD_REQUEST, "이미 가입된 사용자입니다."),
-    DUPLICATED_NICKNAME(HttpStatus.BAD_REQUEST, "이미 사용중인 닉네임입니다.")
+    DUPLICATED_NICKNAME(HttpStatus.BAD_REQUEST, "이미 사용중인 닉네임입니다."),
+
+    // jwt
+    EXPIRED_JWT(HttpStatus.BAD_REQUEST, "만료된 토큰입니다."),
+    INVALID_JWT(HttpStatus.BAD_REQUEST, "유효하지 않은 토큰입니다."),
+    REQUIRED_JWT(HttpStatus.BAD_REQUEST, "토큰은 필수입니다.")
     ;
 
     private final HttpStatus httpStatus;
