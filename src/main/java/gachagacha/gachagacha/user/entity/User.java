@@ -31,7 +31,7 @@ public class User extends BaseEntity {
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "home_id", nullable = false)
-    private Home home;
+    private MiniHome miniHome;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Item> items = new ArrayList<>();
@@ -57,13 +57,13 @@ public class User extends BaseEntity {
         trade.setUser(this);
     }
 
-    public static User create(LoginType loginType, Long loginId, String nickname, Home home) {
+    public static User create(LoginType loginType, Long loginId, String nickname, MiniHome miniHome) {
         User user = new User();
         user.loginType = loginType;
         user.loginId = loginId;
         user.nickname = nickname;
         user.coin = 20000;
-        user.home = home;
+        user.miniHome = miniHome;
         return user;
     }
 }

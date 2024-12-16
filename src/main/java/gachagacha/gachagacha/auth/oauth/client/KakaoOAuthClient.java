@@ -13,7 +13,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 @Component
-public class KakaoOAuthLoginClient implements OAuthLoginClient {
+public class KakaoOAuthClient implements OAuthClient {
 
     private static final RestTemplate restTemplate = new RestTemplate();
 

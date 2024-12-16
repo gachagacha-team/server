@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Entity
 @Getter
-public class Home extends BaseEntity {
+public class MiniHome extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "home_id")
@@ -14,9 +14,9 @@ public class Home extends BaseEntity {
     @Column(nullable = false)
     private int totalVisitorCnt;
 
-    public static Home create() {
-        Home home = new Home();
-        home.totalVisitorCnt = 0;
-        return home;
+    public static MiniHome create() {
+        MiniHome miniHome = new MiniHome();
+        miniHome.totalVisitorCnt = 0;
+        return miniHome;
     }
 }

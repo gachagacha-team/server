@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
-public class GithubOAuthLoginClient implements OAuthLoginClient {
+public class GithubOAuthClient implements OAuthClient {
 
     private static final RestTemplate restTemplate = new RestTemplate();
 
