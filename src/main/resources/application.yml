@@ -10,6 +10,21 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
+oauth2:
+  client:
+    registration:
+      github:
+        client_id: ${GITHUB_CLIENT_ID}
+        client_secret: ${GITHUB_CLIENT_SECRET}
+        request_token_url: ${GITHUB_REQUEST_TOKEN_URL}
+        request_user_url: ${GITHUB_REQUEST_USER_URL}
+      kakao:
+        client_id: ${KAKAO_CLIENT_ID}
+        redirect_url: ${KAKAO_REDIRECT_URL}
+        request_token_url: ${KAKAO_REQUEST_TOKEN_URL}
+        request_user_url: ${KAKAO_REQUEST_USER_URL}
+jwt:
+  secret: ${JWT_SECRET}
 springdoc:
   packages-to-scan: gachagacha.gachagacha
   default-consumes-media-type: application/json;charset=UTF-8

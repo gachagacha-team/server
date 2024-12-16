@@ -1,5 +1,6 @@
-package gachagacha.gachagacha;
+package gachagacha.gachagacha.user.entity;
 
+import gachagacha.gachagacha.*;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -8,6 +9,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "loginType", "loginId" }) })
 public class User extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -15,7 +17,14 @@ public class User extends BaseEntity {
     private long id;
 
     @Column(nullable = false)
-    private String username;
+    @Enumerated(value = EnumType.STRING)
+    private LoginType loginType;
+
+    @Column
+    private Long loginId;
+
+    @Column(nullable = false, unique = true)
+    private String nickname;
 
     @Column(nullable = false)
     private int coin;
@@ -46,5 +55,15 @@ public class User extends BaseEntity {
             trade.getUser().getTrades().remove(trade);
         }
         trade.setUser(this);
+    }
+
+    public static User create(LoginType loginType, Long loginId, String nickname, Home home) {
+        User user = new User();
+        user.loginType = loginType;
+        user.loginId = loginId;
+        user.nickname = nickname;
+        user.coin = 20000;
+        user.home = home;
+        return user;
     }
 }
