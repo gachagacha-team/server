@@ -1,5 +1,6 @@
 package gachagacha.gachagacha;
 
+import gachagacha.gachagacha.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 

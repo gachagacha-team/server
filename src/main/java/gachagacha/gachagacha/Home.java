@@ -13,4 +13,10 @@ public class Home extends BaseEntity {
 
     @Column(nullable = false)
     private int totalVisitorCnt;
+
+    public static Home create() {
+        Home home = new Home();
+        home.totalVisitorCnt = 0;
+        return home;
+    }
 }
