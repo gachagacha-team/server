@@ -37,4 +37,8 @@ public class Minihome extends BaseEntity {
         }
         guestbook.setMiniHome(this);
     }
+
+    public void visit() {
+        this.totalVisitorCnt++;
+    }
 }

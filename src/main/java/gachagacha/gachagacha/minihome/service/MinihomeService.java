@@ -27,10 +27,11 @@ public class MinihomeService {
     private final GuestbookRepository guestbookRepository;
     private final JwtUtils jwtUtils;
 
-    public MinihomeResponse getMinihome(String nickname) {
+    public MinihomeResponse visitMinihome(String nickname) {
         User user = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         Minihome miniHome = user.getMiniHome();
+        miniHome.visit();
         return new MinihomeResponse(nickname, user.getCoin(), miniHome.getTotalVisitorCnt(), miniHome.getLayout());
     }
 
