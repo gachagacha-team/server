@@ -7,16 +7,16 @@ import lombok.Getter;
 
 @Entity
 @Getter
-public class Background extends BaseEntity {
+public class UserItem extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "background_id")
+    @Column(name = "user_item_id")
     private long id;
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
-    private BackgroundType backgroundType;
+    private Item item;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
@@ -26,9 +26,9 @@ public class Background extends BaseEntity {
         this.user = user;
     }
 
-    public static Background create(BackgroundType backgroundType) {
-        Background background = new Background();
-        background.backgroundType = backgroundType;
-        return background;
+    public static UserItem create(Item item) {
+        UserItem userItem = new UserItem();
+        userItem.item = item;
+        return userItem;
     }
 }

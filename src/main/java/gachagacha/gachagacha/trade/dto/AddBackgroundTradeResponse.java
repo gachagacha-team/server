@@ -7,9 +7,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddTradeResponse {
+public class AddBackgroundTradeResponse {
 
-    private long itemTypeId;
+    private long backgroundTypeId;
     private int price;
     private int averagePrice;
 }

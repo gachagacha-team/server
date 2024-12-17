@@ -1,16 +1,14 @@
 package gachagacha.gachagacha.item.service;
 
-import gachagacha.gachagacha.item.dto.AddBackgroundResponse;
-import gachagacha.gachagacha.item.entity.Background;
-import gachagacha.gachagacha.item.entity.BackgroundType;
-import gachagacha.gachagacha.item.entity.ItemType;
+import gachagacha.gachagacha.item.dto.ReadItemsResponse;
+import gachagacha.gachagacha.item.entity.Item;
 import gachagacha.gachagacha.auth.jwt.JwtUtils;
 import gachagacha.gachagacha.exception.ErrorCode;
 import gachagacha.gachagacha.exception.customException.BusinessException;
 import gachagacha.gachagacha.item.dto.AddItemResponse;
-import gachagacha.gachagacha.item.entity.Item;
-import gachagacha.gachagacha.item.repository.BackgroundRepository;
-import gachagacha.gachagacha.item.repository.ItemRepository;
+import gachagacha.gachagacha.item.entity.ItemType;
+import gachagacha.gachagacha.item.entity.UserItem;
+import gachagacha.gachagacha.item.repository.UserItemRepository;
 import gachagacha.gachagacha.user.entity.User;
 import gachagacha.gachagacha.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,50 +23,34 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemService {
 
-    private final ItemRepository itemRepository;
-    private final BackgroundRepository backgroundRepository;
+    private final UserItemRepository userItemRepository;
     private final UserRepository userRepository;
     private final JwtUtils jwtUtils;
 
-    public AddItemResponse addItem(int itemTypeId, HttpServletRequest request) {
+    public AddItemResponse addItem(int itemId, HttpServletRequest request) {
         String nickname = jwtUtils.getNicknameFromHeader(request);
-        ItemType itemType = ItemType.findById(itemTypeId);
-        Item item = Item.create(itemType);
+        Item item = Item.findById(itemId);
+        UserItem userItem = UserItem.create(item);
         User user = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
-        user.addItem(item);
-        itemRepository.save(item);
+        user.addItem(userItem);
+        userItemRepository.save(userItem);
 
-        return new AddItemResponse(item.getId(), itemTypeId, user.getNickname());
+        return new AddItemResponse(item.getItemId(), user.getNickname());
     }
 
-    public List<String> getItems(String nickname, HttpServletRequest request) {
+    public ReadItemsResponse getItems(String nickname, HttpServletRequest request) {
         validateEditAuthorization(nickname, request);
-        List<Item> items = itemRepository.findByUserNickname(nickname);
-        List<String> itemImages = items.stream()
-                .map(item -> "/image" + item.getItemType().getFilePath())
+        List<UserItem> userItems = userItemRepository.findByUserNickname(nickname);
+        List<String> characterUrls = userItems.stream()
+                .filter(userItem -> userItem.getItem().getItemType() == ItemType.CHARACTER)
+                .map(userItem -> "/image" + userItem.getItem().getFilePath())
                 .toList();
-        return itemImages;
-    }
-
-    public AddBackgroundResponse addBackground(int backgroundId, HttpServletRequest request) {
-        String nickname = jwtUtils.getNicknameFromHeader(request);
-        BackgroundType backgroundType = BackgroundType.findById(backgroundId);
-        Background background = Background.create(backgroundType);
-        User user = userRepository.findByNickname(nickname)
-                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
-        user.addBackground(background);
-        backgroundRepository.save(background);
-
-        return new AddBackgroundResponse(background.getId(), backgroundType.getId(), user.getNickname());
-    }
-
-    public List<String> getBackgrounds(String nickname, HttpServletRequest request) {
-        validateEditAuthorization(nickname, request);
-        List<Background> backgrounds = backgroundRepository.findByUserNickname(nickname);
-        return backgrounds.stream()
-                .map(background -> "/image" + background.getBackgroundType().getFilePath())
+        List<String> backgroundUrls = userItems.stream()
+                .filter(userItem -> userItem.getItem().getItemType() == ItemType.BACKGROUND)
+                .map(userItem -> "/image" + userItem.getItem().getFilePath())
                 .toList();
+        return new ReadItemsResponse(characterUrls, backgroundUrls);
     }
 
     private void validateEditAuthorization(String nickname, HttpServletRequest request) {

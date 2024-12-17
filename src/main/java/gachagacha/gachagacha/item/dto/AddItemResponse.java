@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AddItemResponse {
 
-    private long itemId;
-    private int itemTypeId;
+    private int itemId;
     private String nickname;
 }

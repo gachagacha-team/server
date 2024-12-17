@@ -1,9 +1,9 @@
 package gachagacha.gachagacha.user.entity;
 
 import gachagacha.gachagacha.*;
-import gachagacha.gachagacha.item.entity.Background;
-import gachagacha.gachagacha.item.entity.Item;
+import gachagacha.gachagacha.item.entity.UserItem;
 import gachagacha.gachagacha.minihome.entity.Minihome;
+import gachagacha.gachagacha.trade.entity.Trade;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -37,28 +37,17 @@ public class User extends BaseEntity {
     private Minihome miniHome;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Item> items = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Background> backgrounds = new ArrayList<>();
+    private List<UserItem> userItems = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Trade> trades = new ArrayList<>();
 
-    public void addItem(Item item) {
-        this.items.add(item);
-        if (item.getUser() != null) {
-            item.getUser().getItems().remove(item);
+    public void addItem(UserItem userItem) {
+        this.userItems.add(userItem);
+        if (userItem.getUser() != null) {
+            userItem.getUser().getUserItems().remove(userItem);
         }
-        item.setUser(this);
-    }
-
-    public void addBackground(Background background) {
-        this.backgrounds.add(background);
-        if (background.getUser() != null) {
-            background.getUser().getBackgrounds().remove(background);
-        }
-        background.setUser(this);
+        userItem.setUser(this);
     }
 
     public void addTrade(Trade trade) {
