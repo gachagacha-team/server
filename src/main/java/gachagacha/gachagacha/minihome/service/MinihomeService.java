@@ -3,14 +3,11 @@ package gachagacha.gachagacha.minihome.service;
 import gachagacha.gachagacha.auth.jwt.JwtUtils;
 import gachagacha.gachagacha.exception.ErrorCode;
 import gachagacha.gachagacha.exception.customException.BusinessException;
-import gachagacha.gachagacha.minihome.dto.AddGuestbookResponse;
+import gachagacha.gachagacha.minihome.dto.*;
 import gachagacha.gachagacha.minihome.entity.Guestbook;
 import gachagacha.gachagacha.minihome.repository.GuestbookRepository;
 import gachagacha.gachagacha.minihome.entity.Minihome;
 import gachagacha.gachagacha.minihome.repository.MinihomeRepository;
-import gachagacha.gachagacha.minihome.dto.AddGuestbookRequest;
-import gachagacha.gachagacha.minihome.dto.GuestbookResponse;
-import gachagacha.gachagacha.minihome.dto.MinihomeResponse;
 import gachagacha.gachagacha.user.entity.User;
 import gachagacha.gachagacha.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -57,5 +54,14 @@ public class MinihomeService {
         guestbookRepository.save(guestbook);
 
         return new AddGuestbookResponse(guestbook.getId(), guestbookUserNickname, guestbook.getContent());
+    }
+
+    public Slice<ExploreMinihomeResponse> explore(Pageable pageable) {
+        return minihomeRepository.findAllBy(pageable)
+                .map(minihome -> {
+                    User user = userRepository.findByMinihome(minihome)
+                            .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
+                    return new ExploreMinihomeResponse(user.getNickname(), minihome.getTotalVisitorCnt(), "/minihome/" + user.getNickname());
+                });
     }
 }
