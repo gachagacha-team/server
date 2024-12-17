@@ -1,5 +1,6 @@
-package gachagacha.gachagacha;
+package gachagacha.gachagacha.item.entity;
 
+import gachagacha.gachagacha.BaseEntity;
 import gachagacha.gachagacha.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -16,14 +17,17 @@ public class Item extends BaseEntity {
     @Column(nullable = false)
     private ItemType itemType;
 
-//    @Column(nullable = false)
-//    private int level;
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public static Item create(ItemType itemType) {
+        Item item = new Item();
+        item.itemType = itemType;
+        return item;
     }
 }

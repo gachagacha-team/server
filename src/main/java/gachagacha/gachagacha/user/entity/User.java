@@ -1,6 +1,8 @@
 package gachagacha.gachagacha.user.entity;
 
 import gachagacha.gachagacha.*;
+import gachagacha.gachagacha.item.entity.Background;
+import gachagacha.gachagacha.item.entity.Item;
 import gachagacha.gachagacha.minihome.entity.Minihome;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -37,6 +39,7 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Item> items = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Background> backgrounds = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -48,6 +51,14 @@ public class User extends BaseEntity {
             item.getUser().getItems().remove(item);
         }
         item.setUser(this);
+    }
+
+    public void addBackground(Background background) {
+        this.backgrounds.add(background);
+        if (background.getUser() != null) {
+            background.getUser().getBackgrounds().remove(background);
+        }
+        background.setUser(this);
     }
 
     public void addTrade(Trade trade) {
