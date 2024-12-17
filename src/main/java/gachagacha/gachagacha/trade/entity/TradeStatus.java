@@ -1,4 +1,4 @@
-package gachagacha.gachagacha;
+package gachagacha.gachagacha.trade.entity;
 
 public enum TradeStatus {
 

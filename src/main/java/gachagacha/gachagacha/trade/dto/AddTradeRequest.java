@@ -1,15 +1,12 @@
 package gachagacha.gachagacha.trade.dto;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor
-public class AddItemTradeResponse {
+public class AddTradeRequest {
 
-    private long itemTypeId;
+    private long itemId;
     private int price;
-    private int averagePrice;
 }

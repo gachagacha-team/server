@@ -1,7 +1,7 @@
-package gachagacha.gachagacha;
+package gachagacha.gachagacha.trade.entity;
 
+import gachagacha.gachagacha.BaseEntity;
 import gachagacha.gachagacha.item.entity.Item;
-import gachagacha.gachagacha.item.entity.ItemType;
 import gachagacha.gachagacha.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -19,7 +19,8 @@ public class Trade extends BaseEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    private ItemType itemType;
+    @Enumerated(value = EnumType.STRING)
+    private Item item;
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
@@ -32,9 +33,9 @@ public class Trade extends BaseEntity {
         this.user = user;
     }
 
-    public static Trade create(ItemType itemType, int price) {
+    public static Trade create(Item item, int price) {
         Trade trade = new Trade();
-        trade.itemType = itemType;
+        trade.item = item;
         trade.price = price;
         trade.status = TradeStatus.ON_SALE;
         return trade;
