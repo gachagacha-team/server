@@ -3,7 +3,6 @@ package gachagacha.gachagacha.minihome.dto;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.springframework.data.domain.Slice;
 
 @Getter
 @NoArgsConstructor

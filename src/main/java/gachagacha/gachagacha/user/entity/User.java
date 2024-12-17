@@ -78,4 +78,8 @@ public class User extends BaseEntity {
         user.miniHome = miniHome;
         return user;
     }
+
+    public void attend() {
+        this.coin += 500;
+    }
 }
