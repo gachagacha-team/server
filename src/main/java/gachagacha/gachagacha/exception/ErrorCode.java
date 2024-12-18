@@ -19,11 +19,14 @@ public enum ErrorCode {
 
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
     NOT_FOUND_ITEM(HttpStatus.NOT_FOUND, "아이템을 찾을 수 없습니다."),
+    NOT_FOUND_TRADE(HttpStatus.NOT_FOUND, "거래 내역을 찾을 수 없습니다."),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "접근 권한이 없습니다."),
 
     INVALID_ITEM_ID(HttpStatus.BAD_REQUEST, "잘못된 아이템 id 입니다."),
 
-    ALREADY_ATTEND(HttpStatus.FORBIDDEN, "이미 출석체크를 했습니다.")
+    ALREADY_ATTEND(HttpStatus.FORBIDDEN, "이미 출석체크를 했습니다."),
+
+    INSUFFICIENT_COIN(HttpStatus.BAD_REQUEST, "코인이 부족합니다.")
     ;
 
     private final HttpStatus httpStatus;

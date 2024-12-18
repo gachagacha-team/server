@@ -1,9 +1,10 @@
 package gachagacha.gachagacha.user.entity;
 
 import gachagacha.gachagacha.*;
+import gachagacha.gachagacha.exception.ErrorCode;
+import gachagacha.gachagacha.exception.customException.BusinessException;
 import gachagacha.gachagacha.item.entity.UserItem;
 import gachagacha.gachagacha.minihome.entity.Minihome;
-import gachagacha.gachagacha.trade.entity.Trade;
 import jakarta.persistence.*;
 import lombok.Getter;
 
@@ -39,23 +40,12 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserItem> userItems = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Trade> trades = new ArrayList<>();
-
     public void addItem(UserItem userItem) {
         this.userItems.add(userItem);
         if (userItem.getUser() != null) {
             userItem.getUser().getUserItems().remove(userItem);
         }
         userItem.setUser(this);
-    }
-
-    public void addTrade(Trade trade) {
-        this.trades.add(trade);
-        if (trade.getUser() != null) {
-            trade.getUser().getTrades().remove(trade);
-        }
-        trade.setUser(this);
     }
 
     public static User create(LoginType loginType, Long loginId, String nickname, Minihome miniHome) {
@@ -70,5 +60,16 @@ public class User extends BaseEntity {
 
     public void attend() {
         this.coin += 500;
+    }
+
+    public void deductCoin(int price) {
+        if (coin < price) {
+            throw new BusinessException(ErrorCode.INSUFFICIENT_COIN);
+        }
+        coin -= price;
+    }
+
+    public void addCoin(int price) {
+        coin += price;
     }
 }

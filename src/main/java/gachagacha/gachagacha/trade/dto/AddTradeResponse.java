@@ -9,7 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AddTradeResponse {
 
+    private long tradeId;
+    private String sellerNickname;
     private long itemId;
     private int price;
     private int averagePrice;
+    private String tradeStatus;
 }
