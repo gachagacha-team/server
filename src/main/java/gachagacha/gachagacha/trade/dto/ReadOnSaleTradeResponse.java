@@ -1,0 +1,17 @@
+package gachagacha.gachagacha.trade.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class ReadOnSaleTradeResponse {
+
+    private String sellerNickname;
+    private String itemName;
+    private String itemImageUrl;
+    private int itemLevel;
+    private int price;
+}
