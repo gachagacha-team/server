@@ -1,8 +1,8 @@
 package gachagacha.gachagacha.auth.oauth.client;
 
+import gachagacha.gachagacha.auth.oauth.dto.UserInfo;
 import gachagacha.gachagacha.auth.oauth.dto.github.GithubTokenRequest;
 import gachagacha.gachagacha.auth.oauth.dto.github.GithubTokenResponse;
-import gachagacha.gachagacha.auth.oauth.dto.github.GithubUserResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -10,6 +10,8 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Map;
 
 @Component
 public class GithubOAuthClient implements OAuthClient {
@@ -37,15 +39,21 @@ public class GithubOAuthClient implements OAuthClient {
     }
 
     @Override
-    public Long fetchOAuthUserId(String accessToken) {
+    public UserInfo fetchOAuthUserInfo(String accessToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<GithubUserResponse> exchange = restTemplate.exchange(requestUserUrl,
+        ResponseEntity<Map> response = restTemplate.exchange(requestUserUrl,
                 HttpMethod.GET,
                 entity,
-                GithubUserResponse.class
+                Map.class
         );
-        return exchange.getBody().getId();
+        Map<String, Object> body = response.getBody();
+
+        Long id = ((Number) body.get("id")).longValue();
+        String login = (String) body.get("login");
+        String avatarUrl = (String) body.get("avatar_url");
+
+        return new UserInfo(id, login, avatarUrl);
     }
 }

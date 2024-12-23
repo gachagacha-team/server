@@ -14,4 +14,6 @@ public class AuthResponse {
     private JwtDto jwtDto;
     private String loginType;
     private Long loginId;
+    private String nickname;
+    private String profileUrl;
 }

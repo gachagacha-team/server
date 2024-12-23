@@ -42,6 +42,7 @@ public class User extends BaseEntity {
     private List<UserItem> userItems = new ArrayList<>();
 
     private List<Background> backgrounds = new ArrayList<>();
+    private String profileImageUrl;
 
     public void addItem(UserItem userItem) {
         this.userItems.add(userItem);
@@ -51,7 +52,7 @@ public class User extends BaseEntity {
         userItem.setUser(this);
     }
 
-    public static User create(LoginType loginType, Long loginId, String nickname, Minihome miniHome) {
+    public static User create(LoginType loginType, Long loginId, String nickname, Minihome miniHome, String profileImageUrl) {
         User user = new User();
         user.loginType = loginType;
         user.loginId = loginId;
@@ -59,6 +60,7 @@ public class User extends BaseEntity {
         user.coin = 20000;
         user.miniHome = miniHome;
         user.backgrounds.add(Background.WHITE);
+        user.profileImageUrl = profileImageUrl;
         return user;
     }
 

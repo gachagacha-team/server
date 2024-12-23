@@ -2,6 +2,7 @@ package gachagacha.gachagacha.auth.service;
 
 import gachagacha.gachagacha.auth.jwt.JwtDto;
 import gachagacha.gachagacha.auth.jwt.JwtUtils;
+import gachagacha.gachagacha.auth.oauth.dto.UserInfo;
 import gachagacha.gachagacha.user.entity.LoginType;
 import gachagacha.gachagacha.auth.oauth.client.GithubOAuthClient;
 import gachagacha.gachagacha.auth.oauth.client.KakaoOAuthClient;
@@ -24,24 +25,24 @@ public class OAuth2Service {
 
     public AuthResponse authWithGithub(String code) {
         String accessToken = githubOAuthClient.fetchOAuthToken(code);
-        Long userId = githubOAuthClient.fetchOAuthUserId(accessToken);
-        return generateLoginResponse(LoginType.GITHUB, userId);
+        UserInfo userInfo = githubOAuthClient.fetchOAuthUserInfo(accessToken);
+        return generateLoginResponse(LoginType.GITHUB, userInfo);
     }
 
     public AuthResponse authWithKakao(String code) {
         String accessToken = kakaoOAuthClient.fetchOAuthToken(code);
-        Long userId = kakaoOAuthClient.fetchOAuthUserId(accessToken);
-        return generateLoginResponse(LoginType.KAKAO, userId);
+        UserInfo userInfo = kakaoOAuthClient.fetchOAuthUserInfo(accessToken);
+        return generateLoginResponse(LoginType.KAKAO, userInfo);
     }
 
-    private AuthResponse generateLoginResponse(LoginType loginType, long userId) {
-        Optional<User> optionalUser = userRepository.findByLoginTypeAndLoginId(loginType, userId);
+    private AuthResponse generateLoginResponse(LoginType loginType, UserInfo userInfo) {
+        Optional<User> optionalUser = userRepository.findByLoginTypeAndLoginId(loginType, userInfo.getId());
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             JwtDto jwtDto = jwtUtils.generateJwt(user.getNickname());
-            return new AuthResponse(false, jwtDto, null, null);
+            return new AuthResponse(false, jwtDto, null, null, null, null);
         } else {
-            return new AuthResponse(true, null, loginType.getName(), userId);
+            return new AuthResponse(true, null, loginType.getName(), userInfo.getId(), userInfo.getNickname(), userInfo.getProfileImageUrl());
         }
     }
 }

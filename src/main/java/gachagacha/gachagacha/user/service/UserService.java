@@ -34,7 +34,7 @@ public class UserService {
         validateDuplicatedUser(loginType, joinRequest.getLoginId());
         validateDuplicatedNickname(joinRequest.getNickname());
 
-        User user = User.create(loginType, joinRequest.getLoginId(), joinRequest.getNickname(), Minihome.create());
+        User user = User.create(loginType, joinRequest.getLoginId(), joinRequest.getNickname(), Minihome.create(), joinRequest.getProfileUrl());
         userRepository.save(user);
         return jwtUtils.generateJwt(user.getNickname());
     }

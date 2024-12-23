@@ -12,5 +12,6 @@ public class MinihomeResponse {
     private String nickname;
     private int coin;
     private int totalVisitorCnt;
+    private String profileImageUrl;
     private String layout;
 }

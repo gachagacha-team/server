@@ -32,7 +32,7 @@ public class MinihomeService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         Minihome miniHome = user.getMiniHome();
         miniHome.visit();
-        return new MinihomeResponse(nickname, user.getCoin(), miniHome.getTotalVisitorCnt(), miniHome.getLayout());
+        return new MinihomeResponse(nickname, user.getCoin(), miniHome.getTotalVisitorCnt(), user.getProfileImageUrl(), miniHome.getLayout());
     }
 
     public Slice<GuestbookResponse> getGuestbooks(String nickname, Pageable pageable, HttpServletRequest request) {
@@ -65,7 +65,7 @@ public class MinihomeService {
                 .map(minihome -> {
                     User user = userRepository.findByMinihome(minihome)
                             .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
-                    return new ExploreMinihomeResponse(user.getNickname(), minihome.getTotalVisitorCnt());
+                    return new ExploreMinihomeResponse(user.getNickname(), minihome.getTotalVisitorCnt(), user.getProfileImageUrl());
                 });
     }
 

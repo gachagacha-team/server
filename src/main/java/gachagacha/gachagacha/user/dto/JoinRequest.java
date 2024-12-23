@@ -10,4 +10,5 @@ public class JoinRequest {
     private String nickname;
     private String loginType;
     private Long loginId;
+    private String profileUrl;
 }

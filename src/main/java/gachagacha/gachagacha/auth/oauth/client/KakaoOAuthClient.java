@@ -1,7 +1,7 @@
 package gachagacha.gachagacha.auth.oauth.client;
 
+import gachagacha.gachagacha.auth.oauth.dto.UserInfo;
 import gachagacha.gachagacha.auth.oauth.dto.kakao.KakaoTokenResponse;
-import gachagacha.gachagacha.auth.oauth.dto.kakao.KakaoUserResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -11,6 +11,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Map;
 
 @Component
 public class KakaoOAuthClient implements OAuthClient {
@@ -49,18 +51,26 @@ public class KakaoOAuthClient implements OAuthClient {
     }
 
     @Override
-    public Long fetchOAuthUserId(String accessToken) {
+    public UserInfo fetchOAuthUserInfo(String accessToken) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
         headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
 
         HttpEntity<String> httpEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<KakaoUserResponse> exchange = restTemplate.exchange(requestUserUrl,
+        ResponseEntity<Map> response = restTemplate.exchange(requestUserUrl,
                 HttpMethod.GET,
                 httpEntity,
-                KakaoUserResponse.class
+                Map.class
         );
-        return exchange.getBody().getId();
+        Map<String, Object> body = response.getBody();
+        Long id = (Long) body.get("id");
+        Map<String, Object> kakaoAccount = (Map<String, Object>) body.get("kakao_account");
+        Map<String, Object> profile = (Map<String, Object>) kakaoAccount.get("profile");
+
+        String nickname = (String) profile.get("nickname");
+        String profileImage = (String) profile.get("profile_image_url");
+
+        return new UserInfo(id, nickname, profileImage);
     }
 }
