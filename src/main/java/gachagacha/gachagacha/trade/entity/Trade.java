@@ -6,6 +6,8 @@ import gachagacha.gachagacha.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 public class Trade extends BaseEntity {
@@ -33,6 +35,8 @@ public class Trade extends BaseEntity {
     @Column(nullable = false)
     private int price;
 
+    private LocalDateTime transactionDate;
+
     public void setSeller(User seller) {
         this.seller = seller;
     }
@@ -53,7 +57,8 @@ public class Trade extends BaseEntity {
         status = TradeStatus.COMPLETED;
     }
 
-    public void cancelTrade() {
-        status = TradeStatus.CANCELLED;
+    public void edit(int price, TradeStatus tradeStatus) {
+        this.price = price;
+        this.status = status;
     }
 }

@@ -7,8 +7,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddItemResponse {
+public class ReadItemResponse {
 
     private long itemId;
-    private String nickname;
+    private String itemImageUrl;
 }

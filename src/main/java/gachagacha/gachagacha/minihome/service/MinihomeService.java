@@ -27,7 +27,7 @@ public class MinihomeService {
     private final GuestbookRepository guestbookRepository;
     private final JwtUtils jwtUtils;
 
-    public MinihomeResponse visitMinihome(String nickname) {
+    public MinihomeResponse getMinihome(String nickname) {
         User user = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         Minihome miniHome = user.getMiniHome();
@@ -35,15 +35,18 @@ public class MinihomeService {
         return new MinihomeResponse(nickname, user.getCoin(), miniHome.getTotalVisitorCnt(), miniHome.getLayout());
     }
 
-    public Slice<GuestbookResponse> getGuestbook(String nickname, Pageable pageable) {
-        User user = userRepository.findByNickname(nickname)
+    public Slice<GuestbookResponse> getGuestbooks(String nickname, Pageable pageable, HttpServletRequest request) {
+        User viewUser = userRepository.findByNickname(jwtUtils.getNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
-        Minihome miniHome = user.getMiniHome();
+        User minihomeUser = userRepository.findByNickname(nickname)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
+        Minihome miniHome = minihomeUser.getMiniHome();
        return guestbookRepository.findByMinihome(miniHome, pageable)
-               .map(guestbook -> new GuestbookResponse(guestbook.getUser().getNickname(), guestbook.getContent()));
+               .map(guestbook -> new GuestbookResponse(guestbook.getId(), guestbook.getUser().getNickname(), guestbook.getContent(),
+                       guestbook.getCreatedAt(), guestbook.getUser().getNickname().equals(viewUser.getNickname())));
     }
 
-    public AddGuestbookResponse addGuestbook(String nickname, AddGuestbookRequest addGuestbookRequest, HttpServletRequest request) {
+    public GuestbookResponse addGuestbook(String nickname, AddGuestbookRequest addGuestbookRequest, HttpServletRequest request) {
         User minihomeUser = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         String guestbookUserNickname = jwtUtils.getNicknameFromHeader(request);
@@ -54,7 +57,7 @@ public class MinihomeService {
         minihomeUser.getMiniHome().addGuestbook(guestbook);
         guestbookRepository.save(guestbook);
 
-        return new AddGuestbookResponse(guestbook.getId(), guestbookUserNickname, guestbook.getContent());
+        return new GuestbookResponse(guestbook.getId(), guestbookUserNickname, guestbook.getContent(), guestbook.getCreatedAt(), true);
     }
 
     public Slice<ExploreMinihomeResponse> explore(Pageable pageable) {
@@ -62,7 +65,18 @@ public class MinihomeService {
                 .map(minihome -> {
                     User user = userRepository.findByMinihome(minihome)
                             .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
-                    return new ExploreMinihomeResponse(user.getNickname(), minihome.getTotalVisitorCnt(), "/minihome/" + user.getNickname());
+                    return new ExploreMinihomeResponse(user.getNickname(), minihome.getTotalVisitorCnt());
                 });
+    }
+
+    public GuestbookResponse editGuestbook(long guestbookId, EditGuestbookRequest editGuestbookRequest) {
+        Guestbook guestbook = guestbookRepository.findById(guestbookId).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_GUESTBOOK));
+        guestbook.edit(editGuestbookRequest.getContent());
+        return new GuestbookResponse(guestbook.getId(), guestbook.getUser().getNickname(), guestbook.getContent(), guestbook.getCreatedAt(), true);
+    }
+
+    public void deleteGuestbook(long guestbookId) {
+        Guestbook guestbook = guestbookRepository.findById(guestbookId).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_GUESTBOOK));
+        guestbookRepository.delete(guestbook);
     }
 }

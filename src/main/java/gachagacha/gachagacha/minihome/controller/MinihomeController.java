@@ -15,18 +15,28 @@ public class MinihomeController {
     private final MinihomeService minihomeService;
 
     @GetMapping("/minihome/{nickname}")
-    public MinihomeResponse visitMinihome(@PathVariable String nickname) {
-        return minihomeService.visitMinihome(nickname);
+    public MinihomeResponse getMinihome(@PathVariable String nickname) {
+        return minihomeService.getMinihome(nickname);
     }
 
     @GetMapping("/minihome/{nickname}/guestbook")
-    public Slice<GuestbookResponse> getGuestbook(@PathVariable String nickname, Pageable pageable) {
-        return minihomeService.getGuestbook(nickname, pageable);
+    public Slice<GuestbookResponse> getGuestbooks(@PathVariable String nickname, Pageable pageable, HttpServletRequest request) {
+        return minihomeService.getGuestbooks(nickname, pageable, request);
     }
 
     @PostMapping("/minihome/{nickname}/guestbook")
-    public AddGuestbookResponse addGuestbook(@PathVariable String nickname, @RequestBody AddGuestbookRequest addGuestbookRequest, HttpServletRequest request) {
+    public GuestbookResponse addGuestbook(@PathVariable String nickname, @RequestBody AddGuestbookRequest addGuestbookRequest, HttpServletRequest request) {
         return minihomeService.addGuestbook(nickname, addGuestbookRequest, request);
+    }
+
+    @PutMapping("/minihome/guestbook/{guestbookId}")
+    public GuestbookResponse editGuestBook(@PathVariable long guestbookId, @RequestBody EditGuestbookRequest editGuestbookRequest) {
+        return minihomeService.editGuestbook(guestbookId, editGuestbookRequest);
+    }
+
+    @DeleteMapping("/minihome/guestbook/{guestbookId}")
+    public void deleteGuestBook(@PathVariable long guestbookId) {
+        minihomeService.deleteGuestbook(guestbookId);
     }
 
     @GetMapping("/explore")

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class PurchaseResponse {
+public class BuyItemResponse {
 
     private long tradeId;
     private String sellerNickname;

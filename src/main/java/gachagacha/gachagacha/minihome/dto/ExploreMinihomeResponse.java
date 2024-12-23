@@ -11,5 +11,4 @@ public class ExploreMinihomeResponse {
 
     private String nickname;
     private int totalVisitorCnt;
-    private String minihomeUrl;
 }

@@ -8,36 +8,33 @@ import java.util.Arrays;
 
 @Getter
 public enum Item {
-    CHICK_1(ItemType.CHARACTER ,1, 1, "/characters/chick_1.png", "chick_1", 0, 0),
-    CHICK_2(ItemType.CHARACTER, 2, 2, "/characters/chick_2.gif", "chick_2", 0, 0),
-    CHICK_3(ItemType.CHARACTER, 3, 3, "/characters/chick_3.gif", "chick_3", 0, 0),
-    SLIME_1(ItemType.CHARACTER, 4, 1, "/characters/slime_1.png", "slime_1", 0, 0),
-    SLIME_2(ItemType.CHARACTER, 5, 2, "/characters/slime_2.gif", "slime_2", 0, 0),
-    SLIME_3(ItemType.CHARACTER, 6, 3, "/characters/slime_3.gif", "slime_3", 0, 0),
-    HAMSTER_1(ItemType.CHARACTER, 7, 1, "/characters/hamster_1.png", "hamster_1", 0, 0),
-    HAMSTER_2(ItemType.CHARACTER, 8, 2, "/characters/hamster_2.gif", "hamster_2", 0, 0),
-    HAMSTER_3(ItemType.CHARACTER, 9, 3, "/characters/hamster_3.gif", "hamster_3", 0, 0),
 
-    WHITE(ItemType.BACKGROUND, 101, 1, "/backgrounds/white.png", "white", 0, 0),
-    SKYBLUE(ItemType.BACKGROUND, 102, 1, "/backgrounds/skyblue.png", "skyblue", 0, 0),
-    BLUE_YELLOW(ItemType.BACKGROUND, 103, 1, "/backgrounds/blue_yellow.png", "blue_yellow", 0, 0),
-    CLOUD_GROUND(ItemType.BACKGROUND, 104, 1, "/backgrounds/cloud_ground.png", "cloud_ground", 0, 0)
+    PINK_DONUT(1, "pink_donut", Grade.A, "/items/pink_donut.png", 0, 0),
+    PANCAKE(2, "pancake", Grade.A, "/items/pancake.png", 0, 0),
+    CUPCAKE(3, "cupcake", Grade.A, "/items/cupcake.png", 0, 0),
+    CROISSANT(4, "croissant", Grade.B, "/items/croissant.png", 0, 0),
+    BLACK_CAT(5, "black_cat", Grade.C, "/items/black_cat.png", 0, 0),
+    GRAY_WHITE_CAT(6, "gray_white_cat", Grade.C, "/items/gray_white_cat.png", 0, 0),
+    GRAY_ORANGE_CAT(7, "gray_orange_cat", Grade.D, "/items/gray_orange_cat.png", 0, 0),
+    YELLOW_CAT(8, "yellow_cat", Grade.D, "/items/yellow_cat.png", 0, 0),
+    BUNNIES(9, "bunnies", Grade.A, "/items/bunnies.png", 0, 0),
+    STRAWBERRY(10, "strawberry", Grade.B, "/items/strawberry.png", 0, 0),
+    RED_BOY(11, "red_boy", Grade.C, "/items/red_boy.gif", 0, 0),
+    PURPLE_BOY(12, "purple_boy", Grade.C, "/items/purple_boy.gif", 0, 0)
     ;
 
-    private final ItemType itemType;
-    private final int itemId;
-    private final int level;
-    private final String filePath;
+    private final long itemId;
     private final String viewName;
+    private final Grade grade;
+    private final String filePath;
     private int totalTradePrice;
     private int tradeCount;
 
-    Item(ItemType itemType, int itemId, int level, String filePath, String viewName, int totalTradePrice, int tradeCount) {
-        this.itemType = itemType;
+    Item(long itemId, String viewName, Grade grade, String filePath, int totalTradePrice, int tradeCount) {
         this.itemId = itemId;
-        this.level = level;
-        this.filePath = filePath;
         this.viewName = viewName;
+        this.grade = grade;
+        this.filePath = filePath;
         this.totalTradePrice = 0;
         this.tradeCount = 0;
     }
@@ -51,7 +48,7 @@ public enum Item {
         return totalTradePrice / tradeCount;
     }
 
-    public static Item findById(int id) {
+    public static Item findById(long id) {
         return Arrays.stream(Item.values())
                 .filter(item -> item.itemId == id)
                 .findFirst()

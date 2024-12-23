@@ -3,6 +3,7 @@ package gachagacha.gachagacha.user.entity;
 import gachagacha.gachagacha.*;
 import gachagacha.gachagacha.exception.ErrorCode;
 import gachagacha.gachagacha.exception.customException.BusinessException;
+import gachagacha.gachagacha.item.entity.Background;
 import gachagacha.gachagacha.item.entity.UserItem;
 import gachagacha.gachagacha.minihome.entity.Minihome;
 import jakarta.persistence.*;
@@ -40,6 +41,8 @@ public class User extends BaseEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserItem> userItems = new ArrayList<>();
 
+    private List<Background> backgrounds = new ArrayList<>();
+
     public void addItem(UserItem userItem) {
         this.userItems.add(userItem);
         if (userItem.getUser() != null) {
@@ -55,6 +58,7 @@ public class User extends BaseEntity {
         user.nickname = nickname;
         user.coin = 20000;
         user.miniHome = miniHome;
+        user.backgrounds.add(Background.WHITE);
         return user;
     }
 

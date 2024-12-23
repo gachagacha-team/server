@@ -7,11 +7,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReadMyProductTradeResponse {
+public class ReadItemTradeResponse {
 
-    private String tradeStatus;
     private String itemName;
-    private String itemImageUrl;
-    private int itemLevel;
-    private int price;
+    private String grade;
+    private int averagePrice;
 }
