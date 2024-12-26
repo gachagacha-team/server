@@ -28,10 +28,10 @@ public class ItemService {
     private final JwtUtils jwtUtils;
 
     public AddItemResponse addItem(int itemId, HttpServletRequest request) {
-        String nickname = jwtUtils.getNicknameFromHeader(request);
+        long userId = jwtUtils.getUserIdFromHeader(request);
         Item item = Item.findById(itemId);
         UserItem userItem = UserItem.create(item);
-        User user = userRepository.findByNickname(nickname)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         user.addItem(userItem);
         userItemRepository.save(userItem);
@@ -40,23 +40,26 @@ public class ItemService {
     }
 
     public List<ReadBackgroundResponse> getBackgrounds(String nickname, HttpServletRequest request) {
-        validateEditAuthorization(nickname, request);
         User user = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
+        validateEditAuthorization(user.getId(), request);
+
         return user.getBackgrounds().stream()
                 .map(background -> new ReadBackgroundResponse(background.getId(), "/image" + background.getFilePath()))
                 .toList();
     }
 
     public List<ReadItemResponse> getItems(String nickname, HttpServletRequest request) {
-        validateEditAuthorization(nickname, request);
+        User user = userRepository.findByNickname(nickname)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
+        validateEditAuthorization(user.getId(), request);
         return userItemRepository.findByUserNickname(nickname).stream()
                 .map(userItem -> new ReadItemResponse(userItem.getItem().getItemId(), "/image" + userItem.getItem().getFilePath()))
                 .toList();
     }
 
-    private void validateEditAuthorization(String nickname, HttpServletRequest request) {
-        if (!jwtUtils.getNicknameFromHeader(request).equals(nickname)) {
+    private void validateEditAuthorization(long userId, HttpServletRequest request) {
+        if (jwtUtils.getUserIdFromHeader(request) != userId) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
         }
     }

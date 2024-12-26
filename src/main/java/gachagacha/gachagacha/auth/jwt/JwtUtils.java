@@ -27,9 +27,9 @@ public class JwtUtils {
         this.jwtParser = Jwts.parserBuilder().setSigningKey(signingKey).build();
     }
 
-    public JwtDto generateJwt(String nickname) {
+    public JwtDto generateJwt(long userId) {
         Claims claims = Jwts.claims()
-                .setSubject(nickname);
+                .setSubject(String.valueOf(userId));
         return new JwtDto(generateAccessToken(claims), generateRefreshToken(claims));
     }
 
@@ -62,9 +62,10 @@ public class JwtUtils {
         }
     }
 
-    public String getNicknameFromHeader(HttpServletRequest request) {
+    public long getUserIdFromHeader(HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
-        return jwtParser.parseClaimsJws(jwt).getBody().getSubject();
+        String userId = jwtParser.parseClaimsJws(jwt).getBody().getSubject();
+        return Long.parseLong(userId);
     }
 
     private String getJwtFromHeader(HttpServletRequest request) {

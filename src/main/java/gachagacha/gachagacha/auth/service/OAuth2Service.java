@@ -39,7 +39,7 @@ public class OAuth2Service {
         Optional<User> optionalUser = userRepository.findByLoginTypeAndLoginId(loginType, userInfo.getId());
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            JwtDto jwtDto = jwtUtils.generateJwt(user.getNickname());
+            JwtDto jwtDto = jwtUtils.generateJwt(user.getId());
             return new AuthResponse(false, jwtDto, null, null, null, null);
         } else {
             return new AuthResponse(true, null, loginType.getName(), userInfo.getId(), userInfo.getNickname(), userInfo.getProfileImageUrl());

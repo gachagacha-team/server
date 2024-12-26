@@ -42,8 +42,8 @@ public class TradeService {
     }
 
     public Slice<ReadTradesResponse> readMyProductTrades(Pageable pageable, HttpServletRequest request) {
-        String nickname = jwtUtils.getNicknameFromHeader(request);
-        User seller = userRepository.findByNickname(nickname)
+        long userId = jwtUtils.getUserIdFromHeader(request);
+        User seller = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         return tradeRepository.findByUser(seller, pageable)
                 .map(trade -> new ReadTradesResponse(trade.getId(), trade.getItem().getViewName(),
@@ -87,8 +87,8 @@ public class TradeService {
 
         userItemRepository.delete(userItem);
 
-        String nickname = jwtUtils.getNicknameFromHeader(request);
-        User seller = userRepository.findByNickname(nickname)
+        long userId = jwtUtils.getUserIdFromHeader(request);
+        User seller = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
 
         Trade trade = Trade.create(seller, item, addTradeRequest.getPrice());
@@ -99,8 +99,8 @@ public class TradeService {
     }
 
     public BuyItemResponse buy(long tradeId, HttpServletRequest request) {
-        String nickname = jwtUtils.getNicknameFromHeader(request);
-        User buyer = userRepository.findByNickname(nickname)
+        long userId = jwtUtils.getUserIdFromHeader(request);
+        User buyer = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         Trade trade = tradeRepository.findById(tradeId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_TRADE));
