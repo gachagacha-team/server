@@ -7,6 +7,7 @@ import gachagacha.gachagacha.auth.jwt.JwtUtils;
 import gachagacha.gachagacha.minihome.entity.Minihome;
 import gachagacha.gachagacha.user.dto.AttendanceResponse;
 import gachagacha.gachagacha.user.dto.FollowRequest;
+import gachagacha.gachagacha.user.dto.UnfollowRequest;
 import gachagacha.gachagacha.user.entity.Attendance;
 import gachagacha.gachagacha.user.entity.Follow;
 import gachagacha.gachagacha.user.entity.LoginType;
@@ -98,5 +99,18 @@ public class UserService {
         if (followRepository.findByFollowerAndFollowee(follower, followee).isPresent()) {
             throw new BusinessException(ErrorCode.ALREADY_FOLLOWING);
         }
+    }
+
+    public void unfollow(UnfollowRequest unfollowRequest, HttpServletRequest request) {
+        long userId = jwtUtils.getUserIdFromHeader(request);
+        User follower = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
+        User followee = userRepository.findById(unfollowRequest.getFolloweeUserId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
+
+        Follow follow = followRepository.findByFollowerAndFollowee(follower, followee)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_FOLLOW));
+
+        followRepository.delete(follow);
     }
 }

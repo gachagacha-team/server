@@ -33,7 +33,9 @@ ErrorCode {
     CANNOT_EDIT_COMPLETED_TRADE(HttpStatus.BAD_REQUEST, "판매 완료된 거래는 수정이 불가합니다."),
 
     CANNOT_SELF_FOLLOW(HttpStatus.BAD_REQUEST, "자기 자신에게는 팔로우가 불가합니다."),
-    ALREADY_FOLLOWING(HttpStatus.BAD_REQUEST, "이미 팔로우된 상태입니다.")
+    ALREADY_FOLLOWING(HttpStatus.BAD_REQUEST, "이미 팔로우된 상태입니다."),
+    NOT_FOUND_FOLLOW(HttpStatus.NOT_FOUND, "팔로우 내역을 찾을 수 없습니다."),
+
     ;
 
     private final HttpStatus httpStatus;
