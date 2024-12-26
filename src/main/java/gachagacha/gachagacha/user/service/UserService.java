@@ -6,11 +6,14 @@ import gachagacha.gachagacha.auth.jwt.JwtDto;
 import gachagacha.gachagacha.auth.jwt.JwtUtils;
 import gachagacha.gachagacha.minihome.entity.Minihome;
 import gachagacha.gachagacha.user.dto.AttendanceResponse;
+import gachagacha.gachagacha.user.dto.FollowRequest;
 import gachagacha.gachagacha.user.entity.Attendance;
+import gachagacha.gachagacha.user.entity.Follow;
 import gachagacha.gachagacha.user.entity.LoginType;
 import gachagacha.gachagacha.user.dto.JoinRequest;
 import gachagacha.gachagacha.user.entity.User;
 import gachagacha.gachagacha.user.repository.AttendanceRepository;
+import gachagacha.gachagacha.user.repository.FollowRepository;
 import gachagacha.gachagacha.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 @Transactional
@@ -26,6 +30,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final AttendanceRepository attendanceRepository;
+    private final FollowRepository followRepository;
     private final JwtUtils jwtUtils;
 
     public JwtDto join(JoinRequest joinRequest) {
@@ -36,7 +41,7 @@ public class UserService {
 
         User user = User.create(loginType, joinRequest.getLoginId(), joinRequest.getNickname(), Minihome.create(), joinRequest.getProfileUrl());
         userRepository.save(user);
-        return jwtUtils.generateJwt(user.getNickname());
+        return jwtUtils.generateJwt(user.getId());
     }
 
     private void validateDuplicatedUser(LoginType loginType, long loginId) {
@@ -52,8 +57,8 @@ public class UserService {
     }
 
     public AttendanceResponse attend(HttpServletRequest request) {
-        String nickname = jwtUtils.getNicknameFromHeader(request);
-        User user = userRepository.findByNickname(nickname)
+        long userId = jwtUtils.getUserIdFromHeader(request);
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         validateDuplicatedAttendance(user);
         user.attend();
@@ -66,6 +71,32 @@ public class UserService {
         LocalDate date = LocalDate.now();
         if (attendanceRepository.findByUserAndDate(user, date).isPresent()) {
             throw new BusinessException(ErrorCode.ALREADY_ATTEND);
+        }
+    }
+
+    public void follow(FollowRequest followRequest, HttpServletRequest request) {
+        long userId = jwtUtils.getUserIdFromHeader(request);
+        User follower = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
+        User followee = userRepository.findById(followRequest.getFolloweeUserId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
+
+        validateSelfFollow(follower, followee);
+        validateDuplicatedFollow(follower, followee);
+
+        Follow follow = Follow.create(follower, followee);
+        followRepository.save(follow);
+    }
+
+    private void validateSelfFollow(User follower, User followee) {
+        if (follower.getId() == followee.getId()) {
+            throw new BusinessException(ErrorCode.CANNOT_SELF_FOLLOW);
+        }
+    }
+
+    private void validateDuplicatedFollow(User follower, User followee) {
+        if (followRepository.findByFollowerAndFollowee(follower, followee).isPresent()) {
+            throw new BusinessException(ErrorCode.ALREADY_FOLLOWING);
         }
     }
 }

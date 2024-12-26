@@ -6,7 +6,8 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @RequiredArgsConstructor
-public enum ErrorCode {
+public enum
+ErrorCode {
 
     INVALID_LOGIN_TYPE(HttpStatus.BAD_REQUEST, "잘못된 loginType 입니다."),
     DUPLICATED_USER_REGISTRATION(HttpStatus.BAD_REQUEST, "이미 가입된 사용자입니다."),
@@ -29,7 +30,10 @@ public enum ErrorCode {
     ALREADY_ATTEND(HttpStatus.FORBIDDEN, "이미 출석체크를 했습니다."),
 
     INSUFFICIENT_COIN(HttpStatus.BAD_REQUEST, "코인이 부족합니다."),
-    CANNOT_EDIT_COMPLETED_TRADE(HttpStatus.BAD_REQUEST, "판매 완료된 거래는 수정이 불가합니다.")
+    CANNOT_EDIT_COMPLETED_TRADE(HttpStatus.BAD_REQUEST, "판매 완료된 거래는 수정이 불가합니다."),
+
+    CANNOT_SELF_FOLLOW(HttpStatus.BAD_REQUEST, "자기 자신에게는 팔로우가 불가합니다."),
+    ALREADY_FOLLOWING(HttpStatus.BAD_REQUEST, "이미 팔로우된 상태입니다.")
     ;
 
     private final HttpStatus httpStatus;
