@@ -5,19 +5,17 @@ import gachagacha.gachagacha.exception.customException.BusinessException;
 import gachagacha.gachagacha.auth.jwt.JwtDto;
 import gachagacha.gachagacha.auth.jwt.JwtUtils;
 import gachagacha.gachagacha.minihome.entity.Minihome;
-import gachagacha.gachagacha.user.dto.AttendanceResponse;
-import gachagacha.gachagacha.user.dto.FollowRequest;
-import gachagacha.gachagacha.user.dto.UnfollowRequest;
+import gachagacha.gachagacha.user.dto.*;
 import gachagacha.gachagacha.user.entity.Attendance;
 import gachagacha.gachagacha.user.entity.Follow;
 import gachagacha.gachagacha.user.entity.LoginType;
-import gachagacha.gachagacha.user.dto.JoinRequest;
 import gachagacha.gachagacha.user.entity.User;
 import gachagacha.gachagacha.user.repository.AttendanceRepository;
 import gachagacha.gachagacha.user.repository.FollowRepository;
 import gachagacha.gachagacha.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -112,5 +110,33 @@ public class UserService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_FOLLOW));
 
         followRepository.delete(follow);
+    }
+
+    public Slice<FollowerResponse> getFollowers(String nickname, HttpServletRequest request) {
+        User currentUser = userRepository.findById(jwtUtils.getUserIdFromHeader(request))
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
+        User minihomeUser = userRepository.findByNickname(nickname)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
+        return followRepository.findByFollowee(minihomeUser)
+                .map(follow -> {
+                    User follower = follow.getFollower();
+                    boolean isFollowing = followRepository.findByFollowerAndFollowee(currentUser, follower).isPresent();
+                    return new FollowerResponse(follower.getId(), follower.getNickname(), follower.getProfileImageUrl(),
+                            isFollowing, currentUser.getId() == minihomeUser.getId(), currentUser.getId() == follower.getId());
+                });
+    }
+
+    public Slice<FollowingResponse> getFollowing(String nickname, HttpServletRequest request) {
+        User currentUser = userRepository.findById(jwtUtils.getUserIdFromHeader(request))
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
+        User minihomeUser = userRepository.findByNickname(nickname)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
+        return followRepository.findByFollower(minihomeUser)
+                .map(follow -> {
+                    User followee = follow.getFollowee();
+                    boolean isFollowing = followRepository.findByFollowerAndFollowee(currentUser, followee).isPresent();
+                    return new FollowingResponse(followee.getId(), followee.getNickname(), followee.getProfileImageUrl(),
+                            isFollowing, currentUser.getId() == followee.getId());
+                });
     }
 }

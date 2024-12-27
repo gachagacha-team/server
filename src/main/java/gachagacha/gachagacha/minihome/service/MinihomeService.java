@@ -9,6 +9,7 @@ import gachagacha.gachagacha.minihome.repository.GuestbookRepository;
 import gachagacha.gachagacha.minihome.entity.Minihome;
 import gachagacha.gachagacha.minihome.repository.MinihomeRepository;
 import gachagacha.gachagacha.user.entity.User;
+import gachagacha.gachagacha.user.repository.FollowRepository;
 import gachagacha.gachagacha.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -25,18 +26,26 @@ public class MinihomeService {
     private final UserRepository userRepository;
     private final MinihomeRepository minihomeRepository;
     private final GuestbookRepository guestbookRepository;
+    private final FollowRepository followRepository;
     private final JwtUtils jwtUtils;
 
-    public MinihomeResponse getMinihome(String nickname) {
-        User user = userRepository.findByNickname(nickname)
+    public MinihomeResponse getMinihome(String nickname, HttpServletRequest request) {
+        long userId = jwtUtils.getUserIdFromHeader(request);
+
+        User minihomeUser = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
-        Minihome miniHome = user.getMiniHome();
+
+        Minihome miniHome = minihomeUser.getMiniHome();
         miniHome.visit();
-        return new MinihomeResponse(nickname, user.getCoin(), miniHome.getTotalVisitorCnt(), user.getProfileImageUrl(), miniHome.getLayout());
+
+        int followersCnt = followRepository.findByFollowee(minihomeUser).getSize();
+        int followingsCnt = followRepository.findByFollower(minihomeUser).getSize();
+
+        return new MinihomeResponse(minihomeUser.getId() == userId, minihomeUser.getId(), minihomeUser.getNickname(), followersCnt, followingsCnt, miniHome.getTotalVisitorCnt(), minihomeUser.getProfileImageUrl(), miniHome.getLayout());
     }
 
     public Slice<GuestbookResponse> getGuestbooks(String nickname, Pageable pageable, HttpServletRequest request) {
-        User viewUser = userRepository.findByNickname(jwtUtils.getNicknameFromHeader(request))
+        User viewUser = userRepository.findById(jwtUtils.getUserIdFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         User minihomeUser = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
@@ -49,15 +58,15 @@ public class MinihomeService {
     public GuestbookResponse addGuestbook(String nickname, AddGuestbookRequest addGuestbookRequest, HttpServletRequest request) {
         User minihomeUser = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
-        String guestbookUserNickname = jwtUtils.getNicknameFromHeader(request);
-        User guestbookUser = userRepository.findByNickname(guestbookUserNickname)
+        long guestbookUserId = jwtUtils.getUserIdFromHeader(request);
+        User guestbookUser = userRepository.findById(guestbookUserId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
 
         Guestbook guestbook = Guestbook.create(guestbookUser, addGuestbookRequest.getContent());
         minihomeUser.getMiniHome().addGuestbook(guestbook);
         guestbookRepository.save(guestbook);
 
-        return new GuestbookResponse(guestbook.getId(), guestbookUserNickname, guestbook.getContent(), guestbook.getCreatedAt(), true);
+        return new GuestbookResponse(guestbook.getId(), guestbookUser.getNickname(), guestbook.getContent(), guestbook.getCreatedAt(), true);
     }
 
     public Slice<ExploreMinihomeResponse> explore(Pageable pageable) {

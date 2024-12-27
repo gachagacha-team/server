@@ -15,8 +15,8 @@ public class MinihomeController {
     private final MinihomeService minihomeService;
 
     @GetMapping("/minihome/{nickname}")
-    public MinihomeResponse getMinihome(@PathVariable String nickname) {
-        return minihomeService.getMinihome(nickname);
+    public MinihomeResponse getMinihome(@PathVariable String nickname, HttpServletRequest request) {
+        return minihomeService.getMinihome(nickname, request);
     }
 
     @GetMapping("/minihome/{nickname}/guestbook")

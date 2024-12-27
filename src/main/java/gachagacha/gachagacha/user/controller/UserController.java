@@ -1,13 +1,11 @@
 package gachagacha.gachagacha.user.controller;
 
 import gachagacha.gachagacha.auth.jwt.JwtDto;
-import gachagacha.gachagacha.user.dto.AttendanceResponse;
-import gachagacha.gachagacha.user.dto.FollowRequest;
-import gachagacha.gachagacha.user.dto.UnfollowRequest;
+import gachagacha.gachagacha.user.dto.*;
 import gachagacha.gachagacha.user.service.UserService;
-import gachagacha.gachagacha.user.dto.JoinRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,5 +32,15 @@ public class UserController {
     @DeleteMapping("/unfollow")
     public void unfollow(@RequestBody UnfollowRequest unfollowRequest, HttpServletRequest request) {
         userService.unfollow(unfollowRequest, request);
+    }
+
+    @GetMapping("/{nickname}/followers")
+    public Slice<FollowerResponse> getFollowers(@PathVariable String nickname, HttpServletRequest request) {
+        return userService.getFollowers(nickname, request);
+    }
+
+    @GetMapping("/{nickname}/following")
+    public Slice<FollowingResponse> getFollowing(@PathVariable String nickname, HttpServletRequest request) {
+        return userService.getFollowing(nickname, request);
     }
 }
