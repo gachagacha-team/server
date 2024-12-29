@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 public class ReadTradesResponse {
 
     private long tradeId;
+    private long itemId;
     private String itemName;
     private String itemImageUrl;
     private String grade;

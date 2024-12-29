@@ -18,6 +18,9 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Comparator;
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -38,10 +41,29 @@ public class MinihomeService {
         Minihome miniHome = minihomeUser.getMiniHome();
         miniHome.visit();
 
-        int followersCnt = followRepository.findByFollowee(minihomeUser).getSize();
-        int followingsCnt = followRepository.findByFollower(minihomeUser).getSize();
+        int followersCnt = followRepository.findByFollowee(minihomeUser).size();
+        int followingsCnt = followRepository.findByFollower(minihomeUser).size();
 
-        return new MinihomeResponse(minihomeUser.getId() == userId, minihomeUser.getId(), minihomeUser.getNickname(), followersCnt, followingsCnt, miniHome.getTotalVisitorCnt(), minihomeUser.getProfileImageUrl(), miniHome.getLayout());
+        List<User> users = userRepository.findAll();
+        users.sort(Comparator.comparingInt(User::getScore).reversed());
+        int ranking = 0;
+        int lastScore = 0;
+        int sameScoreCnt = 1;
+        for (int i = 0; i < users.size(); i++) {
+            if (users.get(i).getId() == minihomeUser.getId()) {
+                ranking += sameScoreCnt;
+                break;
+            }
+            if (users.get(i).getScore() == lastScore) {
+                sameScoreCnt++;
+                continue;
+            }
+            ranking += sameScoreCnt;
+            sameScoreCnt = 1;
+            lastScore = users.get(i).getScore();
+        }
+
+        return new MinihomeResponse(minihomeUser.getId() == userId, minihomeUser.getId(), minihomeUser.getNickname(), ranking, followersCnt, followingsCnt, miniHome.getTotalVisitorCnt(), minihomeUser.getProfileImageUrl(), miniHome.getLayout());
     }
 
     public Slice<GuestbookResponse> getGuestbooks(String nickname, Pageable pageable, HttpServletRequest request) {

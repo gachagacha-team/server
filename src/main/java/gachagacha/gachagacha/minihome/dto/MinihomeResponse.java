@@ -12,6 +12,7 @@ public class MinihomeResponse {
     private boolean isOwner;
     private long minihomeUserId;
     private String nickname;
+    private int ranking;
     private int followersCnt;
     private int followingCnt;
     private int totalVisitorCnt;

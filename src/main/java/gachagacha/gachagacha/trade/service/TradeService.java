@@ -31,14 +31,14 @@ public class TradeService {
 
     public Slice<ReadTradesResponse> readOnSaleTrades(Pageable pageable) {
         return  tradeRepository.findByOnSale(TradeStatus.ON_SALE, pageable)
-                .map(trade -> new ReadTradesResponse(trade.getId(), trade.getItem().getViewName(),
-                        "/image" + trade.getItem().getFilePath(), trade.getItem().getGrade().name(), trade.getPrice(), trade.getStatus().getViewName()));
+                .map(trade -> new ReadTradesResponse(trade.getId(), trade.getItem().getItemId(), trade.getItem().getViewName(),
+                        "/image" + trade.getItem().getImageFileName(), trade.getItem().getItemGrade().name(), trade.getPrice(), trade.getStatus().getViewName()));
     }
 
     public Slice<ReadTradesResponse> readSoldTrades(Pageable pageable) {
         return  tradeRepository.findByOnSale(TradeStatus.COMPLETED, pageable)
-                .map(trade -> new ReadTradesResponse(trade.getId(), trade.getItem().getViewName(),
-                        "/image" + trade.getItem().getFilePath(), trade.getItem().getGrade().name(), trade.getPrice(), trade.getStatus().getViewName()));
+                .map(trade -> new ReadTradesResponse(trade.getId(), trade.getItem().getItemId(), trade.getItem().getViewName(),
+                        "/image" + trade.getItem().getImageFileName(), trade.getItem().getItemGrade().name(), trade.getPrice(), trade.getStatus().getViewName()));
     }
 
     public Slice<ReadTradesResponse> readMyProductTrades(Pageable pageable, HttpServletRequest request) {
@@ -46,20 +46,20 @@ public class TradeService {
         User seller = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         return tradeRepository.findByUser(seller, pageable)
-                .map(trade -> new ReadTradesResponse(trade.getId(), trade.getItem().getViewName(),
-                        "/image" + trade.getItem().getFilePath(), trade.getItem().getGrade().getViewName(), trade.getPrice(), trade.getStatus().getViewName()));
+                .map(trade -> new ReadTradesResponse(trade.getId(), trade.getItem().getItemId(), trade.getItem().getViewName(),
+                        "/image" + trade.getItem().getImageFileName(), trade.getItem().getItemGrade().getViewName(), trade.getPrice(), trade.getStatus().getViewName()));
     }
 
     public ReadTradeResponse readTrade(long tradeId) {
         Trade trade = tradeRepository.findById(tradeId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_TRADE));
         if (trade.getStatus() == TradeStatus.COMPLETED) {
-            return ReadTradeResponse.fromSold(trade.getItem().getViewName(),"/image" + trade.getItem().getFilePath(),
-                    trade.getItem().getGrade().getViewName(), trade.getPrice(), trade.getStatus().getViewName(), trade.getSeller().getNickname(),
+            return ReadTradeResponse.fromSold(trade.getItem().getItemId(), trade.getItem().getViewName(),"/images/items/" + trade.getItem().getImageFileName(),
+                    trade.getItem().getItemGrade().getViewName(), trade.getPrice(), trade.getStatus().getViewName(), trade.getSeller().getNickname(),
                     trade.getTransactionDate());
         }
-        return ReadTradeResponse.fromOnSaleOrCancelled(trade.getItem().getViewName(),"/image" + trade.getItem().getFilePath(),
-                trade.getItem().getGrade().getViewName(), trade.getPrice(), trade.getStatus().getViewName(), trade.getSeller().getNickname());
+        return ReadTradeResponse.fromOnSaleOrCancelled(trade.getItem().getItemId(), trade.getItem().getViewName(),"/images/items/" + trade.getItem().getImageFileName(),
+                trade.getItem().getItemGrade().getViewName(), trade.getPrice(), trade.getStatus().getViewName(), trade.getSeller().getNickname());
     }
 
     public ReadTradeResponse editTrade(long tradeId, EditTradeRequest editTradeRequest) {
@@ -71,13 +71,13 @@ public class TradeService {
 
         trade.edit(editTradeRequest.getPrice(), TradeStatus.findByViewName(editTradeRequest.getStatus()));
 
-        return ReadTradeResponse.fromOnSaleOrCancelled(trade.getItem().getViewName(),"/image" + trade.getItem().getFilePath(),
-                trade.getItem().getGrade().getViewName(), trade.getPrice(), trade.getStatus().getViewName(), trade.getSeller().getNickname());
+        return ReadTradeResponse.fromOnSaleOrCancelled(trade.getItem().getItemId(), trade.getItem().getViewName(),"/images/items" + trade.getItem().getImageFileName(),
+                trade.getItem().getItemGrade().getViewName(), trade.getPrice(), trade.getStatus().getViewName(), trade.getSeller().getNickname());
     }
 
     public ReadItemTradeResponse readItemTrade(long itemId) {
         Item item = Item.findById(itemId);
-        return new ReadItemTradeResponse(item.getViewName(), item.getGrade().getViewName(), item.getAveragePrice());
+        return new ReadItemTradeResponse(item.getItemId(), item.getViewName(), item.getItemGrade().getViewName(), item.getAveragePrice());
     }
 
     public AddTradeResponse addTrade(AddTradeRequest addTradeRequest, HttpServletRequest request) {

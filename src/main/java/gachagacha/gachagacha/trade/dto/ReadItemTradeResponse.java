@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReadItemTradeResponse {
 
+    private long itemId;
     private String itemName;
     private String grade;
     private int averagePrice;
