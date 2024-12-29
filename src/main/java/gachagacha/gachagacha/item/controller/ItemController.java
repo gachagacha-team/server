@@ -22,9 +22,10 @@ public class ItemController {
 
     private final ItemService itemService;
 
-    @PostMapping("/item/{itemId}") // TODO: 뽑기 기능
-    public AddItemResponse addItem(@PathVariable int itemId, HttpServletRequest request) {
-        return itemService.addItem(itemId, request);
+    @PostMapping("/gacha")
+    public String gacha(HttpServletRequest request) {
+        String imageName = itemService.gacha(request);
+        return "/images/items/" + imageName;
     }
 
     @GetMapping("/{nickname}/backgrounds")
@@ -37,13 +38,13 @@ public class ItemController {
         return itemService.getItems(nickname, request);
     }
 
-    @GetMapping(value = "/image/characters/{imageName}", produces = MediaType.IMAGE_GIF_VALUE)
+    @GetMapping(value = "/images/items/{imageName}", produces = MediaType.IMAGE_GIF_VALUE)
     public ResponseEntity getItemImage(@PathVariable String imageName) {
         ClassPathResource resource = new ClassPathResource("/items/" + imageName);
         return ResponseEntity.ok().body(resource);
     }
 
-    @GetMapping(value = "/image/backgrounds/{imageName}", produces = MediaType.IMAGE_PNG_VALUE)
+    @GetMapping(value = "/images/backgrounds/{imageName}", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity getBackgroundImage(@PathVariable String imageName) {
         ClassPathResource resource = new ClassPathResource("/backgrounds/" + imageName);
         return ResponseEntity.ok().body(resource);

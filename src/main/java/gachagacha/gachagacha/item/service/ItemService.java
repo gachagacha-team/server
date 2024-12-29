@@ -6,7 +6,7 @@ import gachagacha.gachagacha.item.entity.Item;
 import gachagacha.gachagacha.auth.jwt.JwtUtils;
 import gachagacha.gachagacha.exception.ErrorCode;
 import gachagacha.gachagacha.exception.customException.BusinessException;
-import gachagacha.gachagacha.item.dto.AddItemResponse;
+import gachagacha.gachagacha.item.entity.ItemGrade;
 import gachagacha.gachagacha.item.entity.UserItem;
 import gachagacha.gachagacha.item.repository.UserItemRepository;
 import gachagacha.gachagacha.user.entity.User;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Random;
 
 @Service
 @Transactional
@@ -27,16 +28,18 @@ public class ItemService {
     private final UserRepository userRepository;
     private final JwtUtils jwtUtils;
 
-    public AddItemResponse addItem(int itemId, HttpServletRequest request) {
-        long userId = jwtUtils.getUserIdFromHeader(request);
-        Item item = Item.findById(itemId);
-        UserItem userItem = UserItem.create(item);
-        User user = userRepository.findById(userId)
+    public String gacha(HttpServletRequest request) {
+        User user = userRepository.findById(jwtUtils.getUserIdFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
-        user.addItem(userItem);
-        userItemRepository.save(userItem);
+        user.gacha();
 
-        return new AddItemResponse(item.getItemId(), user.getNickname());
+        ItemGrade itemGrade = ItemGrade.getItemGrade(new Random().nextInt(100) + 1);
+        Item item = Item.gacha(itemGrade);
+
+        UserItem userItem = UserItem.create(item);
+        user.addItem(userItem);
+
+        return item.getImageFileName();
     }
 
     public List<ReadBackgroundResponse> getBackgrounds(String nickname, HttpServletRequest request) {
@@ -54,7 +57,7 @@ public class ItemService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         validateEditAuthorization(user.getId(), request);
         return userItemRepository.findByUserNickname(nickname).stream()
-                .map(userItem -> new ReadItemResponse(userItem.getItem().getItemId(), "/image" + userItem.getItem().getFilePath()))
+                .map(userItem -> new ReadItemResponse(userItem.getItem().getItemId(), "/image" + userItem.getItem().getImageFileName()))
                 .toList();
     }
 

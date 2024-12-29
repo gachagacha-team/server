@@ -11,6 +11,7 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Getter
@@ -34,6 +35,9 @@ public class User extends BaseEntity {
     @Column(nullable = false)
     private int coin;
 
+    @Column(nullable = false)
+    private int score;
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "home_id", nullable = false)
     private Minihome miniHome;
@@ -45,6 +49,14 @@ public class User extends BaseEntity {
     private String profileImageUrl;
 
     public void addItem(UserItem userItem) {
+        Optional<UserItem> hasDuplicatedItem = userItems.stream()
+                .filter(existingUserItem -> existingUserItem.getItem() == userItem.getItem())
+                .findAny();
+
+        if (!hasDuplicatedItem.isPresent()) {
+            score += userItem.getItem().getItemGrade().getScore();
+        }
+
         this.userItems.add(userItem);
         if (userItem.getUser() != null) {
             userItem.getUser().getUserItems().remove(userItem);
@@ -77,5 +89,12 @@ public class User extends BaseEntity {
 
     public void addCoin(int price) {
         coin += price;
+    }
+
+    public void gacha() {
+        if (coin < 1000) {
+            throw new BusinessException(ErrorCode.INSUFFICIENT_COIN);
+        }
+        coin -= 1000;
     }
 }
