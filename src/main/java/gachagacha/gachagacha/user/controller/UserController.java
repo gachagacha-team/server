@@ -5,6 +5,7 @@ import gachagacha.gachagacha.user.dto.*;
 import gachagacha.gachagacha.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,12 +36,12 @@ public class UserController {
     }
 
     @GetMapping("/{nickname}/followers")
-    public Slice<FollowerResponse> getFollowers(@PathVariable String nickname, HttpServletRequest request) {
-        return userService.getFollowers(nickname, request);
+    public Slice<FollowerResponse> getFollowers(@PathVariable String nickname, HttpServletRequest request, Pageable pageable) {
+        return userService.getFollowers(nickname, request, pageable);
     }
 
     @GetMapping("/{nickname}/following")
-    public Slice<FollowingResponse> getFollowing(@PathVariable String nickname, HttpServletRequest request) {
-        return userService.getFollowing(nickname, request);
+    public Slice<FollowingResponse> getFollowing(@PathVariable String nickname, HttpServletRequest request, Pageable pageable) {
+        return userService.getFollowing(nickname, request, pageable);
     }
 }

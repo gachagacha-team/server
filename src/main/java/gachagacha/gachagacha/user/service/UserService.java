@@ -15,12 +15,12 @@ import gachagacha.gachagacha.user.repository.FollowRepository;
 import gachagacha.gachagacha.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.List;
 
 @Service
 @Transactional
@@ -112,12 +112,12 @@ public class UserService {
         followRepository.delete(follow);
     }
 
-    public Slice<FollowerResponse> getFollowers(String nickname, HttpServletRequest request) {
+    public Slice<FollowerResponse> getFollowers(String nickname, HttpServletRequest request, Pageable pageable) {
         User currentUser = userRepository.findById(jwtUtils.getUserIdFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         User minihomeUser = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
-        return followRepository.findByFollowee(minihomeUser)
+        return followRepository.findByFollowee(minihomeUser, pageable)
                 .map(follow -> {
                     User follower = follow.getFollower();
                     boolean isFollowing = followRepository.findByFollowerAndFollowee(currentUser, follower).isPresent();
@@ -126,12 +126,12 @@ public class UserService {
                 });
     }
 
-    public Slice<FollowingResponse> getFollowing(String nickname, HttpServletRequest request) {
+    public Slice<FollowingResponse> getFollowing(String nickname, HttpServletRequest request, Pageable pageable) {
         User currentUser = userRepository.findById(jwtUtils.getUserIdFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         User minihomeUser = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
-        return followRepository.findByFollower(minihomeUser)
+        return followRepository.findByFollower(minihomeUser, pageable)
                 .map(follow -> {
                     User followee = follow.getFollowee();
                     boolean isFollowing = followRepository.findByFollowerAndFollowee(currentUser, followee).isPresent();
