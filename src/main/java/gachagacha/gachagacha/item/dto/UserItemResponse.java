@@ -7,8 +7,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReadItemResponse {
+public class UserItemResponse {
 
     private long itemId;
-    private String itemImageUrl;
+    private String itemName;
+    private String itemGrade;
+    private boolean owned;
+    private String imageUrl;
 }

@@ -7,11 +7,11 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum Background {
 
-    WHITE(1, "/backgrounds/white.png"),
-    SKYBLUE(2, "/backgrounds/skyblue.png"),
-    CLOUD_GROUND(3, "/backgrounds/cloud_ground.png")
+    WHITE(1, "white.png"),
+    SKYBLUE(2, "skyblue.png"),
+    CLOUD_GROUND(3, "cloud_ground.png")
     ;
 
     private final long id;
-    private final String filePath;
+    private final String imageFileName;
 }

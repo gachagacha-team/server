@@ -20,6 +20,6 @@ public class WebConfig implements WebMvcConfigurer {
                 .addPathPatterns("/**")
                 .excludePathPatterns("/", "/swagger-ui/**", "/v3/api-docs/**", "/css/**", "/*.ico", "/error",
                         "/login/oauth2/code/github", "/login/oauth2/code/kakao", "/join",
-                        "/image/characters/**", "/image/backgrounds/**");
+                        "/image/**");
     }
 }

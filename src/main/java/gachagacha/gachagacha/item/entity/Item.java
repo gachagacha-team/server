@@ -10,10 +10,10 @@ import java.util.Random;
 
 @Getter
 public enum Item {
-    // A+
-    RAINBOW_KIRBY(101, ItemGrade.A_PLUS, "rainbow kirby", "rainbow_kirby.gif", 0, 0),
-    BUNNIES(102, ItemGrade.A_PLUS, "bunnies", "bunnies.png", 0, 0),
-    MARIO(103, ItemGrade.A_PLUS, "mario", "mario.gif", 0, 0),
+    // S
+    RAINBOW_KIRBY(101, ItemGrade.S, "rainbow kirby", "rainbow_kirby.gif", 0, 0),
+    BUNNIES(102, ItemGrade.S, "bunnies", "bunnies.png", 0, 0),
+    MARIO(103, ItemGrade.S, "mario", "mario.gif", 0, 0),
 
     // A
     MARIO_FLOWER(201, ItemGrade.A, "mario flower", "mario_flower.png", 0, 0),
@@ -30,20 +30,20 @@ public enum Item {
     // C
     RED_BOY(401, ItemGrade.C, "red boy", "red_boy.gif", 0, 0),
     PURPLE_BOY(402, ItemGrade.C, "purple boy", "purple_boy.gif", 0, 0),
-    RED_HARIBO(403, ItemGrade.C, "red haribo", "red_haribo.png", 0, 0),
-    ORANGE_HARIBO(404, ItemGrade.C, "orange haribo", "orange_haribo.png", 0, 0),
-    YELLOW_HARIBO(405, ItemGrade.C, "yellow haribo", "yellow_haribo.png", 0, 0),
-    GREEN_HARIBO(406, ItemGrade.C, "green haribo", "green_haribo.png", 0, 0),
-    BLUE_HARIBO(407, ItemGrade.C, "blue haribo", "blue_haribo.png", 0, 0),
-    PINK_HARIBO(408, ItemGrade.C, "pink haribo", "pink_haribo.png", 0, 0),
 
     // D
+    RED_HARIBO(403, ItemGrade.D, "red haribo", "red_haribo.png", 0, 0),
+    ORANGE_HARIBO(404, ItemGrade.D, "orange haribo", "orange_haribo.png", 0, 0),
+    YELLOW_HARIBO(405, ItemGrade.D, "yellow haribo", "yellow_haribo.png", 0, 0),
+    GREEN_HARIBO(406, ItemGrade.D, "green haribo", "green_haribo.png", 0, 0),
+    BLUE_HARIBO(407, ItemGrade.D, "blue haribo", "blue_haribo.png", 0, 0),
+    PINK_HARIBO(408, ItemGrade.D, "pink haribo", "pink_haribo.png", 0, 0),
+
     BLACK_CAT(501, ItemGrade.D, "black cat", "black_cat.png", 0, 0),
     GRAY_WHITE_CAT(502, ItemGrade.D, "gray white cat", "gray_white_cat.png", 0, 0),
     GRAY_ORANGE_CAT(503, ItemGrade.D, "gray orange cat", "gray_orange_cat.png", 0, 0),
     YELLOW_CAT(504, ItemGrade.D, "yellow cat", "yellow_cat.png", 0, 0)
     ;
-
 
     private final long itemId;
     private final ItemGrade itemGrade;
@@ -66,6 +66,12 @@ public enum Item {
                 .filter(item -> item.itemGrade == itemGrade)
                 .toList();
         return items.get(new Random().nextInt(items.size()));
+    }
+
+    public static List<Item> getItems(ItemGrade itemGrade) {
+        return Arrays.stream(Item.values())
+                .filter(item -> item.getItemGrade() == itemGrade)
+                .toList();
     }
 
     public void addTrade(int price) {
