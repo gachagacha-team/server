@@ -1,6 +1,5 @@
 package gachagacha.gachagacha.item.service;
 
-import gachagacha.gachagacha.item.dto.ReadAllItemResponse;
 import gachagacha.gachagacha.item.dto.ReadBackgroundResponse;
 import gachagacha.gachagacha.item.dto.UserItemResponse;
 import gachagacha.gachagacha.item.entity.Item;
@@ -17,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
@@ -45,12 +45,13 @@ public class ItemService {
         return item.getImageFileName();
     }
 
-    public List<UserItemResponse> getItems(String nickname, String grade, HttpServletRequest request) {
+    public List<UserItemResponse> readItemsByGrade(String nickname, String grade, HttpServletRequest request) {
         User user = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         validateEditAuthorization(user.getId(), request);
+
         ItemGrade itemGrade = ItemGrade.findByViewName(grade);
-        List<Item> items = Item.getItems(itemGrade);
+        List<Item> items = Item.getItemsByGrade(itemGrade);
 
         Set<Long> itemIds = userItemRepository.findByUserNickname(nickname).stream()
                 .filter(userItem -> userItem.getItem().getItemGrade() == itemGrade)
@@ -63,17 +64,22 @@ public class ItemService {
                 .toList();
     }
 
-    public List<ReadAllItemResponse> getAllItems(String nickname, HttpServletRequest request) {
+    public List<UserItemResponse> readAllItems(String nickname, String grade, HttpServletRequest request) {
         User user = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         validateEditAuthorization(user.getId(), request);
 
-        return userItemRepository.findByUserNickname(nickname).stream()
-                .map(userItem -> new ReadAllItemResponse(userItem.getItem().getItemId(), "/image/items/" + userItem.getItem().getImageFileName()))
+        Set<Long> itemIds = userItemRepository.findByUserNickname(nickname).stream()
+                .map(userItem -> userItem.getItem().getItemId())
+                .collect(Collectors.toSet());
+
+        return Arrays.stream(Item.values())
+                .map(item -> new UserItemResponse(item.getItemId(), item.getViewName(), item.getItemGrade().getViewName(),
+                        itemIds.contains(item.getItemId()), "/image/items/" + item.getImageFileName()))
                 .toList();
     }
 
-    public List<ReadBackgroundResponse> getAllBackgrounds(String nickname, HttpServletRequest request) {
+    public List<ReadBackgroundResponse> readAllBackgrounds(String nickname, HttpServletRequest request) {
         User user = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         validateEditAuthorization(user.getId(), request);

@@ -91,7 +91,12 @@ public class MinihomeService {
         return new GuestbookResponse(guestbook.getId(), guestbookUser.getNickname(), guestbook.getContent(), guestbook.getCreatedAt(), true);
     }
 
-    public Slice<ExploreMinihomeResponse> explore(Pageable pageable) {
+    public Slice<ExploreMinihomeResponse> exploreByUser(Pageable pageable) {
+        return userRepository.findAllBy(pageable)
+                .map(user -> new ExploreMinihomeResponse(user.getNickname(), user.getMiniHome().getTotalVisitorCnt(), user.getProfileImageUrl()));
+    }
+
+    public Slice<ExploreMinihomeResponse> exploreByMinihome(Pageable pageable) {
         return minihomeRepository.findAllBy(pageable)
                 .map(minihome -> {
                     User user = userRepository.findByMinihome(minihome)

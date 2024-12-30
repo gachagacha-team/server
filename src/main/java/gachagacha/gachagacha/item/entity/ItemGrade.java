@@ -11,17 +11,18 @@ import java.util.Arrays;
 @RequiredArgsConstructor
 public enum ItemGrade {
 
-    S(1, 10, "S", 100),
-    A(11, 25, "A", 80),
-    B(26, 45, "B", 60),
-    C(46, 70, "C", 40),
-    D(71, 100, "D", 20)
+    S(1, 10, "S", 100, 10000),
+    A(11, 25, "A", 80, 8000),
+    B(26, 45, "B", 60, 6000),
+    C(46, 70, "C", 40, 4000),
+    D(71, 100, "D", 20, 2000)
     ;
 
     private final int startRange;
     private final int endRange;
     private final String viewName;
     private final int score;
+    private final int productPrice;
     
     public static ItemGrade getItemGrade(int randomNumber) {
         return Arrays.stream(ItemGrade.values())

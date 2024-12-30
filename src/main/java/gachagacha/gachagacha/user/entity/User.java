@@ -64,6 +64,14 @@ public class User extends BaseEntity {
         userItem.setUser(this);
     }
 
+    public void cancelProduct(UserItem userItem) {
+        this.userItems.add(userItem);
+        if (userItem.getUser() != null) {
+            userItem.getUser().getUserItems().remove(userItem);
+        }
+        userItem.setUser(this);
+    }
+
     public static User create(LoginType loginType, Long loginId, String nickname, Minihome miniHome, String profileImageUrl) {
         User user = new User();
         user.loginType = loginType;
@@ -80,13 +88,6 @@ public class User extends BaseEntity {
         this.coin += 500;
     }
 
-    public void deductCoin(int price) {
-        if (coin < price) {
-            throw new BusinessException(ErrorCode.INSUFFICIENT_COIN);
-        }
-        coin -= price;
-    }
-
     public void addCoin(int price) {
         coin += price;
     }
@@ -96,5 +97,12 @@ public class User extends BaseEntity {
             throw new BusinessException(ErrorCode.INSUFFICIENT_COIN);
         }
         coin -= 1000;
+    }
+
+    public void deductCoin(int productPrice) {
+        if (coin < productPrice) {
+            throw new BusinessException(ErrorCode.INSUFFICIENT_COIN);
+        }
+        coin -= productPrice;
     }
 }

@@ -1,4 +1,4 @@
-package gachagacha.gachagacha.trade.entity;
+package gachagacha.gachagacha.product.entity;
 
 import gachagacha.gachagacha.BaseEntity;
 import gachagacha.gachagacha.item.entity.Item;
@@ -10,11 +10,11 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
-public class Trade extends BaseEntity {
+public class Product extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "trade_id")
+    @Column(name = "product_id")
     private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -30,35 +30,23 @@ public class Trade extends BaseEntity {
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
-    private TradeStatus status;
-
-    @Column(nullable = false)
-    private int price;
+    private ProductStatus productStatus;
 
     private LocalDateTime transactionDate;
 
-    public void setSeller(User seller) {
-        this.seller = seller;
-    }
-
-    public static Trade create(User seller, Item item, int price) {
-        Trade trade = new Trade();
-        trade.seller = seller;
-        trade.item = item;
-        trade.price = price;
-        trade.status = TradeStatus.ON_SALE;
-        return trade;
+    public static Product create(User seller, Item item) {
+        Product product = new Product();
+        product.seller = seller;
+        product.item = item;
+        product.productStatus = ProductStatus.ON_SALE;
+        return product;
     }
 
     public void processTrade(User buyer) {
         this.buyer = buyer;
-        this.buyer.deductCoin(price);
-        seller.addCoin(price);
-        status = TradeStatus.COMPLETED;
-    }
-
-    public void edit(int price, TradeStatus tradeStatus) {
-        this.price = price;
-        this.status = status;
+        int productPrice = this.getItem().getItemGrade().getProductPrice();
+        this.buyer.deductCoin(productPrice);
+        seller.addCoin(productPrice);
+        productStatus = ProductStatus.COMPLETED;
     }
 }

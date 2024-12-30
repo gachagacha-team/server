@@ -20,7 +20,7 @@ ErrorCode {
 
     NOT_FOUND_USER(HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
     NOT_FOUND_ITEM(HttpStatus.NOT_FOUND, "아이템을 찾을 수 없습니다."),
-    NOT_FOUND_TRADE(HttpStatus.NOT_FOUND, "거래 내역을 찾을 수 없습니다."),
+    NOT_FOUND_PRODUCT(HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
     NOT_FOUND_GUESTBOOK(HttpStatus.NOT_FOUND, "방명록을 찾을 수 없습니다."),
     UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "접근 권한이 없습니다."),
 
@@ -36,7 +36,9 @@ ErrorCode {
     ALREADY_FOLLOWING(HttpStatus.BAD_REQUEST, "이미 팔로우된 상태입니다."),
     NOT_FOUND_FOLLOW(HttpStatus.NOT_FOUND, "팔로우 내역을 찾을 수 없습니다."),
 
-    INVALID_ITEM_GRADE(HttpStatus.BAD_REQUEST, "잘못된 아이템 등급입니다.")
+    INVALID_ITEM_GRADE(HttpStatus.BAD_REQUEST, "잘못된 아이템 등급입니다."),
+
+    INSUFFICIENT_PRODUCT(HttpStatus.BAD_REQUEST, "수량이 부족해 구매가 불가합니다.")
 
     ;
 

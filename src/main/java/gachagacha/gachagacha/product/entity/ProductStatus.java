@@ -1,4 +1,4 @@
-package gachagacha.gachagacha.trade.entity;
+package gachagacha.gachagacha.product.entity;
 
 import gachagacha.gachagacha.exception.ErrorCode;
 import gachagacha.gachagacha.exception.customException.BusinessException;
@@ -9,18 +9,17 @@ import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
-public enum TradeStatus {
+public enum ProductStatus {
 
     ON_SALE("판매 중"),
-    COMPLETED("거래 완료"),
-    CANCELLED("판매 취소")
+    COMPLETED("판매 완료")
     ;
 
     private final String viewName;
 
-    public static TradeStatus findByViewName(String status) {
-        return Arrays.stream(TradeStatus.values())
-                .filter(tradeStatus -> tradeStatus.getViewName().equals(status))
+    public static ProductStatus findByViewName(String status) {
+        return Arrays.stream(ProductStatus.values())
+                .filter(productStatus -> productStatus.getViewName().equals(status))
                 .findAny()
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_TRADE_STATUS));
     }

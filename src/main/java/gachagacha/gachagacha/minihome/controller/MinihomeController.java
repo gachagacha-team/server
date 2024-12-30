@@ -39,8 +39,13 @@ public class MinihomeController {
         minihomeService.deleteGuestbook(guestbookId);
     }
 
-    @GetMapping("/explore")
-    public Slice<ExploreMinihomeResponse> explore(Pageable pageable) {
-        return minihomeService.explore(pageable);
+
+    @GetMapping("/explore/user")
+    public Slice<ExploreMinihomeResponse> exploreByUser(Pageable pageable) {
+        return minihomeService.exploreByUser(pageable);
+    }
+    @GetMapping("/explore/minihome")
+    public Slice<ExploreMinihomeResponse> exploreByMinihome(Pageable pageable) {
+        return minihomeService.exploreByMinihome(pageable);
     }
 }
