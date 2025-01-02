@@ -46,9 +46,10 @@ public class Product extends BaseEntity {
     public void processTrade(User buyer) {
         int productPrice = this.getItem().getItemGrade().getProductPrice();
 
-        buyer.deductCoin(productPrice);
+        buyer.purchaseProduct(productPrice);
         this.seller.addCoin(productPrice);
-        buyer.addItem(UserItem.create(this.item));
+        buyer.addScoreForNewItem(item);
+        buyer.addUserItem(UserItem.create(item));
 
         this.productStatus = ProductStatus.COMPLETED;
         this.buyer = buyer;

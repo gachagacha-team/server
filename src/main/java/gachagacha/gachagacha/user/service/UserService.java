@@ -56,8 +56,7 @@ public class UserService {
     }
 
     public AttendanceResponse attend(HttpServletRequest request) {
-        long userId = jwtUtils.getUserIdFromHeader(request);
-        User user = userRepository.findById(userId)
+        User user = userRepository.findById(jwtUtils.getUserIdFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         validateDuplicatedAttendance(user);
         int bonusCoin = user.attend();

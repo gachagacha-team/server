@@ -96,19 +96,9 @@ public class ProductService {
         User seller = userRepository.findById(jwtUtils.getUserIdFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
 
-        validateSaleAuthorization(userItem, seller);
-
-        Item item = userItem.getItem();
-        Product product = Product.create(seller, item);
-        productRepository.save(product);
-
+        seller.saleUserItem(userItem);
+        productRepository.save(Product.create(seller, userItem.getItem()));
         userItemRepository.delete(userItem);
-    }
-
-    private void validateSaleAuthorization(UserItem userItem, User seller) {
-        if (userItem.getUser().getId() != seller.getId()) {
-            throw new BusinessException(ErrorCode.UNAUTHORIZED);
-        }
     }
 
     public void deleteProduct(long productId, HttpServletRequest request) {
