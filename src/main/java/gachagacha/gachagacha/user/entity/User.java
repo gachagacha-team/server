@@ -13,6 +13,7 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Entity
 @Getter
@@ -40,8 +41,8 @@ public class User extends BaseEntity {
     private int score;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "minihome_id", nullable = false)
-    private Minihome miniHome;
+    @JoinColumn(name = "home_id", nullable = false)
+    private Minihome minihome;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<UserItem> userItems = new ArrayList<>();
@@ -74,20 +75,22 @@ public class User extends BaseEntity {
         userItem.setUser(this);
     }
 
-    public static User create(LoginType loginType, Long loginId, String nickname, Minihome miniHome, String profileImageUrl) {
+    public static User create(LoginType loginType, Long loginId, String nickname, Minihome minihome, String profileImageUrl) {
         User user = new User();
         user.loginType = loginType;
         user.loginId = loginId;
         user.nickname = nickname;
         user.coin = 20000;
-        user.miniHome = miniHome;
+        user.minihome = minihome;
         user.backgrounds.add(Background.WHITE);
         user.profileImageUrl = profileImageUrl;
         return user;
     }
 
-    public void attend() {
-        this.coin += 500;
+    public int attend() {
+        int bonusCoin = new Random().nextInt(4001) + 1000;
+        this.coin += bonusCoin;
+        return bonusCoin;
     }
 
     public void addCoin(int price) {

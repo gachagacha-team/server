@@ -35,7 +35,7 @@ public class MinihomeService {
         User minihomeUser = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
 
-        Minihome miniHome = minihomeUser.getMiniHome();
+        Minihome miniHome = minihomeUser.getMinihome();
         miniHome.visit();
 
         int followersCnt = followRepository.findByFollowee(minihomeUser).size();
@@ -49,7 +49,7 @@ public class MinihomeService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         User minihomeUser = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
-        Minihome miniHome = minihomeUser.getMiniHome();
+        Minihome miniHome = minihomeUser.getMinihome();
        return guestbookRepository.findByMinihome(miniHome, pageable)
                .map(guestbook -> new GuestbookResponse(guestbook.getId(), guestbook.getUser().getNickname(), guestbook.getContent(),
                        guestbook.getCreatedAt(), guestbook.getUser().getNickname().equals(currentUser.getNickname())));
@@ -63,7 +63,7 @@ public class MinihomeService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
 
         Guestbook guestbook = Guestbook.create(guestbookUser, addGuestbookRequest.getContent());
-        minihomeUser.getMiniHome().addGuestbook(guestbook);
+        minihomeUser.getMinihome().addGuestbook(guestbook);
         guestbookRepository.save(guestbook);
 
         return new GuestbookResponse(guestbook.getId(), guestbookUser.getNickname(), guestbook.getContent(), guestbook.getCreatedAt(), true);
@@ -71,7 +71,7 @@ public class MinihomeService {
 
     public Slice<ExploreMinihomeResponse> exploreByUser(Pageable pageable) {
         return userRepository.findAllBy(pageable)
-                .map(user -> new ExploreMinihomeResponse(user.getNickname(), user.getMiniHome().getTotalVisitorCnt(), user.getProfileImageUrl()));
+                .map(user -> new ExploreMinihomeResponse(user.getNickname(), user.getMinihome().getTotalVisitorCnt(), user.getProfileImageUrl()));
     }
 
     public Slice<ExploreMinihomeResponse> exploreByMinihome(Pageable pageable) {

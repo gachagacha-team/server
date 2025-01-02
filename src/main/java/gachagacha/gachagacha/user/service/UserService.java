@@ -60,10 +60,10 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         validateDuplicatedAttendance(user);
-        user.attend();
+        int bonusCoin = user.attend();
         Attendance attendance = Attendance.create(user, LocalDate.now());
         attendanceRepository.save(attendance);
-        return new AttendanceResponse(user.getCoin());
+        return new AttendanceResponse(bonusCoin, user.getCoin());
     }
 
     private void validateDuplicatedAttendance(User user) {

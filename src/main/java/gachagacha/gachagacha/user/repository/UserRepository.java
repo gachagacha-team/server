@@ -21,6 +21,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByNickname(@Param(value = "nickname") String nickname);
 
     @Query("select u from User u " +
-            "where u.miniHome = :minihome")
+            "where u.minihome = :minihome")
     Optional<User> findByMinihome(@Param(value = "minihome") Minihome minihome);
 }

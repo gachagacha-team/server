@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AttendanceResponse {
 
-    private int coin;
+    private int bonusCoin;
+    private int totalCoin;
 }
