@@ -34,23 +34,8 @@ public class ProductService {
     private final UserItemRepository userItemRepository;
     private final ProductRepository productRepository;
 
-    public List<ReadAllProductsResponse> readAllProducts() {
-        // 모든 등급의 아이템 리스트 찾기
-        // 각 아이템 정보 반환(이미지 url, 수량 유무)
-        return Arrays.stream(Item.values())
-                .map(item -> {
-                    List<Product> products = productRepository.findByItem(item);
-                    return new ReadAllProductsResponse(item.getItemId(), "/image/items/" + item.getImageFileName(), !products.isEmpty());
-                })
-                .toList();
-    }
-
-    public List<ReadAllProductsResponse> readProductsByGrade(String grade) {
-        // 특정 등급의 아이템 리스트 찾기
-        ItemGrade itemGrade = ItemGrade.findByViewName(grade);
-        List<Item> items = Item.getItemsByGrade(itemGrade);
-
-        // 각 아이템 정보 반환(이미지 url, 수량 유무)
+    public List<ReadAllProductsResponse> readProducts(String grade) {
+        List<Item> items = (grade == null) ? Arrays.asList(Item.values()) : Item.getItemsByGrade(ItemGrade.findByViewName(grade));
         return items.stream()
                 .map(item -> {
                     List<Product> products = productRepository.findByItem(item);
@@ -65,42 +50,39 @@ public class ProductService {
         return new ReadOneProductResponse(item.getViewName(), item.getItemGrade().getViewName(), products.size(), "/image/items/" + item.getImageFileName());
     }
 
-    public Slice<ReadMyOneProductResponse> readMyProducts(Pageable pageable, HttpServletRequest request) {
-        long userId = jwtUtils.getUserIdFromHeader(request);
-        User seller = userRepository.findById(userId)
+    public Slice<ReadMyOneProductResponse> readMyProducts(String grade, Pageable pageable, HttpServletRequest request) {
+        User seller = userRepository.findById(jwtUtils.getUserIdFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
-        return productRepository.findBySeller(seller, pageable)
-                .map(product -> {
-                    if (product.getProductStatus() == ProductStatus.ON_SALE) {
-                        return ReadMyOneProductResponse.fromOnSale(product.getId(), product.getItem().getViewName(), product.getItem().getItemGrade().getViewName(),
-                                "/image/items/" + product.getItem().getImageFileName(), product.getItem().getItemGrade().getProductPrice(), product.getProductStatus().getViewName());
-                    } else {
-                        return ReadMyOneProductResponse.fromSold(product.getId(), product.getItem().getViewName(), product.getItem().getItemGrade().getViewName(),
-                                "/image/items/" + product.getItem().getImageFileName(), product.getItem().getItemGrade().getProductPrice(), product.getProductStatus().getViewName(), product.getTransactionDate());
-                    }
-                });
-    }
+        Slice<Product> productSlice = productRepository.findBySeller(seller, pageable);
+        List<Product> products = productSlice.getContent();
 
-    public Slice<ReadMyOneProductResponse> readMyProductsByGrade(String grade, Pageable pageable, HttpServletRequest request) {
-        ItemGrade itemGrade = ItemGrade.findByViewName(grade);
-        long userId = jwtUtils.getUserIdFromHeader(request);
-        User seller = userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
+        if (grade != null) {
+            products = filterByGrade(products, ItemGrade.findByViewName(grade));
+        }
 
-        Slice<Product> products = productRepository.findBySeller(seller, pageable);
-        List<ReadMyOneProductResponse> dtoList = products
-                .filter(product -> product.getItem().getItemGrade() == itemGrade)
+        List<ReadMyOneProductResponse> ReadMyOneProductResponses = products.stream()
                 .map(product -> {
-                    if (product.getProductStatus() == ProductStatus.ON_SALE) {
-                        return ReadMyOneProductResponse.fromOnSale(product.getId(), product.getItem().getViewName(), product.getItem().getItemGrade().getViewName(),
-                                "/image/items/" + product.getItem().getImageFileName(), product.getItem().getItemGrade().getProductPrice(), product.getProductStatus().getViewName());
-                    } else {
-                        return ReadMyOneProductResponse.fromSold(product.getId(), product.getItem().getViewName(), product.getItem().getItemGrade().getViewName(),
-                                "/image/items/" + product.getItem().getImageFileName(), product.getItem().getItemGrade().getProductPrice(), product.getProductStatus().getViewName(), product.getTransactionDate());
+                    ReadMyOneProductResponse readMyOneProductResponse = new ReadMyOneProductResponse(product.getId(),
+                            "/image/items/" + product.getItem().getImageFileName(),
+                            product.getItem().getViewName(),
+                            product.getItem().getItemGrade().getViewName(),
+                            product.getItem().getItemGrade().getProductPrice(),
+                            product.getProductStatus().getViewName()
+                    );
+                    if (product.getProductStatus() == ProductStatus.COMPLETED) {
+                        readMyOneProductResponse.setTransactionDate(product.getTransactionDate());
                     }
+                    return readMyOneProductResponse;
                 })
                 .toList();
-        return new SliceImpl<>(dtoList, pageable, products.hasNext());
+
+        return new SliceImpl<>(ReadMyOneProductResponses, pageable, productSlice.hasNext());
+    }
+
+    private List<Product> filterByGrade(List<Product> products, ItemGrade itemGrade) {
+        return products.stream()
+                .filter(product -> product.getItem().getItemGrade() == itemGrade)
+                .toList();
     }
 
     public ReadItemForSaleResponse readItemInfoForSale(long itemId) {
@@ -111,14 +93,22 @@ public class ProductService {
     public void addProduct(AddProductRequest addProductRequest, HttpServletRequest request) {
         UserItem userItem = userItemRepository.findById(addProductRequest.getUserItemId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_ITEM));
-        Item item = userItem.getItem();
-
-        userItemRepository.delete(userItem);
         User seller = userRepository.findById(jwtUtils.getUserIdFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
 
+        validateSaleAuthorization(userItem, seller);
+
+        Item item = userItem.getItem();
         Product product = Product.create(seller, item);
         productRepository.save(product);
+
+        userItemRepository.delete(userItem);
+    }
+
+    private void validateSaleAuthorization(UserItem userItem, User seller) {
+        if (userItem.getUser().getId() != seller.getId()) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED);
+        }
     }
 
     public void deleteProduct(long productId, HttpServletRequest request) {
@@ -128,32 +118,32 @@ public class ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_PRODUCT));
 
+        validateDeleteProductAuthorization(product, seller);
+        seller.cancelProductAndRevertToUserItem(product.getItem());
+        productRepository.delete(product);
+    }
+
+    private void validateDeleteProductAuthorization(Product product, User seller) {
         if (product.getSeller().getId() != seller.getId()) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
         }
-
-        productRepository.delete(product);
-        UserItem userItem = UserItem.create(product.getItem());
-        seller.cancelProduct(userItem);
     }
 
-    public void buy(long itemId, HttpServletRequest request) {
-        long userId = jwtUtils.getUserIdFromHeader(request);
-        User buyer = userRepository.findById(userId)
+    public void purchase(long itemId, HttpServletRequest request) {
+        User buyer = userRepository.findById(jwtUtils.getUserIdFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
 
         Item item = Item.findById(itemId);
 
-        // 수량 있는지 확인
+        Product product = findProduct(item);
+        product.processTrade(buyer);
+    }
+
+    private Product findProduct(Item item) {
         List<Product> products = productRepository.findByItemOrderByCreatedAtAsc(item);
         if (products.isEmpty()) {
             throw new BusinessException(ErrorCode.INSUFFICIENT_PRODUCT);
         }
-
-        // 구매자: 코인 차감, 아이템 지급 / 판매자: 코인 지급
-        Product product = products.get(0); // 가장 처음에 등록된 상품이 판매됨
-        product.processTrade(buyer);
-        UserItem userItem = UserItem.create(product.getItem());
-        buyer.addItem(userItem);
+        return products.get(0);
     }
 }

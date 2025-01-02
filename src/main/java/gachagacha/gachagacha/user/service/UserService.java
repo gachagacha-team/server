@@ -126,7 +126,7 @@ public class UserService {
                 });
     }
 
-    public Slice<FollowingResponse> getFollowing(String nickname, HttpServletRequest request, Pageable pageable) {
+    public Slice<FollowingResponse> getFollowings(String nickname, HttpServletRequest request, Pageable pageable) {
         User currentUser = userRepository.findById(jwtUtils.getUserIdFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         User minihomeUser = userRepository.findByNickname(nickname)

@@ -1,21 +1,37 @@
 package gachagacha.gachagacha.minihome.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class MinihomeResponse {
 
+    @JsonProperty(value = "isOwner")
     private boolean isOwner;
+
+    @JsonProperty(value = "minihomeUserId")
     private long minihomeUserId;
+
+    @JsonProperty(value = "nickname")
     private String nickname;
-    private int ranking;
+
+    @JsonProperty(value = "score")
+    private int score;
+
+    @JsonProperty(value = "followersCnt")
     private int followersCnt;
+
+    @JsonProperty(value = "followingCnt")
     private int followingCnt;
+
+    @JsonProperty(value = "totalVisitorCnt")
     private int totalVisitorCnt;
+
+    @JsonProperty(value = "profileImageUrl")
     private String profileImageUrl;
+
+    @JsonProperty(value = "layout")
     private String layout;
 }

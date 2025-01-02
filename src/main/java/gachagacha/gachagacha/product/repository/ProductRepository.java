@@ -13,6 +13,7 @@ import java.util.List;
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findByItem(Item item);
+
     List<Product> findByItemOrderByCreatedAtAsc(Item item);
 
     Slice<Product> findBySeller(User seller, Pageable pageable);

@@ -2,6 +2,7 @@ package gachagacha.gachagacha.product.entity;
 
 import gachagacha.gachagacha.BaseEntity;
 import gachagacha.gachagacha.item.entity.Item;
+import gachagacha.gachagacha.item.entity.UserItem;
 import gachagacha.gachagacha.user.entity.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -43,10 +44,13 @@ public class Product extends BaseEntity {
     }
 
     public void processTrade(User buyer) {
-        this.buyer = buyer;
         int productPrice = this.getItem().getItemGrade().getProductPrice();
-        this.buyer.deductCoin(productPrice);
-        seller.addCoin(productPrice);
-        productStatus = ProductStatus.COMPLETED;
+
+        buyer.deductCoin(productPrice);
+        this.seller.addCoin(productPrice);
+        buyer.addItem(UserItem.create(this.item));
+
+        this.productStatus = ProductStatus.COMPLETED;
+        this.buyer = buyer;
     }
 }

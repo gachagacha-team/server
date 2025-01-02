@@ -13,21 +13,22 @@ import java.util.Random;
 @RequiredArgsConstructor
 public enum Item {
     // S
-    RAINBOW_KIRBY(101, ItemGrade.S, "rainbow kirby", "rainbow_kirby.gif"),
-    BUNNIES(102, ItemGrade.S, "bunnies", "bunnies.png"),
-    MARIO(103, ItemGrade.S, "mario", "mario.gif"),
+    RAINBOW_KIRBY(101, ItemGrade.S, "별의 커비", "rainbow_kirby.gif"),
+    ANGEL_KIRBY(102, ItemGrade.S, "앤젤 커비", "angel_kirby.gif"),
+    BUNNIES(103, ItemGrade.S, "버니즈", "bunnies.png"),
+    MARIO(104, ItemGrade.S, "마리오", "mario.gif"),
 
     // A
-    MARIO_FLOWER(201, ItemGrade.A, "mario flower", "mario_flower.png"),
-    PINK_DONUT(202, ItemGrade.A, "pink donut", "pink_donut.png"),
-    PANCAKE(203, ItemGrade.A, "pancake", "pancake.png"),
-    CUPCAKE(204, ItemGrade.A, "cupcake", "cupcake.png"),
-    CROISSANT(205, ItemGrade.A, "croissant", "croissant.png"),
+    MARIO_FLOWER(201, ItemGrade.A, "마리오 꽃", "mario_flower.png"),
+    PINK_DONUT(202, ItemGrade.A, "핑크 도넛", "pink_donut.png"),
+    PANCAKE(203, ItemGrade.A, "팬케이크", "pancake.png"),
+    CUPCAKE(204, ItemGrade.A, "컵케이크", "cupcake.png"),
+    CROISSANT(205, ItemGrade.A, "크로와상", "croissant.png"),
 
     // B
-    MARIO_STAR(301, ItemGrade.B, "mario star", "mario_star.png"),
-    MARIO_BLOCK(302, ItemGrade.B, "mario block", "mario_block.png"),
-    STRAWBERRY(303, ItemGrade.B, "strawberry", "strawberry.png"),
+    MARIO_STAR(301, ItemGrade.B, "마리오 스타", "mario_star.png"),
+    MARIO_BLOCK(302, ItemGrade.B, "마리오 블록", "mario_block.png"),
+    STRAWBERRY(303, ItemGrade.B, "스트로베리", "strawberry.png"),
 
     // C
     RED_BOY(401, ItemGrade.C, "red boy", "red_boy.gif"),

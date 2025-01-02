@@ -4,6 +4,7 @@ import gachagacha.gachagacha.*;
 import gachagacha.gachagacha.exception.ErrorCode;
 import gachagacha.gachagacha.exception.customException.BusinessException;
 import gachagacha.gachagacha.item.entity.Background;
+import gachagacha.gachagacha.item.entity.Item;
 import gachagacha.gachagacha.item.entity.UserItem;
 import gachagacha.gachagacha.minihome.entity.Minihome;
 import jakarta.persistence.*;
@@ -39,7 +40,7 @@ public class User extends BaseEntity {
     private int score;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @JoinColumn(name = "home_id", nullable = false)
+    @JoinColumn(name = "minihome_id", nullable = false)
     private Minihome miniHome;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -64,7 +65,8 @@ public class User extends BaseEntity {
         userItem.setUser(this);
     }
 
-    public void cancelProduct(UserItem userItem) {
+    public void cancelProductAndRevertToUserItem(Item item) {
+        UserItem userItem = UserItem.create(item);
         this.userItems.add(userItem);
         if (userItem.getUser() != null) {
             userItem.getUser().getUserItems().remove(userItem);
@@ -92,7 +94,7 @@ public class User extends BaseEntity {
         coin += price;
     }
 
-    public void gacha() {
+    public void deductCoinForGacha() {
         if (coin < 1000) {
             throw new BusinessException(ErrorCode.INSUFFICIENT_COIN);
         }

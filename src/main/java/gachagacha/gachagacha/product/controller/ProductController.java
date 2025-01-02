@@ -16,46 +16,38 @@ public class ProductController {
 
     private final ProductService productService;
 
-    @GetMapping("/market")
-    public List<ReadAllProductsResponse> readAllProducts(@RequestParam(value = "grade", required = false) String grade) {
-        if (grade != null) {
-            return productService.readProductsByGrade(grade);
-        } else {
-            return productService.readAllProducts();
-        }
-    }
-
-    @GetMapping("/market/items/{itemId}")
-    public ReadOneProductResponse readOneProduct(@PathVariable long itemId) {
-        return productService.readOneProduct(itemId);
-    }
-
-    @GetMapping("/market/myProducts")
-    public Slice<ReadMyOneProductResponse> readMyProducts(@RequestParam(value = "grade", required = false) String grade, Pageable pageable, HttpServletRequest request) {
-        if (grade != null) {
-            return productService.readMyProductsByGrade(grade, pageable, request);
-        } else {
-            return productService.readMyProducts(pageable, request);
-        }
-    }
-
-    @GetMapping("/market/sale/{itemId}")
+    @GetMapping("/items/{itemId}/forSale")
     public ReadItemForSaleResponse readItemInfoForSale(@PathVariable long itemId) {
         return productService.readItemInfoForSale(itemId);
     }
 
-    @PostMapping("/market/sale")
+    @PostMapping("/products")
     public void addProduct(@RequestBody AddProductRequest addProductRequest, HttpServletRequest request) {
         productService.addProduct(addProductRequest, request);
     }
 
-    @DeleteMapping("/market/{productId}")
+    @GetMapping("/products")
+    public List<ReadAllProductsResponse> readAllProducts(@RequestParam(value = "grade", required = false) String grade) {
+        return productService.readProducts(grade);
+    }
+
+    @GetMapping("/products/me")
+    public Slice<ReadMyOneProductResponse> readMyProducts(@RequestParam(value = "grade", required = false) String grade, Pageable pageable, HttpServletRequest request) {
+        return productService.readMyProducts(grade, pageable, request);
+    }
+
+    @GetMapping("/items/{itemId}/products")
+    public ReadOneProductResponse readOneProduct(@PathVariable long itemId) {
+        return productService.readOneProduct(itemId);
+    }
+
+    @DeleteMapping("/products/{productId}")
     public void deleteProduct(@PathVariable long productId, HttpServletRequest request) {
         productService.deleteProduct(productId, request);
     }
 
-    @PostMapping("/market/buy/{itemId}")
-    public void buy(@PathVariable long itemId, HttpServletRequest request) {
-        productService.buy(itemId, request);
+    @PostMapping("/items/{itemId}/purchase")
+    public void purchase(@PathVariable long itemId, HttpServletRequest request) {
+        productService.purchase(itemId, request);
     }
 }

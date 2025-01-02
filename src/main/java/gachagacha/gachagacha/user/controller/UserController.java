@@ -25,23 +25,23 @@ public class UserController {
         return userService.attend(request);
     }
 
-    @PostMapping("/follow")
+    @PostMapping("/users/follow")
     public void follow(@RequestBody FollowRequest followRequest, HttpServletRequest request) {
         userService.follow(followRequest, request);
     }
 
-    @DeleteMapping("/unfollow")
+    @DeleteMapping("/users/unfollow")
     public void unfollow(@RequestBody UnfollowRequest unfollowRequest, HttpServletRequest request) {
         userService.unfollow(unfollowRequest, request);
     }
 
-    @GetMapping("/{nickname}/followers")
+    @GetMapping("/users/{nickname}/followers")
     public Slice<FollowerResponse> getFollowers(@PathVariable String nickname, HttpServletRequest request, Pageable pageable) {
         return userService.getFollowers(nickname, request, pageable);
     }
 
-    @GetMapping("/{nickname}/following")
-    public Slice<FollowingResponse> getFollowing(@PathVariable String nickname, HttpServletRequest request, Pageable pageable) {
-        return userService.getFollowing(nickname, request, pageable);
+    @GetMapping("/users/{nickname}/followings")
+    public Slice<FollowingResponse> getFollowings(@PathVariable String nickname, HttpServletRequest request, Pageable pageable) {
+        return userService.getFollowings(nickname, request, pageable);
     }
 }

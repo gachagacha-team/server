@@ -24,18 +24,16 @@ public class ItemController {
         return "/image/items/" + imageName;
     }
 
-
-    //TODO 수량 나오게
-    @GetMapping("/{nickname}/items")
+    @GetMapping("/items/{nickname}")
     public List<UserItemResponse> getItems(@PathVariable String nickname, @RequestParam(value = "grade", required = false) String grade, HttpServletRequest request) {
         if (grade != null) {
             return itemService.readItemsByGrade(nickname, grade, request);
         } else {
-            return itemService.readAllItems(nickname, grade, request);
+            return itemService.readAllItems(nickname, request);
         }
     }
 
-    @GetMapping("/{nickname}/backgrounds")
+    @GetMapping("/backgrounds/{nickname}")
     public List<ReadBackgroundResponse> readAllBackgrounds(@PathVariable String nickname, HttpServletRequest request) {
         return itemService.readAllBackgrounds(nickname, request);
     }

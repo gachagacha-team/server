@@ -18,9 +18,6 @@ import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Comparator;
-import java.util.List;
-
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -32,8 +29,8 @@ public class MinihomeService {
     private final FollowRepository followRepository;
     private final JwtUtils jwtUtils;
 
-    public MinihomeResponse getMinihome(String nickname, HttpServletRequest request) {
-        long userId = jwtUtils.getUserIdFromHeader(request);
+    public MinihomeResponse readMinihome(String nickname, HttpServletRequest request) {
+        long currentUserId = jwtUtils.getUserIdFromHeader(request);
 
         User minihomeUser = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
@@ -44,37 +41,18 @@ public class MinihomeService {
         int followersCnt = followRepository.findByFollowee(minihomeUser).size();
         int followingsCnt = followRepository.findByFollower(minihomeUser).size();
 
-        List<User> users = userRepository.findAll();
-        users.sort(Comparator.comparingInt(User::getScore).reversed());
-        int ranking = 0;
-        int lastScore = 0;
-        int sameScoreCnt = 1;
-        for (int i = 0; i < users.size(); i++) {
-            if (users.get(i).getId() == minihomeUser.getId()) {
-                ranking += sameScoreCnt;
-                break;
-            }
-            if (users.get(i).getScore() == lastScore) {
-                sameScoreCnt++;
-                continue;
-            }
-            ranking += sameScoreCnt;
-            sameScoreCnt = 1;
-            lastScore = users.get(i).getScore();
-        }
-
-        return new MinihomeResponse(minihomeUser.getId() == userId, minihomeUser.getId(), minihomeUser.getNickname(), ranking, followersCnt, followingsCnt, miniHome.getTotalVisitorCnt(), minihomeUser.getProfileImageUrl(), miniHome.getLayout());
+        return new MinihomeResponse(minihomeUser.getId() == currentUserId, minihomeUser.getId(), minihomeUser.getNickname(), minihomeUser.getScore(), followersCnt, followingsCnt, miniHome.getTotalVisitorCnt(), minihomeUser.getProfileImageUrl(), miniHome.getLayout());
     }
 
-    public Slice<GuestbookResponse> getGuestbooks(String nickname, Pageable pageable, HttpServletRequest request) {
-        User viewUser = userRepository.findById(jwtUtils.getUserIdFromHeader(request))
+    public Slice<GuestbookResponse> readGuestbooks(String nickname, Pageable pageable, HttpServletRequest request) {
+        User currentUser = userRepository.findById(jwtUtils.getUserIdFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         User minihomeUser = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         Minihome miniHome = minihomeUser.getMiniHome();
        return guestbookRepository.findByMinihome(miniHome, pageable)
                .map(guestbook -> new GuestbookResponse(guestbook.getId(), guestbook.getUser().getNickname(), guestbook.getContent(),
-                       guestbook.getCreatedAt(), guestbook.getUser().getNickname().equals(viewUser.getNickname())));
+                       guestbook.getCreatedAt(), guestbook.getUser().getNickname().equals(currentUser.getNickname())));
     }
 
     public GuestbookResponse addGuestbook(String nickname, AddGuestbookRequest addGuestbookRequest, HttpServletRequest request) {
