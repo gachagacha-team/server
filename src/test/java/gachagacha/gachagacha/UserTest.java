@@ -7,8 +7,9 @@ import gachagacha.gachagacha.item.entity.UserItem;
 import gachagacha.gachagacha.trade.entity.Trade;
 import gachagacha.gachagacha.user.entity.LoginType;
 import gachagacha.gachagacha.user.entity.User;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+
+import static org.assertj.core.api.Assertions.*;
 
 class UserTest {
 
@@ -18,7 +19,7 @@ class UserTest {
         User user = User.create(LoginType.KAKAO, 1l, "nickname","profileImageUrl");
 
         // then
-        Assertions.assertThat(user.getCoinAmount()).isEqualTo(20000);
+        assertThat(user.getCoinAmount()).isEqualTo(20000);
     }
 
     @Test
@@ -32,10 +33,10 @@ class UserTest {
         user.addUserItem(userItem);
 
         // then
-        Assertions.assertThat(user.getUserItems().size()).isEqualTo(1);
-        Assertions.assertThat(user.getUserItems().get(0).getItem()).isEqualTo(item);
-        Assertions.assertThat(userItem.getUser()).isEqualTo(user);
-        Assertions.assertThat(userItem.getUser().getUserItems().size()).isEqualTo(1);
+        assertThat(user.getUserItems().size()).isEqualTo(1);
+        assertThat(user.getUserItems().get(0).getItem()).isEqualTo(item);
+        assertThat(userItem.getUser()).isEqualTo(user);
+        assertThat(userItem.getUser().getUserItems().size()).isEqualTo(1);
     }
 
     @Test
@@ -50,7 +51,7 @@ class UserTest {
         user.addUserItem(userItem);
 
         // then
-        Assertions.assertThat(user.getScore().getScore()).isEqualTo(existingScore + item.getItemGrade().getScore());
+        assertThat(user.getScore().getScore()).isEqualTo(existingScore + item.getItemGrade().getScore());
     }
 
     @Test
@@ -65,7 +66,7 @@ class UserTest {
         user.addUserItem(UserItem.create(item));
 
         // then
-        Assertions.assertThat(user.getScore().getScore()).isEqualTo(existingScore);
+        assertThat(user.getScore().getScore()).isEqualTo(existingScore);
     }
 
     @Test
@@ -78,7 +79,7 @@ class UserTest {
         }
 
         // when & then
-        Assertions.assertThatThrownBy(() -> user.deductCoinForGacha())
+        assertThatThrownBy(() -> user.deductCoinForGacha())
                 .isInstanceOf(BusinessException.class)
                 .hasMessage(ErrorCode.INSUFFICIENT_COIN.getMessage());
     }
@@ -93,7 +94,7 @@ class UserTest {
         user.deductCoinForGacha();
 
         // then
-        Assertions.assertThat(user.getCoinAmount()).isEqualTo(coin - 1000);
+        assertThat(user.getCoinAmount()).isEqualTo(coin - 1000);
     }
 
     @Test
@@ -108,7 +109,7 @@ class UserTest {
         itemOwner.setId(2l);
 
         // when & then
-        Assertions.assertThatThrownBy(() -> seller.saleUserItem(userItem))
+        assertThatThrownBy(() -> seller.saleUserItem(userItem))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage(ErrorCode.UNAUTHORIZED.getMessage());
     }
@@ -124,7 +125,7 @@ class UserTest {
         seller.saleUserItem(userItem);
 
         // then
-        Assertions.assertThat(seller.getUserItems()).isEmpty();
+        assertThat(seller.getUserItems()).isEmpty();
     }
 
     @Test
@@ -139,7 +140,7 @@ class UserTest {
         seller.saleUserItem(userItem);
 
         // then
-        Assertions.assertThat(seller.getScore().getScore()).isEqualTo(existingScore - userItem.getItem().getItemGrade().getScore());
+        assertThat(seller.getScore().getScore()).isEqualTo(existingScore - userItem.getItem().getItemGrade().getScore());
     }
 
     @Test
@@ -159,7 +160,7 @@ class UserTest {
         seller.saleUserItem(userItem1);
 
         // then
-        Assertions.assertThat(seller.getScore().getScore()).isEqualTo(existingScore);
+        assertThat(seller.getScore().getScore()).isEqualTo(existingScore);
     }
 
     @Test
@@ -174,7 +175,7 @@ class UserTest {
         currentUser.setId(2l);
 
         // when & then
-        Assertions.assertThatThrownBy(() -> currentUser.cancelTrade(trade))
+        assertThatThrownBy(() -> currentUser.cancelTrade(trade))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage(ErrorCode.UNAUTHORIZED.getMessage());
     }
@@ -190,9 +191,9 @@ class UserTest {
         seller.cancelTrade(trade);
 
         // then
-        Assertions.assertThat(seller.getUserItems().size()).isEqualTo(1);
-        Assertions.assertThat(seller.getUserItems().get(0).getUser()).isEqualTo(seller);
-        Assertions.assertThat(seller.getUserItems().get(0).getItem()).isEqualTo(item);
+        assertThat(seller.getUserItems().size()).isEqualTo(1);
+        assertThat(seller.getUserItems().get(0).getUser()).isEqualTo(seller);
+        assertThat(seller.getUserItems().get(0).getItem()).isEqualTo(item);
     }
 
     @Test
@@ -206,7 +207,7 @@ class UserTest {
         }
 
         // then
-        Assertions.assertThatCode(() -> user.processPurchase(Item.BLACK_CAT))
+        assertThatCode(() -> user.processPurchase(Item.BLACK_CAT))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage(ErrorCode.INSUFFICIENT_COIN.getMessage());
     }
@@ -223,7 +224,7 @@ class UserTest {
         user.processPurchase(item);
 
         // then
-        Assertions.assertThat(user.getCoinAmount()).isEqualTo(initialCoin - productPrice);
+        assertThat(user.getCoinAmount()).isEqualTo(initialCoin - productPrice);
     }
 
     @Test
@@ -236,7 +237,7 @@ class UserTest {
         user.processPurchase( item);
 
         // then
-        Assertions.assertThat(user.getUserItems().size()).isEqualTo(1);
-        Assertions.assertThat(user.getUserItems().get(0).getItem()).isEqualTo(item);
+        assertThat(user.getUserItems().size()).isEqualTo(1);
+        assertThat(user.getUserItems().get(0).getItem()).isEqualTo(item);
     }
 }
