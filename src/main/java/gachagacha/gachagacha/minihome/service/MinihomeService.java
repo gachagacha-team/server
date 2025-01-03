@@ -41,7 +41,7 @@ public class MinihomeService {
         int followersCnt = followRepository.findByFollowee(minihomeUser).size();
         int followingsCnt = followRepository.findByFollower(minihomeUser).size();
 
-        return new MinihomeResponse(minihomeUser.getId() == currentUserId, minihomeUser.getId(), minihomeUser.getNickname(), minihomeUser.getScore(), followersCnt, followingsCnt, miniHome.getTotalVisitorCnt(), minihomeUser.getProfileImageUrl(), miniHome.getLayout());
+        return new MinihomeResponse(minihomeUser.getId() == currentUserId, minihomeUser.getId(), minihomeUser.getNickname(), minihomeUser.getScore().getScore(), followersCnt, followingsCnt, miniHome.getTotalVisitorCnt(), minihomeUser.getProfileImageUrl(), miniHome.getLayout());
     }
 
     public Slice<GuestbookResponse> readGuestbooks(String nickname, Pageable pageable, HttpServletRequest request) {

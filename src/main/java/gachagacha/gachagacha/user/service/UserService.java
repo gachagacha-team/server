@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Random;
 
 @Service
 @Transactional
@@ -38,7 +39,7 @@ public class UserService {
         validateDuplicatedUser(loginType, joinRequest.getLoginId());
         validateDuplicatedNickname(joinRequest.getNickname());
 
-        User user = User.create(loginType, joinRequest.getLoginId(), joinRequest.getNickname(), Minihome.create(), joinRequest.getProfileUrl());
+        User user = User.create(loginType, joinRequest.getLoginId(), joinRequest.getNickname(), joinRequest.getProfileUrl());
         userRepository.save(user);
         return jwtUtils.generateJwt(user.getId());
     }
@@ -59,10 +60,11 @@ public class UserService {
         User user = userRepository.findById(jwtUtils.getUserIdFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         validateDuplicatedAttendance(user);
-        int bonusCoin = user.attend();
+        int bonusCoin = new Random().nextInt(4001) + 1000;
+        user.addCoin(bonusCoin);
         Attendance attendance = Attendance.create(user, LocalDate.now());
         attendanceRepository.save(attendance);
-        return new AttendanceResponse(bonusCoin, user.getCoin());
+        return new AttendanceResponse(bonusCoin, user.getCoin().getCoin());
     }
 
     private void validateDuplicatedAttendance(User user) {

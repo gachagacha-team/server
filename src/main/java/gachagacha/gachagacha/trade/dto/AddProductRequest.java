@@ -1,4 +1,4 @@
-package gachagacha.gachagacha.product.dto;
+package gachagacha.gachagacha.trade.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

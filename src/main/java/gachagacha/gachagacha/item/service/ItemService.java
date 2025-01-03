@@ -34,7 +34,6 @@ public class ItemService {
         user.deductCoinForGacha();
 
         Item item = Item.gacha(ItemGrade.getItemGrade(new Random().nextInt(100) + 1));
-        user.addScoreForNewItem(item);
         user.addUserItem(UserItem.create(item));
         return item.getImageFileName();
     }

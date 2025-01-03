@@ -1,7 +1,7 @@
-package gachagacha.gachagacha.product.controller;
+package gachagacha.gachagacha.trade.controller;
 
-import gachagacha.gachagacha.product.dto.*;
-import gachagacha.gachagacha.product.service.ProductService;
+import gachagacha.gachagacha.trade.dto.*;
+import gachagacha.gachagacha.trade.service.TradeService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -12,42 +12,42 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-public class ProductController {
+public class TradeController {
 
-    private final ProductService productService;
+    private final TradeService tradeService;
 
     @GetMapping("/items/{itemId}/forSale")
     public ReadItemForSaleResponse readItemInfoForSale(@PathVariable long itemId) {
-        return productService.readItemInfoForSale(itemId);
+        return tradeService.readItemInfoForSale(itemId);
     }
 
     @PostMapping("/products")
     public void addProduct(@RequestBody AddProductRequest addProductRequest, HttpServletRequest request) {
-        productService.addProduct(addProductRequest, request);
+        tradeService.registerTrade(addProductRequest, request);
     }
 
     @GetMapping("/products")
     public List<ReadAllProductsResponse> readAllProducts(@RequestParam(value = "grade", required = false) String grade) {
-        return productService.readProducts(grade);
+        return tradeService.readProducts(grade);
     }
 
     @GetMapping("/products/me")
     public Slice<ReadMyOneProductResponse> readMyProducts(@RequestParam(value = "grade", required = false) String grade, Pageable pageable, HttpServletRequest request) {
-        return productService.readMyProducts(grade, pageable, request);
+        return tradeService.readMyProducts(grade, pageable, request);
     }
 
     @GetMapping("/items/{itemId}/products")
     public ReadOneProductResponse readOneProduct(@PathVariable long itemId) {
-        return productService.readOneProduct(itemId);
+        return tradeService.readOneProduct(itemId);
     }
 
     @DeleteMapping("/products/{productId}")
-    public void deleteProduct(@PathVariable long productId, HttpServletRequest request) {
-        productService.deleteProduct(productId, request);
+    public void cancelTrade(@PathVariable long productId, HttpServletRequest request) {
+        tradeService.cancelTrade(productId, request);
     }
 
     @PostMapping("/items/{itemId}/purchase")
     public void purchase(@PathVariable long itemId, HttpServletRequest request) {
-        productService.purchase(itemId, request);
+        tradeService.purchase(itemId, request);
     }
 }

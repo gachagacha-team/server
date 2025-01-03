@@ -7,13 +7,12 @@ import gachagacha.gachagacha.item.entity.Background;
 import gachagacha.gachagacha.item.entity.Item;
 import gachagacha.gachagacha.item.entity.UserItem;
 import gachagacha.gachagacha.minihome.entity.Minihome;
+import gachagacha.gachagacha.trade.entity.Trade;
 import jakarta.persistence.*;
 import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.Random;
 
 @Entity
 @Getter
@@ -35,10 +34,12 @@ public class User extends BaseEntity {
     private String nickname;
 
     @Column(nullable = false)
-    private int coin;
+    @Embedded
+    private Coin coin;
 
     @Column(nullable = false)
-    private int score;
+    @Embedded
+    private Score score;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "minihome_id", nullable = false)
@@ -49,88 +50,73 @@ public class User extends BaseEntity {
 
     private List<Background> backgrounds = new ArrayList<>();
     private String profileImageUrl;
+    private static final int GACHA_COST = 1000;
 
-    public static User create(LoginType loginType, Long loginId, String nickname, Minihome minihome, String profileImageUrl) {
+    public static User create(LoginType loginType, Long loginId, String nickname, String profileImageUrl) {
         User user = new User();
         user.loginType = loginType;
         user.loginId = loginId;
         user.nickname = nickname;
-        user.coin = 20000;
-        user.minihome = minihome;
+        user.coin = new Coin();
+        user.score = new Score();
+        user.minihome = Minihome.create();
         user.backgrounds.add(Background.WHITE);
         user.profileImageUrl = profileImageUrl;
         return user;
     }
 
     public void addUserItem(UserItem userItem) {
-        this.userItems.add(userItem);
+        score.addScoreForNewItem(userItem.getItem(), userItems);
+
+        userItems.add(userItem);
         if (userItem.getUser() != null) {
             userItem.getUser().getUserItems().remove(userItem);
         }
         userItem.setUser(this);
-    }
-
-    public void cancelProductAndRevertToUserItem(Item item) {
-        UserItem userItem = UserItem.create(item);
-        this.userItems.add(userItem);
-        if (userItem.getUser() != null) {
-            userItem.getUser().getUserItems().remove(userItem);
-        }
-        userItem.setUser(this);
-    }
-
-    public int attend() {
-        int bonusCoin = new Random().nextInt(4001) + 1000;
-        this.coin += bonusCoin;
-        return bonusCoin;
-    }
-
-    public void addCoin(int price) {
-        coin += price;
     }
 
     public void deductCoinForGacha() {
-        if (coin < 1000) {
-            throw new BusinessException(ErrorCode.INSUFFICIENT_COIN);
-        }
-        coin -= 1000;
+        coin.deduct(GACHA_COST);
     }
 
-    public void purchaseProduct(int productPrice) {
-        if (coin < productPrice) {
-            throw new BusinessException(ErrorCode.INSUFFICIENT_COIN);
-        }
-        coin -= productPrice;
-    }
-
+    /* 판매 등록 */
     public void saleUserItem(UserItem userItem) {
-        validateSaleAuthorization(userItem);
-        decreaseScoreForSaleItem(userItem);
-    }
-
-    private void validateSaleAuthorization(UserItem userItem) {
         if (userItem.getUser().getId() != this.getId()) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
         }
+        userItems.remove(userItem);
+        score.decreaseScoreForSaleItem(userItems, userItem.getItem());
     }
 
-    private void decreaseScoreForSaleItem(UserItem userItemForSale) {
-        Item item = userItemForSale.getItem();
-        long itemCount = userItems.stream()
-                .filter(userItem -> userItem.getItem() == item)
-                .count();
-        if (itemCount == 1) {
-            score -= userItemForSale.getItem().getItemGrade().getScore();
+    /* 판매 취소 */
+    public void cancelTrade(Trade trade) {
+        if (trade.getSeller().getId() != this.getId()) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED);
         }
+        UserItem userItem = UserItem.create(trade.getItem());
+        this.addUserItem(userItem);
     }
 
-    public void addScoreForNewItem(Item item) {
-        Optional<UserItem> hasDuplicatedItem = userItems.stream()
-                .filter(existingUserItem -> existingUserItem.getItem() == item)
-                .findAny();
+    /* 구매자: 구매 */
+    public void processPurchase(int price, Item item) {
+        coin.deduct(price);
+        addUserItem(UserItem.create(item));
+    }
 
-        if (!hasDuplicatedItem.isPresent()) {
-            score += item.getItemGrade().getScore();
-        }
+    /* 판매자: 판매 완료 */
+    public void completeSale(int price) {
+        coin.addCoin(price);
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void addCoin(int bonusCoin) {
+        this.coin.addCoin(bonusCoin);
+    }
+
+    public int getCoinAmount() {
+        return this.getCoin().getCoin();
     }
 }

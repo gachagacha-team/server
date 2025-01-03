@@ -22,7 +22,7 @@ public enum ItemGrade {
     private final int endRange;
     private final String viewName;
     private final int score;
-    private final int productPrice;
+    private final int price;
     
     public static ItemGrade getItemGrade(int randomNumber) {
         return Arrays.stream(ItemGrade.values())

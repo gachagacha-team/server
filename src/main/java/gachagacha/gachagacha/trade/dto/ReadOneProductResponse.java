@@ -1,4 +1,4 @@
-package gachagacha.gachagacha.product.dto;
+package gachagacha.gachagacha.trade.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,10 +7,10 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ReadItemForSaleResponse {
+public class ReadOneProductResponse {
 
-    private long itemId;
     private String name;
     private String grade;
-    private int price;
+    private int quantity;
+    private String imageUrl;
 }
