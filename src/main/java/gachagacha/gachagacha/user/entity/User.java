@@ -98,14 +98,14 @@ public class User extends BaseEntity {
     }
 
     /* 구매자: 구매 */
-    public void processPurchase(int price, Item item) {
-        coin.deduct(price);
+    public void processPurchase(Item item) {
+        coin.deduct(item.getItemGrade().getPrice());
         addUserItem(UserItem.create(item));
     }
 
     /* 판매자: 판매 완료 */
-    public void completeSale(int price) {
-        coin.addCoin(price);
+    public void completeSale(Item item) {
+        coin.addCoin(item.getItemGrade().getPrice());
     }
 
     public void setId(long id) {

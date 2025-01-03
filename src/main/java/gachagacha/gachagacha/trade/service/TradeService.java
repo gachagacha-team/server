@@ -122,6 +122,9 @@ public class TradeService {
                 .stream()
                 .findFirst()
                 .orElseThrow(() -> new BusinessException(ErrorCode.INSUFFICIENT_PRODUCT));
+
+        buyer.processPurchase(trade.getItem());
+        trade.getSeller().completeSale(trade.getItem());
         trade.processTrade(buyer);
     }
 }

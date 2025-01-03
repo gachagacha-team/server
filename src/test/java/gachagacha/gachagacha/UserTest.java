@@ -198,25 +198,29 @@ class UserTest {
     @Test
     void 코인이_부족하면_상품_구매에_실패한다() {
         // given
-        User user = User.create(LoginType.KAKAO, 1l, "nickname","profileImageUrl");
+        User user = User.create(LoginType.KAKAO, 1l, "nickname", "profileImageUrl");
 
-        // when & then
-        Assertions.assertThatCode(() -> user.processPurchase(user.getCoinAmount() - 1, Item.BLACK_CAT))
-                .doesNotThrowAnyException();
-        Assertions.assertThatThrownBy(() -> user.processPurchase(user.getCoinAmount() + 1, Item.BLACK_CAT))
-                .isInstanceOf(BusinessException.class);
+        // when
+        for (int i = 0; i < 20; i++) { // 초기 코인이 20,000이므로 코인 차감(-1,000)을 20번 반복하여 코인을 부족하게 만든다.
+            user.deductCoinForGacha();
+        }
+
+        // then
+        Assertions.assertThatCode(() -> user.processPurchase(Item.BLACK_CAT))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage(ErrorCode.INSUFFICIENT_COIN.getMessage());
     }
 
     @Test
     void 상품_구매_후_상품_금액만큼_코인이_차감된다() {
         // given
-        User user = User.create(LoginType.KAKAO, 1l, "nickname","profileImageUrl");
+        User user = User.create(LoginType.KAKAO, 1l, "nickname", "profileImageUrl");
         Item item = Item.BLACK_CAT;
         int productPrice = item.getItemGrade().getPrice();
         int initialCoin = user.getCoinAmount();
 
         // when
-        user.processPurchase(productPrice, Item.BLACK_CAT);
+        user.processPurchase(item);
 
         // then
         Assertions.assertThat(user.getCoinAmount()).isEqualTo(initialCoin - productPrice);
@@ -229,7 +233,7 @@ class UserTest {
         Item item = Item.BLACK_CAT;
 
         // when
-        user.processPurchase(item.getItemGrade().getPrice(), item);
+        user.processPurchase( item);
 
         // then
         Assertions.assertThat(user.getUserItems().size()).isEqualTo(1);

@@ -43,12 +43,7 @@ public class Trade extends BaseEntity {
     }
 
     public void processTrade(User buyer) {
-        int price = this.getItem().getItemGrade().getPrice();
-
-        buyer.processPurchase(price, this.getItem());
-        this.seller.completeSale(price);
-
-        this.tradeStatus = TradeStatus.COMPLETED;
         this.buyer = buyer;
+        this.tradeStatus = TradeStatus.COMPLETED;
     }
 }
