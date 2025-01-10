@@ -19,7 +19,8 @@ public class KakaoOAuthClient implements OAuthClient {
     private static final RestTemplate restTemplate = new RestTemplate();
     private static final String CLIENT_ID = "9c35100cd45c705417bf81e23e8c7734";
     private static final String REQUEST_USER_URL = "https://kapi.kakao.com/v2/user/me";
-    private static final String REDIRECT_URL = "http://localhost:8085/login/oauth2/code/kakao";
+//    private static final String REDIRECT_URL = "http://localhost:8085/login/oauth2/code/kakao";
+    private static final String REDIRECT_URL = "http://61.79.183.245:80/login/oauth2/code/kakao";
     private static final String REQUEST_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
 
     @Override
