@@ -2,7 +2,6 @@ package gachagacha.gachagacha.auth.oauth.client;
 
 import gachagacha.gachagacha.auth.oauth.dto.UserInfo;
 import gachagacha.gachagacha.auth.oauth.dto.kakao.KakaoTokenResponse;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -18,18 +17,10 @@ import java.util.Map;
 public class KakaoOAuthClient implements OAuthClient {
 
     private static final RestTemplate restTemplate = new RestTemplate();
-
-    @Value("${oauth2.client.registration.kakao.client_id}")
-    private String clientId;
-
-    @Value("${oauth2.client.registration.kakao.request_user_url}")
-    private String requestUserUrl;
-
-    @Value("${oauth2.client.registration.kakao.redirect_url}")
-    private String redirectUrl;
-
-    @Value("${oauth2.client.registration.kakao.request_token_url}")
-    private String requestTokenUrl;
+    private static final String CLIENT_ID = "9c35100cd45c705417bf81e23e8c7734";
+    private static final String REQUEST_USER_URL = "https://kapi.kakao.com/v2/user/me";
+    private static final String REDIRECT_URL = "http://localhost:8085/login/oauth2/code/kakao";
+    private static final String REQUEST_TOKEN_URL = "https://kauth.kakao.com/oauth/token";
 
     @Override
     public String fetchOAuthToken(String code) {
@@ -38,13 +29,13 @@ public class KakaoOAuthClient implements OAuthClient {
 
         MultiValueMap<String, String> httpBodies = new LinkedMultiValueMap<>();
         httpBodies.add("grant_type", "authorization_code");
-        httpBodies.add("client_id", clientId);
-        httpBodies.add("redirect_uri", redirectUrl);
+        httpBodies.add("client_id", CLIENT_ID);
+        httpBodies.add("redirect_uri", REDIRECT_URL);
         httpBodies.add("code", code);
 
         HttpEntity<MultiValueMap<String, String>> httpEntity = new HttpEntity<>(httpBodies, httpHeaders);
 
-        KakaoTokenResponse tokenResponse = restTemplate.postForObject(requestTokenUrl,
+        KakaoTokenResponse tokenResponse = restTemplate.postForObject(REQUEST_TOKEN_URL,
                 httpEntity,
                 KakaoTokenResponse.class);
         return tokenResponse.getAccessToken();
@@ -58,7 +49,7 @@ public class KakaoOAuthClient implements OAuthClient {
 
         HttpEntity<String> httpEntity = new HttpEntity<>(headers);
 
-        ResponseEntity<Map> response = restTemplate.exchange(requestUserUrl,
+        ResponseEntity<Map> response = restTemplate.exchange(REQUEST_USER_URL,
                 HttpMethod.GET,
                 httpEntity,
                 Map.class
