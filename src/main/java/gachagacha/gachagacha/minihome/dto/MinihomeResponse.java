@@ -11,9 +11,6 @@ public class MinihomeResponse {
     @JsonProperty(value = "isOwner")
     private boolean isOwner;
 
-    @JsonProperty(value = "minihomeUserId")
-    private long minihomeUserId;
-
     @JsonProperty(value = "nickname")
     private String nickname;
 

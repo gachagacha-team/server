@@ -44,8 +44,14 @@ public class OAuth2Service {
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
             JwtDto jwtDto = jwtUtils.generateJwt(user.getId());
+            String encodedNickname = URLEncoder.encode(user.getNickname(), StandardCharsets.UTF_8);
+
             return REDIRECT_BASIC_URL
                     + "?isNewUser=" + false
+                    + "&nickname=" + encodedNickname
+                    + "&profileUrl=" + user.getProfileImageUrl()
+                    + "&loginType="
+                    + "&loginId="
                     + "&accessToken=" + jwtDto.getAccessToken()
                     + "&refreshToken=" + jwtDto.getRefreshToken();
         } else {
@@ -53,9 +59,11 @@ public class OAuth2Service {
             return REDIRECT_BASIC_URL
                     + "?isNewUser=" + true
                     + "&nickname=" + encodedNickname
+                    + "&profileUrl=" + getProfileImageUrl(userInfo, loginType)
                     + "&loginType=" + loginType.getName()
                     + "&loginId=" + userInfo.getId()
-                    + "&profileUrl=" + getProfileImageUrl(userInfo, loginType);
+                    + "&accessToken="
+                    + "&refreshToken=";
         }
     }
 
