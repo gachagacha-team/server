@@ -27,9 +27,10 @@ public class JwtUtils {
         this.jwtParser = Jwts.parserBuilder().setSigningKey(signingKey).build();
     }
 
-    public JwtDto generateJwt(long userId) {
-        Claims claims = Jwts.claims()
-                .setSubject(String.valueOf(userId));
+    public JwtDto generateJwt(String nickname, String profileImageUrl) {
+        Claims claims = Jwts.claims();
+        claims.put("nickname", nickname);
+        claims.put("profile", profileImageUrl);
         return new JwtDto(generateAccessToken(claims), generateRefreshToken(claims));
     }
 
@@ -51,7 +52,7 @@ public class JwtUtils {
                 .compact();
     }
 
-    public void validateAccessToken(HttpServletRequest request) {
+    public void validateTokenFromHeader(HttpServletRequest request) {
         String accessToken = getJwtFromHeader(request);
         try {
             jwtParser.parseClaimsJws(accessToken);
@@ -62,13 +63,21 @@ public class JwtUtils {
         }
     }
 
-    public long getUserIdFromHeader(HttpServletRequest request) {
+    public String getUserNicknameFromHeader(HttpServletRequest request) {
         String jwt = getJwtFromHeader(request);
-        String userId = jwtParser.parseClaimsJws(jwt).getBody().getSubject();
-        return Long.parseLong(userId);
+        String nickname = (String) jwtParser.parseClaimsJws(jwt).getBody().get("nickname");
+        return nickname;
     }
 
     private String getJwtFromHeader(HttpServletRequest request) {
+        String header = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if (header != null && header.startsWith("Bearer ")) {
+            return header.split(" ")[1];
+        }
+        throw new CustomJwtException(ErrorCode.REQUIRED_JWT);
+    }
+
+    public String getRefreshTokenFromHeader(HttpServletRequest request) {
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (header != null && header.startsWith("Bearer ")) {
             return header.split(" ")[1];

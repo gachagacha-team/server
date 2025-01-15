@@ -2,13 +2,10 @@ package gachagacha.gachagacha.user.service;
 
 import gachagacha.gachagacha.exception.ErrorCode;
 import gachagacha.gachagacha.exception.customException.BusinessException;
-import gachagacha.gachagacha.auth.jwt.JwtDto;
 import gachagacha.gachagacha.auth.jwt.JwtUtils;
-import gachagacha.gachagacha.minihome.entity.Minihome;
 import gachagacha.gachagacha.user.dto.*;
 import gachagacha.gachagacha.user.entity.Attendance;
 import gachagacha.gachagacha.user.entity.Follow;
-import gachagacha.gachagacha.user.entity.LoginType;
 import gachagacha.gachagacha.user.entity.User;
 import gachagacha.gachagacha.user.repository.AttendanceRepository;
 import gachagacha.gachagacha.user.repository.FollowRepository;
@@ -33,31 +30,8 @@ public class UserService {
     private final FollowRepository followRepository;
     private final JwtUtils jwtUtils;
 
-    public JwtDto join(JoinRequest joinRequest) {
-        LoginType loginType = LoginType.find(joinRequest.getLoginType());
-
-        validateDuplicatedUser(loginType, joinRequest.getLoginId());
-        validateDuplicatedNickname(joinRequest.getNickname());
-
-        User user = User.create(loginType, joinRequest.getLoginId(), joinRequest.getNickname(), joinRequest.getProfileUrl());
-        userRepository.save(user);
-        return jwtUtils.generateJwt(user.getId());
-    }
-
-    private void validateDuplicatedUser(LoginType loginType, long loginId) {
-        if (userRepository.findByLoginTypeAndLoginId(loginType, loginId).isPresent()) {
-            throw new BusinessException(ErrorCode.DUPLICATED_USER_REGISTRATION);
-        }
-    }
-
-    private void validateDuplicatedNickname(String nickname) {
-        if (userRepository.findByNickname(nickname).isPresent()) {
-            throw new BusinessException(ErrorCode.DUPLICATED_NICKNAME);
-        }
-    }
-
     public AttendanceResponse attend(HttpServletRequest request) {
-        User user = userRepository.findById(jwtUtils.getUserIdFromHeader(request))
+        User user = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         validateDuplicatedAttendance(user);
         int bonusCoin = new Random().nextInt(4001) + 1000;
@@ -75,8 +49,7 @@ public class UserService {
     }
 
     public void follow(FollowRequest followRequest, HttpServletRequest request) {
-        long userId = jwtUtils.getUserIdFromHeader(request);
-        User follower = userRepository.findById(userId)
+        User follower = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         User followee = userRepository.findById(followRequest.getFolloweeUserId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
@@ -101,8 +74,7 @@ public class UserService {
     }
 
     public void unfollow(UnfollowRequest unfollowRequest, HttpServletRequest request) {
-        long userId = jwtUtils.getUserIdFromHeader(request);
-        User follower = userRepository.findById(userId)
+        User follower = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         User followee = userRepository.findById(unfollowRequest.getFolloweeUserId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
@@ -114,7 +86,7 @@ public class UserService {
     }
 
     public Slice<FollowerResponse> getFollowers(String nickname, HttpServletRequest request, Pageable pageable) {
-        User currentUser = userRepository.findById(jwtUtils.getUserIdFromHeader(request))
+        User currentUser = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         User minihomeUser = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
@@ -128,7 +100,7 @@ public class UserService {
     }
 
     public Slice<FollowingResponse> getFollowings(String nickname, HttpServletRequest request, Pageable pageable) {
-        User currentUser = userRepository.findById(jwtUtils.getUserIdFromHeader(request))
+        User currentUser = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         User minihomeUser = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));

@@ -30,7 +30,7 @@ public class MinihomeService {
     private final JwtUtils jwtUtils;
 
     public MinihomeResponse readMinihome(String nickname, HttpServletRequest request) {
-        long currentUserId = jwtUtils.getUserIdFromHeader(request);
+        String currentUserNickname = jwtUtils.getUserNicknameFromHeader(request);
 
         User minihomeUser = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
@@ -41,11 +41,11 @@ public class MinihomeService {
         int followersCnt = followRepository.findByFollowee(minihomeUser).size();
         int followingsCnt = followRepository.findByFollower(minihomeUser).size();
 
-        return new MinihomeResponse(minihomeUser.getId() == currentUserId, minihomeUser.getNickname(), minihomeUser.getScore().getScore(), followersCnt, followingsCnt, miniHome.getTotalVisitorCnt(), minihomeUser.getProfileImageUrl(), miniHome.getLayout());
+        return new MinihomeResponse(minihomeUser.getNickname().equals(currentUserNickname), minihomeUser.getNickname(), minihomeUser.getScore().getScore(), followersCnt, followingsCnt, miniHome.getTotalVisitorCnt(), minihomeUser.getProfileImageUrl(), miniHome.getLayout());
     }
 
     public Slice<GuestbookResponse> readGuestbooks(String nickname, Pageable pageable, HttpServletRequest request) {
-        User currentUser = userRepository.findById(jwtUtils.getUserIdFromHeader(request))
+        User currentUser = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         User minihomeUser = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
@@ -58,8 +58,8 @@ public class MinihomeService {
     public GuestbookResponse addGuestbook(String nickname, AddGuestbookRequest addGuestbookRequest, HttpServletRequest request) {
         User minihomeUser = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
-        long guestbookUserId = jwtUtils.getUserIdFromHeader(request);
-        User guestbookUser = userRepository.findById(guestbookUserId)
+        String guestbookUserNickname = jwtUtils.getUserNicknameFromHeader(request);
+        User guestbookUser = userRepository.findByNickname(guestbookUserNickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
 
         Guestbook guestbook = Guestbook.create(guestbookUser, addGuestbookRequest.getContent());

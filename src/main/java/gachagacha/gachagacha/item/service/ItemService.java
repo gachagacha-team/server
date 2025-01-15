@@ -29,7 +29,7 @@ public class ItemService {
     private final JwtUtils jwtUtils;
 
     public String gacha(HttpServletRequest request) {
-        User user = userRepository.findById(jwtUtils.getUserIdFromHeader(request))
+        User user = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         user.deductCoinForGacha();
 
@@ -102,7 +102,7 @@ public class ItemService {
     private User validateItemReadAuthorization(String nickname, HttpServletRequest request) {
         User user = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
-        if (jwtUtils.getUserIdFromHeader(request) != user.getId()) {
+        if (jwtUtils.getUserNicknameFromHeader(request) != user.getNickname()) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
         }
         return user;

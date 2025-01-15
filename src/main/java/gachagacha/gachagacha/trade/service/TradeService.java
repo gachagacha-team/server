@@ -51,7 +51,7 @@ public class TradeService {
     }
 
     public Slice<ReadMyOneProductResponse> readMyProducts(String grade, Pageable pageable, HttpServletRequest request) {
-        User seller = userRepository.findById(jwtUtils.getUserIdFromHeader(request))
+        User seller = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         Slice<Trade> productSlice = tradeRepository.findBySeller(seller, pageable);
         List<Trade> trades = productSlice.getContent();
@@ -93,7 +93,7 @@ public class TradeService {
     public void registerTrade(AddProductRequest addProductRequest, HttpServletRequest request) {
         UserItem userItem = userItemRepository.findById(addProductRequest.getUserItemId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_ITEM));
-        User seller = userRepository.findById(jwtUtils.getUserIdFromHeader(request))
+        User seller = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
 
         seller.saleUserItem(userItem);
@@ -102,7 +102,7 @@ public class TradeService {
     }
 
     public void cancelTrade(long productId, HttpServletRequest request) {
-        User seller = userRepository.findById(jwtUtils.getUserIdFromHeader(request))
+        User seller = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
 
         Trade trade = tradeRepository.findById(productId)
@@ -113,7 +113,7 @@ public class TradeService {
     }
 
     public void purchase(long itemId, HttpServletRequest request) {
-        User buyer = userRepository.findById(jwtUtils.getUserIdFromHeader(request))
+        User buyer = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
 
         Item item = Item.findById(itemId);
