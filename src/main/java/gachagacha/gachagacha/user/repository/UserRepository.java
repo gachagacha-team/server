@@ -1,7 +1,7 @@
 package gachagacha.gachagacha.user.repository;
 
 import gachagacha.gachagacha.minihome.entity.Minihome;
-import gachagacha.gachagacha.user.entity.LoginType;
+import gachagacha.gachagacha.user.entity.SocialType;
 import gachagacha.gachagacha.user.entity.User;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -16,7 +16,7 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
     Slice<User> findAllBy(Pageable pageable);
 
-    Optional<User> findByLoginTypeAndLoginId(@Param(value = "loginType") LoginType loginType, @Param(value = "loginId") Long loginId);
+    Optional<User> findBySocialTypeAndLoginId(@Param(value = "socialType") SocialType socialType, @Param(value = "loginId") Long loginId);
 
     Optional<User> findByNickname(@Param(value = "nickname") String nickname);
 

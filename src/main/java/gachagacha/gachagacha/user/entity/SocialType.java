@@ -9,17 +9,17 @@ import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
-public enum LoginType {
+public enum SocialType {
 
     GITHUB("github"),
     KAKAO("kakao");
 
     private final String name;
 
-    public static LoginType find(String name) {
-        return Arrays.stream(LoginType.values())
+    public static SocialType find(String name) {
+        return Arrays.stream(SocialType.values())
                 .filter(loginType -> loginType.getName().equals(name))
                 .findAny()
-                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_LOGIN_TYPE));
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_SOCIAL_TYPE));
     }
 }

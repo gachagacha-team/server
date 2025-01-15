@@ -16,7 +16,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "loginType", "loginId" }) })
+@Table(uniqueConstraints = { @UniqueConstraint(columnNames = { "socialType", "loginId" }) })
 public class User extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +25,7 @@ public class User extends BaseEntity {
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
-    private LoginType loginType;
+    private SocialType socialType;
 
     @Column
     private Long loginId;
@@ -52,9 +52,9 @@ public class User extends BaseEntity {
     private String profileImageUrl;
     private static final int GACHA_COST = 1000;
 
-    public static User create(LoginType loginType, Long loginId, String nickname, String profileImageUrl) {
+    public static User create(SocialType socialType, Long loginId, String nickname, String profileImageUrl) {
         User user = new User();
-        user.loginType = loginType;
+        user.socialType = socialType;
         user.loginId = loginId;
         user.nickname = nickname;
         user.coin = new Coin();

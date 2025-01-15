@@ -25,7 +25,7 @@ public class ExceptionController {
     public ResponseEntity handleJwtException(CustomJwtException e) {
         log.info("handle CustomJwtException, message = {}", e.getMessage());
         ErrorCode errorCode = e.getErrorCode();
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.status(errorCode.getHttpStatus())
                 .body(new ExceptionResponse(errorCode.getMessage()));
     }
 }

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 public class JoinRequest {
 
     private String nickname;
-    private String loginType;
+    private String socialType;
     private Long loginId;
     private String profileUrl;
 }
