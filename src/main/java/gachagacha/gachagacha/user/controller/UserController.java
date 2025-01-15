@@ -15,11 +15,6 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/join")
-    public JwtDto join(@RequestBody JoinRequest joinRequest) {
-        return userService.join(joinRequest);
-    }
-
     @PostMapping("/attend")
     public AttendanceResponse attend(HttpServletRequest request) {
         return userService.attend(request);

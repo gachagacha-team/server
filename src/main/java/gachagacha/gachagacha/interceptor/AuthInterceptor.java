@@ -21,7 +21,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         if (request.getMethod().equals("OPTIONS")) {
             return true;
         }
-        jwtUtils.validateAccessToken(request);
+        jwtUtils.validateTokenFromHeader(request);
         return true;
     }
 }
