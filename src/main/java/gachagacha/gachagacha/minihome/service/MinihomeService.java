@@ -13,6 +13,7 @@ import gachagacha.gachagacha.user.repository.FollowRepository;
 import gachagacha.gachagacha.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -44,7 +45,7 @@ public class MinihomeService {
         return new MinihomeResponse(minihomeUser.getNickname().equals(currentUserNickname), minihomeUser.getNickname(), minihomeUser.getScore().getScore(), followersCnt, followingsCnt, miniHome.getTotalVisitorCnt(), minihomeUser.getProfileImageUrl(), miniHome.getLayout());
     }
 
-    public Slice<GuestbookResponse> readGuestbooks(String nickname, Pageable pageable, HttpServletRequest request) {
+    public Page<GuestbookResponse> readGuestbooks(String nickname, Pageable pageable, HttpServletRequest request) {
         User currentUser = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         User minihomeUser = userRepository.findByNickname(nickname)
@@ -69,12 +70,7 @@ public class MinihomeService {
         return new GuestbookResponse(guestbook.getId(), guestbookUser.getNickname(), guestbook.getContent(), guestbook.getCreatedAt(), true);
     }
 
-    public Slice<ExploreMinihomeResponse> exploreByUser(Pageable pageable) {
-        return userRepository.findAllBy(pageable)
-                .map(user -> new ExploreMinihomeResponse(user.getNickname(), user.getMinihome().getTotalVisitorCnt(), user.getProfileImageUrl()));
-    }
-
-    public Slice<ExploreMinihomeResponse> exploreByMinihome(Pageable pageable) {
+    public Slice<ExploreMinihomeResponse> explore(Pageable pageable) {
         return minihomeRepository.findAllBy(pageable)
                 .map(minihome -> {
                     User user = userRepository.findByMinihome(minihome)

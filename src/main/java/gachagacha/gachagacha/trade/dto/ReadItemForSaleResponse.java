@@ -9,8 +9,14 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReadItemForSaleResponse {
 
-    private long itemId;
+    private long userItemId;
     private String name;
     private String grade;
     private int price;
+    private String imageUrl;
+
+//    private long itemId;
+//    private String name;
+//    private String grade;
+//    private int price;
 }

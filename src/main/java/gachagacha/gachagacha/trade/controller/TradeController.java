@@ -4,8 +4,10 @@ import gachagacha.gachagacha.trade.dto.*;
 import gachagacha.gachagacha.trade.service.TradeService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,9 +18,9 @@ public class TradeController {
 
     private final TradeService tradeService;
 
-    @GetMapping("/items/{itemId}/forSale")
-    public ReadItemForSaleResponse readItemInfoForSale(@PathVariable long itemId) {
-        return tradeService.readItemInfoForSale(itemId);
+    @GetMapping("/items/me/forSale")
+    public Page<ReadItemForSaleResponse> readMyItemsForSale(HttpServletRequest request, @PageableDefault(size = 10) Pageable pageable) {
+        return tradeService.readMyItemsForSale(request, pageable);
     }
 
     @PostMapping("/products")

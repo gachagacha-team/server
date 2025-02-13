@@ -15,6 +15,7 @@ import gachagacha.gachagacha.user.entity.User;
 import gachagacha.gachagacha.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.SliceImpl;
@@ -85,9 +86,14 @@ public class TradeService {
                 .toList();
     }
 
-    public ReadItemForSaleResponse readItemInfoForSale(long itemId) {
-        Item item = Item.findById(itemId);
-        return new ReadItemForSaleResponse(item.getItemId(), item.getViewName(), item.getItemGrade().getViewName(), item.getItemGrade().getPrice());
+    public Page<ReadItemForSaleResponse> readMyItemsForSale(HttpServletRequest request, Pageable pageable) {
+        User user = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
+
+        return userItemRepository.findByUserNicknameSlice(user.getNickname(), pageable)
+                .map(userItem -> new ReadItemForSaleResponse(userItem.getId(), userItem.getItem().getViewName(),
+                        userItem.getItem().getItemGrade().getViewName(), userItem.getItem().getItemGrade().getPrice(),
+                        "/image/items/" + userItem.getItem().getImageFileName()));
     }
 
     public void registerTrade(AddProductRequest addProductRequest, HttpServletRequest request) {

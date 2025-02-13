@@ -17,5 +17,4 @@ public class UserItemResponse {
     private String itemGrade;
     private List<Long> userItemIds;
     private int itemCnt;
-    private boolean hasItem;
 }

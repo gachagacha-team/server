@@ -4,10 +4,13 @@ import gachagacha.gachagacha.minihome.dto.*;
 import gachagacha.gachagacha.minihome.service.MinihomeService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class MinihomeController {
@@ -20,7 +23,7 @@ public class MinihomeController {
     }
 
     @GetMapping("/guestbooks/{nickname}")
-    public Slice<GuestbookResponse> readGuestbooks(@PathVariable String nickname, Pageable pageable, HttpServletRequest request) {
+    public Page<GuestbookResponse> readGuestbooks(@PathVariable String nickname, Pageable pageable, HttpServletRequest request) {
         return minihomeService.readGuestbooks(nickname, pageable, request);
     }
 
@@ -39,12 +42,8 @@ public class MinihomeController {
         minihomeService.deleteGuestbook(guestbookId);
     }
 
-    @GetMapping("/explore/user")
-    public Slice<ExploreMinihomeResponse> exploreByUser(Pageable pageable) {
-        return minihomeService.exploreByUser(pageable);
-    }
     @GetMapping("/explore/minihome")
-    public Slice<ExploreMinihomeResponse> exploreByMinihome(Pageable pageable) {
-        return minihomeService.exploreByMinihome(pageable);
+    public Slice<ExploreMinihomeResponse> explore(Pageable pageable) {
+        return minihomeService.explore(pageable);
     }
 }
