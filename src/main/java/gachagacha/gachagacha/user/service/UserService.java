@@ -30,6 +30,12 @@ public class UserService {
     private final FollowRepository followRepository;
     private final JwtUtils jwtUtils;
 
+    public CoinResponse getCoin(HttpServletRequest request) {
+        User user = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
+        return new CoinResponse(user.getCoinAmount());
+    }
+
     public AttendanceResponse attend(HttpServletRequest request) {
         User user = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));

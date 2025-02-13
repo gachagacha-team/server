@@ -15,6 +15,11 @@ public class UserController {
 
     private final UserService userService;
 
+    @GetMapping("/coin")
+    public CoinResponse getCoin(HttpServletRequest request) {
+        return userService.getCoin(request);
+    }
+
     @PostMapping("/attend")
     public AttendanceResponse attend(HttpServletRequest request) {
         return userService.attend(request);
