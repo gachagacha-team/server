@@ -1,1 +1,36 @@
-spring.application.name=gachagacha
+server:
+  port: 8080
+  ssl.key-store: ${SSL_KEY_STORE}
+  ssl.key-store-type: ${SSL_KEY_STORE_TYPE}
+  ssl.key-store-password: ${SSL_KEY_STORE_PASSWORD}
+spring:
+  datasource:
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+jwt:
+  secret: ${JWT_SECRET}
+oauth:
+  github:
+    client_id: ${OAUTH_GITHUB_CLIENT_ID}
+    client_secret: ${OAUTH_GITHUB_CLIENT_SECRET}
+  kakao:
+    client_id: ${KAKAO_CLIENT_ID}
+    redirect_url: ${KAKAO_REDIRECT_URL}
+
+springdoc:
+  packages-to-scan: gachagacha.gachagacha
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    disable-swagger-default-url: true
+    display-request-duration: true
+    operations-sorter: alph
+    path: /
