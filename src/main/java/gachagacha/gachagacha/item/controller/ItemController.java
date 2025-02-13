@@ -1,5 +1,6 @@
 package gachagacha.gachagacha.item.controller;
 
+import gachagacha.gachagacha.item.dto.GachaResponse;
 import gachagacha.gachagacha.item.dto.ReadBackgroundResponse;
 import gachagacha.gachagacha.item.dto.UserItemResponse;
 import gachagacha.gachagacha.item.service.ItemService;
@@ -19,9 +20,8 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping("/gacha")
-    public String gacha(HttpServletRequest request) {
-        String imageName = itemService.gacha(request);
-        return "/image/items/" + imageName;
+    public GachaResponse gacha(HttpServletRequest request) {
+        return itemService.gacha(request);
     }
 
     @GetMapping("/items/{nickname}")
@@ -47,6 +47,12 @@ public class ItemController {
     @GetMapping(value = "/image/backgrounds/{imageName}", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity getBackgroundImage(@PathVariable String imageName) {
         ClassPathResource resource = new ClassPathResource("/backgrounds/" + imageName);
+        return ResponseEntity.ok().body(resource);
+    }
+
+    @GetMapping(value = "/image/gacha/{imageName}", produces = MediaType.IMAGE_GIF_VALUE)
+    public ResponseEntity getGachaImage(@PathVariable String imageName) {
+        ClassPathResource resource = new ClassPathResource("/items/" + imageName);
         return ResponseEntity.ok().body(resource);
     }
 }

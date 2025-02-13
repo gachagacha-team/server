@@ -1,5 +1,6 @@
 package gachagacha.gachagacha.item.service;
 
+import gachagacha.gachagacha.item.dto.GachaResponse;
 import gachagacha.gachagacha.item.dto.ReadBackgroundResponse;
 import gachagacha.gachagacha.item.dto.UserItemResponse;
 import gachagacha.gachagacha.item.entity.Item;
@@ -28,14 +29,14 @@ public class ItemService {
     private final UserRepository userRepository;
     private final JwtUtils jwtUtils;
 
-    public String gacha(HttpServletRequest request) {
+    public GachaResponse gacha(HttpServletRequest request) {
         User user = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         user.deductCoinForGacha();
 
         Item item = Item.gacha(ItemGrade.getItemGrade(new Random().nextInt(100) + 1));
         user.addUserItem(UserItem.create(item));
-        return item.getImageFileName();
+        return new GachaResponse(item.getViewName(), "/image/gacha/" + item.getImageFileName(), item.getItemGrade().getViewName());
     }
 
     public List<UserItemResponse> readItemsByGrade(String nickname, String grade, HttpServletRequest request) {
@@ -59,8 +60,7 @@ public class ItemService {
                         "/image/items/" + item.getImageFileName(),
                         item.getViewName(), item.getItemGrade().getViewName(),
                         itemIdToUserItemIds.get(item.getItemId()),
-                        itemIdToUserItemIds.get(item.getItemId()).size(),
-                        itemIdToUserItemIds.containsKey(item.getItemId())
+                        itemIdToUserItemIds.containsKey(item.getItemId()) ? itemIdToUserItemIds.get(item.getItemId()).size() : 0
                 ))
                 .toList();
     }
@@ -83,10 +83,8 @@ public class ItemService {
                         item.getViewName(),
                         item.getItemGrade().getViewName(),
                         itemIdToUserItemIds.get(item.getItemId()),
-                        itemIdToUserItemIds.get(item.getItemId()).size(),
-                        itemIdToUserItemIds.containsKey(item.getItemId())
-                ))
-                .toList();
+                        itemIdToUserItemIds.containsKey(item.getItemId()) ? itemIdToUserItemIds.get(item.getItemId()).size() : 0)
+                ).toList();
     }
 
     public List<ReadBackgroundResponse> readAllBackgrounds(String nickname, HttpServletRequest request) {
@@ -102,7 +100,7 @@ public class ItemService {
     private User validateItemReadAuthorization(String nickname, HttpServletRequest request) {
         User user = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
-        if (jwtUtils.getUserNicknameFromHeader(request) != user.getNickname()) {
+        if (!jwtUtils.getUserNicknameFromHeader(request).equals(user.getNickname())) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
         }
         return user;
