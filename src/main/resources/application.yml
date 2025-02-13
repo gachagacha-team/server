@@ -1,30 +1,30 @@
+server:
+  port: 8080
+  ssl.key-store: ${SSL_KEY_STORE}
+  ssl.key-store-type: ${SSL_KEY_STORE_TYPE}
+  ssl.key-store-password: ${SSL_KEY_STORE_PASSWORD}
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/gachagacha
+    url: ${DATASOURCE_URL}
     username: ${DATASOURCE_USERNAME}
     password: ${DATASOURCE_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: none
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
-oauth2:
-  client:
-    registration:
-      github:
-        client_id: ${GITHUB_CLIENT_ID}
-        client_secret: ${GITHUB_CLIENT_SECRET}
-        request_token_url: ${GITHUB_REQUEST_TOKEN_URL}
-        request_user_url: ${GITHUB_REQUEST_USER_URL}
-      kakao:
-        client_id: ${KAKAO_CLIENT_ID}
-        redirect_url: ${KAKAO_REDIRECT_URL}
-        request_token_url: ${KAKAO_REQUEST_TOKEN_URL}
-        request_user_url: ${KAKAO_REQUEST_USER_URL}
 jwt:
   secret: ${JWT_SECRET}
+oauth:
+  github:
+    client_id: ${OAUTH_GITHUB_CLIENT_ID}
+    client_secret: ${OAUTH_GITHUB_CLIENT_SECRET}
+  kakao:
+    client_id: ${KAKAO_CLIENT_ID}
+    redirect_url: ${KAKAO_REDIRECT_URL}
+
 springdoc:
   packages-to-scan: gachagacha.gachagacha
   default-consumes-media-type: application/json;charset=UTF-8
