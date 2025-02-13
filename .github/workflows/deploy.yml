@@ -65,5 +65,6 @@ jobs:
             existing_container=$(docker ps -a -q -f name=gachagacha)
             if [ -n "$existing_container" ]; then
               sudo docker rm -f $existing_container
+              sleep 3 
             fi
             sudo docker run -d --name gachagacha --network host -p 8080:8080 -e SPRING_PROFILES_ACTIVE=dev ${{ secrets.DOCKER_USERNAME }}/gachagacha:latest
