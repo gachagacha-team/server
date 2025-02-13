@@ -17,6 +17,8 @@ public enum Item {
     ANGEL_KIRBY(102, ItemGrade.S, "앤젤 커비", "angel_kirby.gif"),
     BUNNIES(103, ItemGrade.S, "버니즈", "bunnies.png"),
     MARIO(104, ItemGrade.S, "마리오", "mario.gif"),
+    KITTY_ON_BALLOON(105, ItemGrade.S, "풍선 탄 키티", "kitty_on_balloon.gif"),
+    KITTY_WITH_BALLOON(106, ItemGrade.S, "풍선을 든 키티", "kitty_with_balloon.gif"),
 
     // A
     MARIO_FLOWER(201, ItemGrade.A, "마리오 꽃", "mario_flower.png"),
