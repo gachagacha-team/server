@@ -21,7 +21,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class ItemService {
 
@@ -29,6 +28,7 @@ public class ItemService {
     private final UserRepository userRepository;
     private final JwtUtils jwtUtils;
 
+    @Transactional
     public GachaResponse gacha(HttpServletRequest request) {
         User user = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
@@ -39,6 +39,7 @@ public class ItemService {
         return new GachaResponse(item.getViewName(), "/image/gacha/" + item.getImageFileName(), item.getItemGrade().getViewName());
     }
 
+    @Transactional(readOnly = true)
     public List<UserItemResponse> readItemsByGrade(String nickname, String grade, HttpServletRequest request) {
         validateItemReadAuthorization(nickname, request);
 
@@ -65,6 +66,7 @@ public class ItemService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public List<UserItemResponse> readAllItems(String nickname, HttpServletRequest request) {
         validateItemReadAuthorization(nickname, request);
 
@@ -87,6 +89,7 @@ public class ItemService {
                 ).toList();
     }
 
+    @Transactional(readOnly = true)
     public List<ReadBackgroundResponse> readAllBackgrounds(String nickname, HttpServletRequest request) {
         User user = validateItemReadAuthorization(nickname, request);
 

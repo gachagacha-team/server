@@ -26,7 +26,6 @@ import java.util.Arrays;
 import java.util.List;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class TradeService {
 
@@ -35,6 +34,7 @@ public class TradeService {
     private final UserItemRepository userItemRepository;
     private final TradeRepository tradeRepository;
 
+    @Transactional(readOnly = true)
     public List<ReadAllProductsResponse> readProducts(String grade) {
         List<Item> items = (grade == null) ? Arrays.asList(Item.values()) : Item.getItemsByGrade(ItemGrade.findByViewName(grade));
         return items.stream()
@@ -45,12 +45,14 @@ public class TradeService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public ReadOneProductResponse readOneProduct(long itemId) {
         Item item = Item.findById(itemId);
         List<Trade> trades = tradeRepository.findByItem(item);
         return new ReadOneProductResponse(item.getViewName(), item.getItemGrade().getViewName(), trades.size(), "/image/items/" + item.getImageFileName());
     }
 
+    @Transactional(readOnly = true)
     public Slice<ReadMyOneProductResponse> readMyProducts(String grade, Pageable pageable, HttpServletRequest request) {
         User seller = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
@@ -86,6 +88,7 @@ public class TradeService {
                 .toList();
     }
 
+    @Transactional(readOnly = true)
     public Page<ReadItemForSaleResponse> readMyItemsForSale(HttpServletRequest request, Pageable pageable) {
         User user = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
@@ -96,6 +99,7 @@ public class TradeService {
                         "/image/items/" + userItem.getItem().getImageFileName()));
     }
 
+    @Transactional
     public void registerTrade(AddProductRequest addProductRequest, HttpServletRequest request) {
         UserItem userItem = userItemRepository.findById(addProductRequest.getUserItemId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_ITEM));
@@ -107,6 +111,7 @@ public class TradeService {
         userItemRepository.delete(userItem);
     }
 
+    @Transactional
     public void cancelTrade(long productId, HttpServletRequest request) {
         User seller = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
@@ -118,6 +123,7 @@ public class TradeService {
         tradeRepository.delete(trade);
     }
 
+    @Transactional
     public void purchase(long itemId, HttpServletRequest request) {
         User buyer = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
