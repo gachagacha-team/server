@@ -24,7 +24,7 @@ jobs:
       - name: set yml
         uses: microsoft/variable-substitution@v1
         with:
-          files: ./src/main/resources/application-dev.yml
+          files: ./src/main/resources/application-prod.yml
         env:
           server.ssl.key-store: ${{ secrets.SSL_KEY_STORE }}
           server.ssl.key-store-type: ${{ secrets.SSL_KEY_STORE_TYPE }}
