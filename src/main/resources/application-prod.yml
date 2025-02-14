@@ -34,3 +34,6 @@ springdoc:
     display-request-duration: true
     operations-sorter: alph
     path: /
+logging:
+  discord:
+    webhook-url: ${DISCORD_WEBHOOK_URL}

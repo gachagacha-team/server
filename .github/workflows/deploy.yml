@@ -24,7 +24,7 @@ jobs:
       - name: set yml
         uses: microsoft/variable-substitution@v1
         with:
-          files: ./src/main/resources/application-dev.yml
+          files: ./src/main/resources/application-prod.yml
         env:
           server.ssl.key-store: ${{ secrets.SSL_KEY_STORE }}
           server.ssl.key-store-type: ${{ secrets.SSL_KEY_STORE_TYPE }}
@@ -37,6 +37,7 @@ jobs:
           oauth.github.client_secret: ${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }}
           oauth.kakao.client_id: ${{ secrets.KAKAO_CLIENT_ID }}
           oauth.kakao.redirect_url: ${{ secrets.KAKAO_REDIRECT_URL }}
+          logging.discord.webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
 
       - name: build with gradle
         run: |
@@ -65,5 +66,6 @@ jobs:
             existing_container=$(docker ps -a -q -f name=gachagacha)
             if [ -n "$existing_container" ]; then
               sudo docker rm -f $existing_container
+              sleep 3 
             fi
-            sudo docker run -d --name gachagacha --network host -p 8080:8080 -e SPRING_PROFILES_ACTIVE=dev ${{ secrets.DOCKER_USERNAME }}/gachagacha:latest
+            sudo docker run -d --name gachagacha --network host -p 8080:8080 -e SPRING_PROFILES_ACTIVE=prod ${{ secrets.DOCKER_USERNAME }}/gachagacha:latest
