@@ -1,0 +1,40 @@
+server:
+  port: 8085
+  ssl.key-store: classpath:keystore.p12
+  ssl.key-store-type: PKCS12
+  ssl.key-store-password: gacha!*!*
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/gachagacha
+    username: root
+  jpa:
+    hibernate:
+      ddl-auto: none
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+    show-sql: true
+
+jwt:
+  secret: weinfeglinqelrgknerkgkrkrxsatbbdddzxiowklh
+oauth:
+  github:
+    client_id: Iv23lica8LFNbzOrB595
+    client_secret: 4058722e6c8e35922b32ecb5bbcef6ff8ff5310c
+  kakao:
+    client_id: 9c35100cd45c705417bf81e23e8c7734
+    redirect_url: https://222.121.46.20:80/login/oauth2/code/kakao
+
+springdoc:
+  packages-to-scan: gachagacha.gachagacha
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    disable-swagger-default-url: true
+    display-request-duration: true
+    operations-sorter: alph
+    path: /
+
+file:
+  profile: /src/main/resources/profile/
