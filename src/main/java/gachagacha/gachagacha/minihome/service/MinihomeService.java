@@ -42,7 +42,7 @@ public class MinihomeService {
         int followersCnt = followRepository.findByFollowee(minihomeUser).size();
         int followingsCnt = followRepository.findByFollower(minihomeUser).size();
 
-        return new MinihomeResponse(minihomeUser.getNickname().equals(currentUserNickname), minihomeUser.getNickname(), minihomeUser.getScore().getScore(), followersCnt, followingsCnt, miniHome.getTotalVisitorCnt(), minihomeUser.getProfileImageUrl(), miniHome.getLayout());
+        return new MinihomeResponse(minihomeUser.getNickname().equals(currentUserNickname), minihomeUser.getNickname(), minihomeUser.getScore().getScore(), followersCnt, followingsCnt, miniHome.getTotalVisitorCnt(), "/image/profile/" + minihomeUser.getProfileImage().getStoreFileName(), miniHome.getLayout());
     }
 
     @Transactional(readOnly = true)
@@ -91,7 +91,7 @@ public class MinihomeService {
                 .map(minihome -> {
                     User user = userRepository.findByMinihome(minihome)
                             .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
-                    return new ExploreMinihomeResponse(user.getNickname(), minihome.getTotalVisitorCnt(), user.getProfileImageUrl());
+                    return new ExploreMinihomeResponse(user.getNickname(), minihome.getTotalVisitorCnt(), "/image/profile/" + user.getProfileImage().getStoreFileName());
                 });
     }
 }

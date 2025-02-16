@@ -6,13 +6,16 @@ import gachagacha.gachagacha.user.dto.JoinRequest;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class AuthController {
@@ -31,9 +34,9 @@ public class AuthController {
         response.sendRedirect(redirectUrl);
     }
 
-    @PostMapping("/join")
-    public void join(@RequestBody JoinRequest joinRequest, HttpServletResponse response) throws IOException {
-        String redirectUrl = authService.join(joinRequest);
+    @PostMapping(value = "/join")
+    public void join(@RequestPart(value = "data") JoinRequest joinRequest, @RequestPart(value = "profileImageFile") MultipartFile file, HttpServletResponse response) throws IOException {
+        String redirectUrl = authService.join(joinRequest, file);
         response.sendRedirect(redirectUrl);
     }
 

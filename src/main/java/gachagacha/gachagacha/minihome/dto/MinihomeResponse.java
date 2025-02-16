@@ -26,8 +26,8 @@ public class MinihomeResponse {
     @JsonProperty(value = "totalVisitorCnt")
     private int totalVisitorCnt;
 
-    @JsonProperty(value = "profileImageUrl")
-    private String profileImageUrl;
+    @JsonProperty(value = "profileImageStoreFileName")
+    private String profileImageStoreFileName;
 
     @JsonProperty(value = "layout")
     private String layout;

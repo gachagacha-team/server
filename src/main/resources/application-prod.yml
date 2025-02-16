@@ -37,3 +37,6 @@ springdoc:
 logging:
   discord:
     webhook-url: ${DISCORD_WEBHOOK_URL}
+
+file:
+  profile: /src/main/resources/profile/

@@ -102,7 +102,7 @@ public class UserService {
                 .map(follow -> {
                     User follower = follow.getFollower();
                     boolean isFollowing = followRepository.findByFollowerAndFollowee(currentUser, follower).isPresent();
-                    return new FollowerResponse(follower.getId(), follower.getNickname(), follower.getProfileImageUrl(),
+                    return new FollowerResponse(follower.getId(), follower.getNickname(), "/image/profile/" + follower.getProfileImage().getStoreFileName(),
                             isFollowing, currentUser.getId() == minihomeUser.getId(), currentUser.getId() == follower.getId());
                 });
     }
@@ -117,7 +117,7 @@ public class UserService {
                 .map(follow -> {
                     User followee = follow.getFollowee();
                     boolean isFollowing = followRepository.findByFollowerAndFollowee(currentUser, followee).isPresent();
-                    return new FollowingResponse(followee.getId(), followee.getNickname(), followee.getProfileImageUrl(),
+                    return new FollowingResponse(followee.getId(), followee.getNickname(), "/image/profile/" + followee.getProfileImage().getStoreFileName(),
                             isFollowing, currentUser.getId() == followee.getId());
                 });
     }
