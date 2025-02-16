@@ -100,7 +100,12 @@ public class AuthService {
     }
 
     private void storeProfileImage(MultipartFile file, String storeFileName) throws IOException {
-        file.transferTo(new File(System.getProperty("user.dir") + fileDir + storeFileName));
+        String directoryPath = System.getProperty("user.dir") + fileDir;
+        File directory = new File(directoryPath);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+        file.transferTo(new File(directoryPath + storeFileName));
     }
 
     public JwtDto renewTokens(HttpServletRequest request) {
