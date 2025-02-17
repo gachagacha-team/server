@@ -40,3 +40,10 @@ logging:
 
 file:
   profile: /uploads/profile/
+
+image:
+  api:
+    endpoints:
+      profile: /image/profile/
+      items: /image/items/
+      backgrounds: /image/backgrounds/

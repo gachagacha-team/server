@@ -13,6 +13,7 @@ import gachagacha.gachagacha.user.repository.FollowRepository;
 import gachagacha.gachagacha.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -22,6 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @RequiredArgsConstructor
 public class MinihomeService {
+
+    @Value("${image.api.endpoints.profile}")
+    private String profileImageApiEndpoint;
 
     private final UserRepository userRepository;
     private final MinihomeRepository minihomeRepository;
@@ -42,7 +46,7 @@ public class MinihomeService {
         int followersCnt = followRepository.findByFollowee(minihomeUser).size();
         int followingsCnt = followRepository.findByFollower(minihomeUser).size();
 
-        return new MinihomeResponse(minihomeUser.getNickname().equals(currentUserNickname), minihomeUser.getNickname(), minihomeUser.getScore().getScore(), followersCnt, followingsCnt, miniHome.getTotalVisitorCnt(), "/image/profile/" + minihomeUser.getProfileImage().getStoreFileName(), miniHome.getLayout());
+        return new MinihomeResponse(minihomeUser.getNickname().equals(currentUserNickname), minihomeUser.getNickname(), minihomeUser.getScore().getScore(), followersCnt, followingsCnt, miniHome.getTotalVisitorCnt(), profileImageApiEndpoint + minihomeUser.getProfileImage().getStoreFileName(), miniHome.getLayout());
     }
 
     @Transactional(readOnly = true)
@@ -91,7 +95,7 @@ public class MinihomeService {
                 .map(minihome -> {
                     User user = userRepository.findByMinihome(minihome)
                             .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
-                    return new ExploreMinihomeResponse(user.getNickname(), minihome.getTotalVisitorCnt(), "/image/profile/" + user.getProfileImage().getStoreFileName());
+                    return new ExploreMinihomeResponse(user.getNickname(), minihome.getTotalVisitorCnt(), profileImageApiEndpoint + user.getProfileImage().getStoreFileName());
                 });
     }
 }

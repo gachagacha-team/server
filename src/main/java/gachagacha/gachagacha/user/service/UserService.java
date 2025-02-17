@@ -12,6 +12,7 @@ import gachagacha.gachagacha.user.repository.FollowRepository;
 import gachagacha.gachagacha.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,9 @@ import java.util.Random;
 @Service
 @RequiredArgsConstructor
 public class UserService {
+
+    @Value("${image.api.endpoints.profile}")
+    private String profileImageApiEndpoint;
 
     private final UserRepository userRepository;
     private final AttendanceRepository attendanceRepository;
@@ -102,7 +106,7 @@ public class UserService {
                 .map(follow -> {
                     User follower = follow.getFollower();
                     boolean isFollowing = followRepository.findByFollowerAndFollowee(currentUser, follower).isPresent();
-                    return new FollowerResponse(follower.getId(), follower.getNickname(), "/image/profile/" + follower.getProfileImage().getStoreFileName(),
+                    return new FollowerResponse(follower.getId(), follower.getNickname(), profileImageApiEndpoint + follower.getProfileImage().getStoreFileName(),
                             isFollowing, currentUser.getId() == minihomeUser.getId(), currentUser.getId() == follower.getId());
                 });
     }
@@ -117,7 +121,7 @@ public class UserService {
                 .map(follow -> {
                     User followee = follow.getFollowee();
                     boolean isFollowing = followRepository.findByFollowerAndFollowee(currentUser, followee).isPresent();
-                    return new FollowingResponse(followee.getId(), followee.getNickname(), "/image/profile/" + followee.getProfileImage().getStoreFileName(),
+                    return new FollowingResponse(followee.getId(), followee.getNickname(), profileImageApiEndpoint + followee.getProfileImage().getStoreFileName(),
                             isFollowing, currentUser.getId() == followee.getId());
                 });
     }

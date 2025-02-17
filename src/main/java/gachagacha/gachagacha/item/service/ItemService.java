@@ -14,6 +14,7 @@ import gachagacha.gachagacha.user.entity.User;
 import gachagacha.gachagacha.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,6 +24,12 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ItemService {
+
+    @Value("${image.api.endpoints.items}")
+    private String itemsImageApiEndpoint;
+
+    @Value("${image.api.endpoints.backgrounds}")
+    private String backgroundsImageApiEndpoint;
 
     private final UserItemRepository userItemRepository;
     private final UserRepository userRepository;
@@ -36,7 +43,7 @@ public class ItemService {
 
         Item item = Item.gacha(ItemGrade.getItemGrade(new Random().nextInt(100) + 1));
         user.addUserItem(UserItem.create(item));
-        return new GachaResponse(item.getViewName(), "/image/gacha/" + item.getImageFileName(), item.getItemGrade().getViewName());
+        return new GachaResponse(item.getViewName(), itemsImageApiEndpoint + item.getImageFileName(), item.getItemGrade().getViewName());
     }
 
     @Transactional(readOnly = true)
@@ -58,7 +65,7 @@ public class ItemService {
 
         return items.stream()
                 .map(item -> new UserItemResponse(item.getItemId(),
-                        "/image/items/" + item.getImageFileName(),
+                        itemsImageApiEndpoint + item.getImageFileName(),
                         item.getViewName(), item.getItemGrade().getViewName(),
                         itemIdToUserItemIds.get(item.getItemId()),
                         itemIdToUserItemIds.containsKey(item.getItemId()) ? itemIdToUserItemIds.get(item.getItemId()).size() : 0
@@ -81,7 +88,7 @@ public class ItemService {
 
         return Arrays.stream(Item.values())
                 .map(item -> new UserItemResponse(item.getItemId(),
-                        "/image/items/" + item.getImageFileName(),
+                        itemsImageApiEndpoint + item.getImageFileName(),
                         item.getViewName(),
                         item.getItemGrade().getViewName(),
                         itemIdToUserItemIds.get(item.getItemId()),
@@ -95,7 +102,7 @@ public class ItemService {
 
         return user.getBackgrounds().stream()
                 .map(background -> new ReadBackgroundResponse(background.getId(),
-                        "/image/backgrounds/" + background.getImageFileName()
+                        backgroundsImageApiEndpoint + background.getImageFileName()
                 ))
                 .toList();
     }

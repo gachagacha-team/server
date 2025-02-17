@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
-import java.io.IOException;
 
 @RestController
 public class ImageController {
@@ -31,14 +30,8 @@ public class ImageController {
         return ResponseEntity.ok().body(resource);
     }
 
-    @GetMapping(value = "/image/gacha/{imageName}", produces = MediaType.IMAGE_GIF_VALUE)
-    public ResponseEntity getGachaImage(@PathVariable String imageName) {
-        ClassPathResource resource = new ClassPathResource("/items/" + imageName);
-        return ResponseEntity.ok().body(resource);
-    }
-
     @GetMapping(value = "/image/profile/{imageName}", produces = MediaType.IMAGE_PNG_VALUE)
-    public ResponseEntity getProfileImage(@PathVariable String imageName) throws IOException {
+    public ResponseEntity getProfileImage(@PathVariable String imageName) {
         File imageFile = new File(System.getProperty("user.dir") + fileDir + imageName);
         Resource resource = new FileSystemResource(imageFile);
         return ResponseEntity.ok()
