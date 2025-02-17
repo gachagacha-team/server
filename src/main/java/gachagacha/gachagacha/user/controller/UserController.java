@@ -1,6 +1,5 @@
 package gachagacha.gachagacha.user.controller;
 
-import gachagacha.gachagacha.auth.jwt.JwtDto;
 import gachagacha.gachagacha.user.dto.*;
 import gachagacha.gachagacha.user.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;

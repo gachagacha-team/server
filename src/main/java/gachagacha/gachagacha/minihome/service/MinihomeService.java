@@ -20,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class MinihomeService {
 
@@ -30,6 +29,7 @@ public class MinihomeService {
     private final FollowRepository followRepository;
     private final JwtUtils jwtUtils;
 
+    @Transactional
     public MinihomeResponse readMinihome(String nickname, HttpServletRequest request) {
         String currentUserNickname = jwtUtils.getUserNicknameFromHeader(request);
 
@@ -42,9 +42,10 @@ public class MinihomeService {
         int followersCnt = followRepository.findByFollowee(minihomeUser).size();
         int followingsCnt = followRepository.findByFollower(minihomeUser).size();
 
-        return new MinihomeResponse(minihomeUser.getNickname().equals(currentUserNickname), minihomeUser.getNickname(), minihomeUser.getScore().getScore(), followersCnt, followingsCnt, miniHome.getTotalVisitorCnt(), minihomeUser.getProfileImageUrl(), miniHome.getLayout());
+        return new MinihomeResponse(minihomeUser.getNickname().equals(currentUserNickname), minihomeUser.getNickname(), minihomeUser.getScore().getScore(), followersCnt, followingsCnt, miniHome.getTotalVisitorCnt(), "/image/profile/" + minihomeUser.getProfileImage().getStoreFileName(), miniHome.getLayout());
     }
 
+    @Transactional(readOnly = true)
     public Page<GuestbookResponse> readGuestbooks(String nickname, Pageable pageable, HttpServletRequest request) {
         User currentUser = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
@@ -56,6 +57,7 @@ public class MinihomeService {
                        guestbook.getCreatedAt(), guestbook.getUser().getNickname().equals(currentUser.getNickname())));
     }
 
+    @Transactional
     public GuestbookResponse addGuestbook(String nickname, AddGuestbookRequest addGuestbookRequest, HttpServletRequest request) {
         User minihomeUser = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
@@ -70,23 +72,26 @@ public class MinihomeService {
         return new GuestbookResponse(guestbook.getId(), guestbookUser.getNickname(), guestbook.getContent(), guestbook.getCreatedAt(), true);
     }
 
-    public Slice<ExploreMinihomeResponse> explore(Pageable pageable) {
-        return minihomeRepository.findAllBy(pageable)
-                .map(minihome -> {
-                    User user = userRepository.findByMinihome(minihome)
-                            .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
-                    return new ExploreMinihomeResponse(user.getNickname(), minihome.getTotalVisitorCnt(), user.getProfileImageUrl());
-                });
-    }
-
+    @Transactional
     public GuestbookResponse editGuestbook(long guestbookId, EditGuestbookRequest editGuestbookRequest) {
         Guestbook guestbook = guestbookRepository.findById(guestbookId).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_GUESTBOOK));
         guestbook.edit(editGuestbookRequest.getContent());
         return new GuestbookResponse(guestbook.getId(), guestbook.getUser().getNickname(), guestbook.getContent(), guestbook.getCreatedAt(), true);
     }
 
+    @Transactional
     public void deleteGuestbook(long guestbookId) {
         Guestbook guestbook = guestbookRepository.findById(guestbookId).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_GUESTBOOK));
         guestbookRepository.delete(guestbook);
+    }
+
+    @Transactional(readOnly = true)
+    public Slice<ExploreMinihomeResponse> explore(Pageable pageable) {
+        return minihomeRepository.findAllBy(pageable)
+                .map(minihome -> {
+                    User user = userRepository.findByMinihome(minihome)
+                            .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
+                    return new ExploreMinihomeResponse(user.getNickname(), minihome.getTotalVisitorCnt(), "/image/profile/" + user.getProfileImage().getStoreFileName());
+                });
     }
 }

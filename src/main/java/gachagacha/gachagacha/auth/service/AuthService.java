@@ -7,6 +7,7 @@ import gachagacha.gachagacha.auth.jwt.JwtUtils;
 import gachagacha.gachagacha.exception.ErrorCode;
 import gachagacha.gachagacha.exception.customException.BusinessException;
 import gachagacha.gachagacha.user.dto.JoinRequest;
+import gachagacha.gachagacha.user.entity.ProfileImage;
 import gachagacha.gachagacha.user.entity.SocialType;
 import gachagacha.gachagacha.auth.oauth.client.GithubOAuthClient;
 import gachagacha.gachagacha.auth.oauth.client.KakaoOAuthClient;
@@ -14,13 +15,20 @@ import gachagacha.gachagacha.user.entity.User;
 import gachagacha.gachagacha.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class AuthService {
+
+    @Value("${file.profile}")
+    private String fileDir;
 
     private final UserRepository userRepository;
     private final JwtUtils jwtUtils;
@@ -44,7 +52,7 @@ public class AuthService {
         Optional<User> optionalUser = userRepository.findBySocialTypeAndLoginId(socialType, loginId);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            JwtDto jwtDto = jwtUtils.generateJwt(user.getNickname(), user.getProfileImageUrl());
+            JwtDto jwtDto = jwtUtils.generateJwt(user.getNickname(), "/image/profile/" + user.getProfileImage().getStoreFileName());
             refreshTokenRepository.save(new RefreshToken(jwtDto.getRefreshToken()));
             return "http://localhost:5173/auth"
                     + "?accessToken=" + jwtDto.getAccessToken()
@@ -56,15 +64,23 @@ public class AuthService {
         }
     }
 
-    public String join(JoinRequest joinRequest) {
+    public String join(JoinRequest joinRequest, MultipartFile file) throws IOException {
+        if (file == null) {
+            throw new BusinessException(ErrorCode.REQUIRED_PROFILE_IMAGE);
+        }
+
         SocialType socialType = SocialType.find(joinRequest.getSocialType());
 
         validateDuplicatedUser(socialType, joinRequest.getLoginId());
         validateDuplicatedNickname(joinRequest.getNickname());
 
-        User user = User.create(socialType, joinRequest.getLoginId(), joinRequest.getNickname(), joinRequest.getProfileUrl());
+        String originalFilename = file.getOriginalFilename();
+        ProfileImage profileImage = ProfileImage.create(originalFilename);
+        storeProfileImage(file, profileImage.getStoreFileName());
+        User user = User.create(socialType, joinRequest.getLoginId(), joinRequest.getNickname(), profileImage);
         userRepository.save(user);
-        JwtDto jwtDto = jwtUtils.generateJwt(user.getNickname(), user.getProfileImageUrl());
+
+        JwtDto jwtDto = jwtUtils.generateJwt(user.getNickname(), user.getProfileImage().getStoreFileName());
         refreshTokenRepository.save(new RefreshToken(jwtDto.getRefreshToken()));
         return "http://localhost:5173/auth"
                 + "?accessToken=" + jwtDto.getAccessToken()
@@ -83,6 +99,15 @@ public class AuthService {
         }
     }
 
+    private void storeProfileImage(MultipartFile file, String storeFileName) throws IOException {
+        String directoryPath = System.getProperty("user.dir") + fileDir;
+        File directory = new File(directoryPath);
+        if (!directory.exists()) {
+            directory.mkdirs();
+        }
+        file.transferTo(new File(directoryPath + storeFileName));
+    }
+
     public JwtDto renewTokens(HttpServletRequest request) {
         jwtUtils.validateTokenFromHeader(request);
 
@@ -92,7 +117,7 @@ public class AuthService {
         refreshTokenRepository.delete(refreshToken);
         User user = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
-        JwtDto jwtDto = jwtUtils.generateJwt(user.getNickname(), user.getProfileImageUrl());
+        JwtDto jwtDto = jwtUtils.generateJwt(user.getNickname(), "/image/profile/" + user.getProfileImage().getStoreFileName());
         refreshTokenRepository.save(new RefreshToken(jwtDto.getRefreshToken()));
         return jwtDto;
     }

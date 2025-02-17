@@ -1,13 +1,12 @@
 server:
-  port: 8080
-  ssl.key-store: ${SSL_KEY_STORE}
-  ssl.key-store-type: ${SSL_KEY_STORE_TYPE}
-  ssl.key-store-password: ${SSL_KEY_STORE_PASSWORD}
+  port: 8085
+  ssl.key-store: classpath:keystore.p12
+  ssl.key-store-type: PKCS12
+  ssl.key-store-password: gacha!*!*
 spring:
   datasource:
-    url: ${DATASOURCE_URL}
-    username: ${DATASOURCE_USERNAME}
-    password: ${DATASOURCE_PASSWORD}
+    url: jdbc:mysql://localhost:3306/gachagacha
+    username: root
   jpa:
     hibernate:
       ddl-auto: none
@@ -15,15 +14,17 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
+    show-sql: true
+
 jwt:
-  secret: ${JWT_SECRET}
+  secret: weinfeglinqelrgknerkgkrkrxsatbbdddzxiowklh
 oauth:
   github:
-    client_id: ${OAUTH_GITHUB_CLIENT_ID}
-    client_secret: ${OAUTH_GITHUB_CLIENT_SECRET}
+    client_id: Iv23lica8LFNbzOrB595
+    client_secret: 4058722e6c8e35922b32ecb5bbcef6ff8ff5310c
   kakao:
-    client_id: ${KAKAO_CLIENT_ID}
-    redirect_url: ${KAKAO_REDIRECT_URL}
+    client_id: 9c35100cd45c705417bf81e23e8c7734
+    redirect_url: https://222.121.46.20:80/login/oauth2/code/kakao
 
 springdoc:
   packages-to-scan: gachagacha.gachagacha
@@ -34,9 +35,6 @@ springdoc:
     display-request-duration: true
     operations-sorter: alph
     path: /
-logging:
-  discord:
-    webhook-url: ${DISCORD_WEBHOOK_URL}
 
 file:
-  profile: /uploads/profile/
+  profile: /src/main/resources/profile/

@@ -41,6 +41,10 @@ public class User extends BaseEntity {
     @Embedded
     private Score score;
 
+    @Column(nullable = false)
+    @Embedded
+    private ProfileImage profileImage;
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "minihome_id", nullable = false)
     private Minihome minihome;
@@ -49,10 +53,10 @@ public class User extends BaseEntity {
     private List<UserItem> userItems = new ArrayList<>();
 
     private List<Background> backgrounds = new ArrayList<>();
-    private String profileImageUrl;
+
     private static final int GACHA_COST = 1000;
 
-    public static User create(SocialType socialType, Long loginId, String nickname, String profileImageUrl) {
+    public static User create(SocialType socialType, Long loginId, String nickname, ProfileImage profileImage) {
         User user = new User();
         user.socialType = socialType;
         user.loginId = loginId;
@@ -61,7 +65,7 @@ public class User extends BaseEntity {
         user.score = new Score();
         user.minihome = Minihome.create();
         user.backgrounds.add(Background.WHITE);
-        user.profileImageUrl = profileImageUrl;
+        user.profileImage = profileImage;
         return user;
     }
 
@@ -112,7 +116,7 @@ public class User extends BaseEntity {
         this.id = id;
     }
 
-    public void addCoin(int bonusCoin) {
+    public void addCoinByAttendance(int bonusCoin) {
         this.coin.addCoin(bonusCoin);
     }
 

@@ -28,10 +28,10 @@ public class JwtUtils {
         this.jwtParser = Jwts.parserBuilder().setSigningKey(signingKey).build();
     }
 
-    public JwtDto generateJwt(String nickname, String profileImageUrl) {
+    public JwtDto generateJwt(String nickname, String profileImageStoreFileName) {
         Claims claims = Jwts.claims();
         claims.put("nickname", nickname);
-        claims.put("profile", profileImageUrl);
+        claims.put("profile", profileImageStoreFileName);
         return new JwtDto(generateAccessToken(claims), generateRefreshToken(claims));
     }
 

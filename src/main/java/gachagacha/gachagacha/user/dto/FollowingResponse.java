@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 public class FollowingResponse {
     private Long userId;
     private String nickname;
-    private String profileImageUrl;
+    private String profileImageStoreFileName;
 
     @JsonProperty("isFollowing")
     private boolean isFollowing;
@@ -25,7 +25,7 @@ public class FollowingResponse {
         return nickname;
     }
 
-    public String getProfileImageUrl() {
-        return profileImageUrl;
+    public String getProfileImageStoreFileName() {
+        return profileImageStoreFileName;
     }
 }

@@ -21,7 +21,6 @@ import java.time.LocalDate;
 import java.util.Random;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 public class UserService {
 
@@ -36,15 +35,15 @@ public class UserService {
         return new CoinResponse(user.getCoinAmount());
     }
 
+    @Transactional
     public AttendanceResponse attend(HttpServletRequest request) {
         User user = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         validateDuplicatedAttendance(user);
-        int bonusCoin = new Random().nextInt(4001) + 1000;
-        user.addCoin(bonusCoin);
-        Attendance attendance = Attendance.create(user, LocalDate.now());
-        attendanceRepository.save(attendance);
-        return new AttendanceResponse(bonusCoin, user.getCoin().getCoin());
+        int bonusCoin = (new Random().nextInt(5) + 1) * 1000;
+        user.addCoinByAttendance(bonusCoin);
+        attendanceRepository.save(Attendance.create(user, LocalDate.now()));
+        return new AttendanceResponse(bonusCoin, user.getCoinAmount());
     }
 
     private void validateDuplicatedAttendance(User user) {
@@ -54,6 +53,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public void follow(FollowRequest followRequest, HttpServletRequest request) {
         User follower = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
@@ -79,6 +79,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public void unfollow(UnfollowRequest unfollowRequest, HttpServletRequest request) {
         User follower = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
@@ -91,6 +92,7 @@ public class UserService {
         followRepository.delete(follow);
     }
 
+    @Transactional(readOnly = true)
     public Slice<FollowerResponse> getFollowers(String nickname, HttpServletRequest request, Pageable pageable) {
         User currentUser = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
@@ -100,11 +102,12 @@ public class UserService {
                 .map(follow -> {
                     User follower = follow.getFollower();
                     boolean isFollowing = followRepository.findByFollowerAndFollowee(currentUser, follower).isPresent();
-                    return new FollowerResponse(follower.getId(), follower.getNickname(), follower.getProfileImageUrl(),
+                    return new FollowerResponse(follower.getId(), follower.getNickname(), "/image/profile/" + follower.getProfileImage().getStoreFileName(),
                             isFollowing, currentUser.getId() == minihomeUser.getId(), currentUser.getId() == follower.getId());
                 });
     }
 
+    @Transactional(readOnly = true)
     public Slice<FollowingResponse> getFollowings(String nickname, HttpServletRequest request, Pageable pageable) {
         User currentUser = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
@@ -114,7 +117,7 @@ public class UserService {
                 .map(follow -> {
                     User followee = follow.getFollowee();
                     boolean isFollowing = followRepository.findByFollowerAndFollowee(currentUser, followee).isPresent();
-                    return new FollowingResponse(followee.getId(), followee.getNickname(), followee.getProfileImageUrl(),
+                    return new FollowingResponse(followee.getId(), followee.getNickname(), "/image/profile/" + followee.getProfileImage().getStoreFileName(),
                             isFollowing, currentUser.getId() == followee.getId());
                 });
     }

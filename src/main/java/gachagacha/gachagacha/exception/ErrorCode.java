@@ -12,6 +12,7 @@ ErrorCode {
     INVALID_SOCIAL_TYPE(HttpStatus.BAD_REQUEST, "잘못된 socialType 입니다."),
     DUPLICATED_USER_REGISTRATION(HttpStatus.BAD_REQUEST, "이미 가입된 사용자입니다."),
     DUPLICATED_NICKNAME(HttpStatus.BAD_REQUEST, "이미 사용중인 닉네임입니다."),
+    REQUIRED_PROFILE_IMAGE(HttpStatus.BAD_REQUEST, "프로필 이미지는 필수입니다."),
 
     // jwt
     REQUIRED_JWT(HttpStatus.UNAUTHORIZED, "토큰은 필수입니다."),
