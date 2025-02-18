@@ -7,5 +7,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class UnfollowRequest {
 
-    private long followeeUserId;
+    private String followeeUserNickname;
 }

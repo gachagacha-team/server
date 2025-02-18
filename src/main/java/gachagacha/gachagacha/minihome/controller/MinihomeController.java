@@ -2,6 +2,7 @@ package gachagacha.gachagacha.minihome.controller;
 
 import gachagacha.gachagacha.minihome.dto.*;
 import gachagacha.gachagacha.minihome.service.MinihomeService;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ public class MinihomeController {
 
     private final MinihomeService minihomeService;
 
+    @Operation(summary = "미니홈 조회", description = "닉네임으로 특정 사용자의 미니홈을 조회한다.")
     @GetMapping("/minihomes/{nickname}")
     public MinihomeResponse readMinihome(@PathVariable String nickname, HttpServletRequest request) {
         return minihomeService.readMinihome(nickname, request);
@@ -45,5 +47,10 @@ public class MinihomeController {
     @GetMapping("/explore/minihome")
     public Slice<ExploreMinihomeResponse> explore(Pageable pageable) {
         return minihomeService.explore(pageable);
+    }
+
+    @GetMapping("/explore/minihome/score")
+    public Slice<ExploreMinihomeResponse> exploreByScore(Pageable pageable) {
+        return minihomeService.exploreByScore(pageable);
     }
 }

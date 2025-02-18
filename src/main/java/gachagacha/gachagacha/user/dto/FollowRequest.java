@@ -7,5 +7,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class FollowRequest {
 
-    private long followeeUserId;
+    private String followeeUserNickname;
 }
