@@ -47,3 +47,6 @@ image:
       profile: /image/profile/
       items: /image/items/
       backgrounds: /image/backgrounds/
+  default:
+    profile: default_profile.png
+
