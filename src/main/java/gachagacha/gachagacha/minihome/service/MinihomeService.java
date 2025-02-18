@@ -102,7 +102,16 @@ public class MinihomeService {
                 .map(minihome -> {
                     User user = userRepository.findByMinihome(minihome)
                             .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
-                    return new ExploreMinihomeResponse(user.getNickname(), minihome.getTotalVisitorCnt(), profileImageApiEndpoint + user.getProfileImage().getStoreFileName());
+                    return new ExploreMinihomeResponse(user.getNickname(), minihome.getTotalVisitorCnt(),
+                            profileImageApiEndpoint + user.getProfileImage().getStoreFileName());
                 });
+    }
+
+    @Transactional(readOnly = true)
+    public Slice<ExploreMinihomeResponse> exploreByScore(Pageable pageable) {
+        return userRepository.findAllBy(pageable)
+                .map(user -> new ExploreMinihomeResponse(user.getNickname(), user.getMinihome().getTotalVisitorCnt(),
+                        profileImageApiEndpoint + user.getProfileImage().getStoreFileName()
+                ));
     }
 }
