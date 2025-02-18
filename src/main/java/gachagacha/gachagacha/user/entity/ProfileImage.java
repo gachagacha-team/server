@@ -22,4 +22,10 @@ public class ProfileImage {
         profileImage.storeFileName = storeFileName;
         return profileImage;
     }
+
+    public static ProfileImage createDefault() {
+        ProfileImage profileImage = new ProfileImage();
+        profileImage.storeFileName = "default_profile.png";
+        return profileImage;
+    }
 }
