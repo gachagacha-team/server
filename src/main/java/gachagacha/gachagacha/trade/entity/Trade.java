@@ -45,5 +45,6 @@ public class Trade extends BaseEntity {
     public void processTrade(User buyer) {
         this.buyer = buyer;
         this.tradeStatus = TradeStatus.COMPLETED;
+        this.transactionDate = LocalDateTime.now().withNano(0);
     }
 }

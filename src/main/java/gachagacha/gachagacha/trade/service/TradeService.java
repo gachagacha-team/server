@@ -15,6 +15,8 @@ import gachagacha.gachagacha.user.entity.User;
 import gachagacha.gachagacha.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -25,9 +27,13 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TradeService {
+
+    @Value("${image.api.endpoints.items}")
+    private String itemsImageApiEndpoint;
 
     private final JwtUtils jwtUtils;
     private final UserRepository userRepository;
@@ -40,7 +46,7 @@ public class TradeService {
         return items.stream()
                 .map(item -> {
                     List<Trade> trades = tradeRepository.findByItem(item);
-                    return new ReadAllProductsResponse(item.getItemId(), "/image/items/" + item.getImageFileName(), !trades.isEmpty());
+                    return new ReadAllProductsResponse(item.getItemId(), itemsImageApiEndpoint + item.getImageFileName(), !trades.isEmpty());
                 })
                 .toList();
     }
@@ -49,7 +55,7 @@ public class TradeService {
     public ReadOneProductResponse readOneProduct(long itemId) {
         Item item = Item.findById(itemId);
         List<Trade> trades = tradeRepository.findByItem(item);
-        return new ReadOneProductResponse(item.getViewName(), item.getItemGrade().getViewName(), trades.size(), "/image/items/" + item.getImageFileName());
+        return new ReadOneProductResponse(item.getViewName(), item.getItemGrade().getViewName(), trades.size(), itemsImageApiEndpoint + item.getImageFileName());
     }
 
     @Transactional(readOnly = true)
@@ -66,7 +72,7 @@ public class TradeService {
         List<ReadMyOneProductResponse> ReadMyOneProductResponses = trades.stream()
                 .map(trade -> {
                     ReadMyOneProductResponse readMyOneProductResponse = new ReadMyOneProductResponse(trade.getId(),
-                            "/image/items/" + trade.getItem().getImageFileName(),
+                            itemsImageApiEndpoint + trade.getItem().getImageFileName(),
                             trade.getItem().getViewName(),
                             trade.getItem().getItemGrade().getViewName(),
                             trade.getItem().getItemGrade().getPrice(),
@@ -96,7 +102,7 @@ public class TradeService {
         return userItemRepository.findByUserNicknameSlice(user.getNickname(), pageable)
                 .map(userItem -> new ReadItemForSaleResponse(userItem.getId(), userItem.getItem().getViewName(),
                         userItem.getItem().getItemGrade().getViewName(), userItem.getItem().getItemGrade().getPrice(),
-                        "/image/items/" + userItem.getItem().getImageFileName()));
+                        itemsImageApiEndpoint + userItem.getItem().getImageFileName()));
     }
 
     @Transactional
@@ -123,16 +129,13 @@ public class TradeService {
         tradeRepository.delete(trade);
     }
 
+
     @Transactional
     public void purchase(long itemId, HttpServletRequest request) {
         User buyer = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
-
         Item item = Item.findById(itemId);
-
-        Trade trade = tradeRepository.findByItemOrderByCreatedAtAsc(item)
-                .stream()
-                .findFirst()
+        Trade trade = tradeRepository.findFirstByItemAndTradeStatusOrderByCreatedAtAsc(item, TradeStatus.ON_SALE)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INSUFFICIENT_PRODUCT));
 
         buyer.processPurchase(trade.getItem());

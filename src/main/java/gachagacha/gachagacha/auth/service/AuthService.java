@@ -30,6 +30,9 @@ public class AuthService {
     @Value("${file.profile}")
     private String fileDir;
 
+    @Value("${image.api.endpoints.profile}")
+    private String profileImageApiEndpoint;
+
     private final UserRepository userRepository;
     private final JwtUtils jwtUtils;
     private final GithubOAuthClient githubOAuthClient;
@@ -52,7 +55,7 @@ public class AuthService {
         Optional<User> optionalUser = userRepository.findBySocialTypeAndLoginId(socialType, loginId);
         if (optionalUser.isPresent()) {
             User user = optionalUser.get();
-            JwtDto jwtDto = jwtUtils.generateJwt(user.getNickname(), "/image/profile/" + user.getProfileImage().getStoreFileName());
+            JwtDto jwtDto = jwtUtils.generateJwt(user.getNickname(), profileImageApiEndpoint + user.getProfileImage().getStoreFileName());
             refreshTokenRepository.save(new RefreshToken(jwtDto.getRefreshToken()));
             return "http://localhost:5173/auth"
                     + "?accessToken=" + jwtDto.getAccessToken()
@@ -117,7 +120,7 @@ public class AuthService {
         refreshTokenRepository.delete(refreshToken);
         User user = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
-        JwtDto jwtDto = jwtUtils.generateJwt(user.getNickname(), "/image/profile/" + user.getProfileImage().getStoreFileName());
+        JwtDto jwtDto = jwtUtils.generateJwt(user.getNickname(), profileImageApiEndpoint + user.getProfileImage().getStoreFileName());
         refreshTokenRepository.save(new RefreshToken(jwtDto.getRefreshToken()));
         return jwtDto;
     }
