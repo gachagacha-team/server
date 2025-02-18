@@ -31,4 +31,7 @@ public class MinihomeResponse {
 
     @JsonProperty(value = "layout")
     private String layout;
+
+    @JsonProperty(value = "isFollowing")
+    private boolean isFollowing;
 }

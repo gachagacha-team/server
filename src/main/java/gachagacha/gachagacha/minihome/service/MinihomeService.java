@@ -35,7 +35,8 @@ public class MinihomeService {
 
     @Transactional
     public MinihomeResponse readMinihome(String nickname, HttpServletRequest request) {
-        String currentUserNickname = jwtUtils.getUserNicknameFromHeader(request);
+        User currentUser = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
 
         User minihomeUser = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
@@ -46,7 +47,13 @@ public class MinihomeService {
         int followersCnt = followRepository.findByFollowee(minihomeUser).size();
         int followingsCnt = followRepository.findByFollower(minihomeUser).size();
 
-        return new MinihomeResponse(minihomeUser.getNickname().equals(currentUserNickname), minihomeUser.getNickname(), minihomeUser.getScore().getScore(), followersCnt, followingsCnt, miniHome.getTotalVisitorCnt(), profileImageApiEndpoint + minihomeUser.getProfileImage().getStoreFileName(), miniHome.getLayout());
+        boolean isFollowing = followRepository.findByFollowerAndFollowee(currentUser, minihomeUser).isPresent();
+
+        return new MinihomeResponse(minihomeUser.getNickname().equals(currentUser.getNickname()),
+                minihomeUser.getNickname(), minihomeUser.getScore().getScore(),
+                followersCnt, followingsCnt, miniHome.getTotalVisitorCnt(),
+                profileImageApiEndpoint + minihomeUser.getProfileImage().getStoreFileName(),
+                miniHome.getLayout(), isFollowing);
     }
 
     @Transactional(readOnly = true)
