@@ -15,6 +15,7 @@ import gachagacha.gachagacha.user.entity.User;
 import gachagacha.gachagacha.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Arrays;
 import java.util.List;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class TradeService {
@@ -127,16 +129,13 @@ public class TradeService {
         tradeRepository.delete(trade);
     }
 
+
     @Transactional
     public void purchase(long itemId, HttpServletRequest request) {
         User buyer = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
-
         Item item = Item.findById(itemId);
-
-        Trade trade = tradeRepository.findByItemOrderByCreatedAtAsc(item)
-                .stream()
-                .findFirst()
+        Trade trade = tradeRepository.findFirstByItemAndTradeStatusOrderByCreatedAtAsc(item, TradeStatus.ON_SALE)
                 .orElseThrow(() -> new BusinessException(ErrorCode.INSUFFICIENT_PRODUCT));
 
         buyer.processPurchase(trade.getItem());
