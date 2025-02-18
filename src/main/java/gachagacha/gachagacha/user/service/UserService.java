@@ -61,7 +61,7 @@ public class UserService {
     public void follow(FollowRequest followRequest, HttpServletRequest request) {
         User follower = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
-        User followee = userRepository.findById(followRequest.getFolloweeUserId())
+        User followee = userRepository.findByNickname(followRequest.getFolloweeUserNickname())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
 
         validateSelfFollow(follower, followee);
@@ -87,7 +87,7 @@ public class UserService {
     public void unfollow(UnfollowRequest unfollowRequest, HttpServletRequest request) {
         User follower = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
-        User followee = userRepository.findById(unfollowRequest.getFolloweeUserId())
+        User followee = userRepository.findByNickname(unfollowRequest.getFolloweeUserNickname())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
 
         Follow follow = followRepository.findByFollowerAndFollowee(follower, followee)
