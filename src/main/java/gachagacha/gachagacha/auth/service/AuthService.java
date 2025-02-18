@@ -68,18 +68,19 @@ public class AuthService {
     }
 
     public String join(JoinRequest joinRequest, MultipartFile file) throws IOException {
-        if (file == null) {
-            throw new BusinessException(ErrorCode.REQUIRED_PROFILE_IMAGE);
-        }
-
         SocialType socialType = SocialType.find(joinRequest.getSocialType());
 
         validateDuplicatedUser(socialType, joinRequest.getLoginId());
         validateDuplicatedNickname(joinRequest.getNickname());
 
-        String originalFilename = file.getOriginalFilename();
-        ProfileImage profileImage = ProfileImage.create(originalFilename);
-        storeProfileImage(file, profileImage.getStoreFileName());
+        ProfileImage profileImage;
+        if (file == null) {
+            profileImage = ProfileImage.createDefault();
+        } else {
+            profileImage = ProfileImage.create(file.getOriginalFilename());
+            storeProfileImage(file, profileImage.getStoreFileName());
+        }
+
         User user = User.create(socialType, joinRequest.getLoginId(), joinRequest.getNickname(), profileImage);
         userRepository.save(user);
 

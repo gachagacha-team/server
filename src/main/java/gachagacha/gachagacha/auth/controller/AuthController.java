@@ -36,7 +36,7 @@ public class AuthController {
 
     @Operation(summary = "회원가입")
     @PostMapping(value = "/join")
-    public void join(@RequestPart(value = "data") JoinRequest joinRequest, @RequestPart(value = "profileImageFile") MultipartFile file, HttpServletResponse response) throws IOException {
+    public void join(@RequestPart(value = "data") JoinRequest joinRequest, @RequestPart(value = "profileImageFile", required = false) MultipartFile file, HttpServletResponse response) throws IOException {
         String redirectUrl = authService.join(joinRequest, file);
         response.sendRedirect(redirectUrl);
     }

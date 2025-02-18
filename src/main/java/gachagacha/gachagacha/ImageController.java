@@ -20,6 +20,9 @@ public class ImageController {
     @Value("${file.profile}")
     private String fileDir;
 
+    @Value(value = "${image.default.profile}")
+    private String defaultProfileName;
+
     @Operation(summary = "아이템 이미지 조회")
     @Parameter(name = "imageName", description = "이미지 파일명")
     @GetMapping(value = "/image/items/{imageName}", produces = MediaType.IMAGE_GIF_VALUE)
@@ -40,9 +43,14 @@ public class ImageController {
     @Parameter(name = "imageName", description = "이미지 파일명")
     @GetMapping(value = "/image/profile/{imageName}", produces = MediaType.IMAGE_PNG_VALUE)
     public ResponseEntity getProfileImage(@PathVariable String imageName) {
-        File imageFile = new File(System.getProperty("user.dir") + fileDir + imageName);
-        Resource resource = new FileSystemResource(imageFile);
-        return ResponseEntity.ok()
-                .body(resource);
+        if (imageName.equals(defaultProfileName)) {
+            ClassPathResource resource = new ClassPathResource(imageName);
+            return ResponseEntity.ok().body(resource);
+        } else {
+            File imageFile = new File(System.getProperty("user.dir") + fileDir + imageName);
+            Resource resource = new FileSystemResource(imageFile);
+            return ResponseEntity.ok()
+                    .body(resource);
+        }
     }
 }
