@@ -68,4 +68,4 @@ jobs:
               sudo docker rm -f $existing_container
               sleep 3 
             fi
-            sudo docker run -d --name gachagacha --network host -p 8080:8080 -e SPRING_PROFILES_ACTIVE=prod ${{ secrets.DOCKER_USERNAME }}/gachagacha:latest
+            sudo docker run -d --name gachagacha --network host -p 8080:8080 -v gachagacha-uploads:/uploads -e SPRING_PROFILES_ACTIVE=prod ${{ secrets.DOCKER_USERNAME }}/gachagacha:latest
