@@ -63,9 +63,16 @@ public class MinihomeService {
         User minihomeUser = userRepository.findByNickname(nickname)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
         Minihome miniHome = minihomeUser.getMinihome();
-       return guestbookRepository.findByMinihome(miniHome, pageable)
-               .map(guestbook -> new GuestbookResponse(guestbook.getId(), guestbook.getUser().getNickname(), guestbook.getContent(),
-                       guestbook.getCreatedAt(), guestbook.getUser().getNickname().equals(currentUser.getNickname())));
+
+        return guestbookRepository.findByMinihome(miniHome, pageable)
+                .map(guestbook -> {
+                    if (guestbook.getUser() == null) {
+                        return new GuestbookResponse(guestbook.getId(), "undefined", guestbook.getContent(),
+                                guestbook.getCreatedAt(), false);
+                    }
+                    return new GuestbookResponse(guestbook.getId(), guestbook.getUser().getNickname(), guestbook.getContent(),
+                            guestbook.getCreatedAt(), guestbook.getUser().getNickname().equals(currentUser.getNickname()));
+                });
     }
 
     @Transactional
@@ -84,15 +91,25 @@ public class MinihomeService {
     }
 
     @Transactional
-    public GuestbookResponse editGuestbook(long guestbookId, EditGuestbookRequest editGuestbookRequest) {
+    public GuestbookResponse editGuestbook(long guestbookId, EditGuestbookRequest editGuestbookRequest, HttpServletRequest request) {
         Guestbook guestbook = guestbookRepository.findById(guestbookId).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_GUESTBOOK));
+        User guestbookUser = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
+        if (!guestbook.getUser().getNickname().equals(guestbookUser.getNickname())) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED);
+        }
         guestbook.edit(editGuestbookRequest.getContent());
         return new GuestbookResponse(guestbook.getId(), guestbook.getUser().getNickname(), guestbook.getContent(), guestbook.getCreatedAt(), true);
     }
 
     @Transactional
-    public void deleteGuestbook(long guestbookId) {
+    public void deleteGuestbook(long guestbookId, HttpServletRequest request) {
         Guestbook guestbook = guestbookRepository.findById(guestbookId).orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_GUESTBOOK));
+        User guestbookUser = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
+        if (!guestbook.getUser().getNickname().equals(guestbookUser.getNickname())) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED);
+        }
         guestbookRepository.delete(guestbook);
     }
 

@@ -6,17 +6,22 @@ import gachagacha.gachagacha.auth.jwt.JwtDto;
 import gachagacha.gachagacha.auth.jwt.JwtUtils;
 import gachagacha.gachagacha.exception.ErrorCode;
 import gachagacha.gachagacha.exception.customException.BusinessException;
+import gachagacha.gachagacha.minihome.repository.GuestbookRepository;
+import gachagacha.gachagacha.trade.repository.TradeRepository;
 import gachagacha.gachagacha.user.dto.JoinRequest;
 import gachagacha.gachagacha.user.entity.ProfileImage;
 import gachagacha.gachagacha.user.entity.SocialType;
 import gachagacha.gachagacha.auth.oauth.client.GithubOAuthClient;
 import gachagacha.gachagacha.auth.oauth.client.KakaoOAuthClient;
 import gachagacha.gachagacha.user.entity.User;
+import gachagacha.gachagacha.user.repository.AttendanceRepository;
+import gachagacha.gachagacha.user.repository.FollowRepository;
 import gachagacha.gachagacha.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -38,6 +43,10 @@ public class AuthService {
     private final GithubOAuthClient githubOAuthClient;
     private final KakaoOAuthClient kakaoOAuthClient;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final FollowRepository followRepository;
+    private final AttendanceRepository attendanceRepository;
+    private final TradeRepository tradeRepository;
+    private final GuestbookRepository guestbookRepository;
 
     public String authWithGithub(String code) {
         String accessToken = githubOAuthClient.fetchOAuthToken(code);
@@ -130,7 +139,47 @@ public class AuthService {
         jwtUtils.validateTokenFromHeader(request);
         RefreshToken refreshToken = refreshTokenRepository.findByRefreshToken(jwtUtils.getRefreshTokenFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_JWT));
-
         refreshTokenRepository.delete(refreshToken);
+    }
+
+    @Transactional
+    public void withdraw(HttpServletRequest request) {
+        User user = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
+
+        // follow 엔티티 삭제
+        followRepository.findByFollowee(user).stream()
+                .forEach(follow -> followRepository.delete(follow));
+        followRepository.findByFollower(user).stream()
+                .forEach(follow -> followRepository.delete(follow));
+
+        // attendance 엔티티 삭제
+        attendanceRepository.findByUser(user).stream()
+                .forEach(attendance -> attendanceRepository.delete(attendance));
+
+        // trade 엔티티 soft delete
+        tradeRepository.findBySeller(user).stream()
+                .forEach(trade -> trade.softDeleteBySeller());
+        tradeRepository.findByBuyer(user).stream()
+                .forEach(trade -> trade.softDeleteByBuyer());
+
+        // guestbook 엔티티 soft delete
+        guestbookRepository.findByMinihome(user.getMinihome()).stream()
+                .forEach(guestbook -> guestbook.softDeleteByMinihomeUser());
+        guestbookRepository.findByUser(user).stream()
+                .forEach(guestbook -> guestbook.softDeleteByUser());
+
+        // user, userItem, minihome 엔티티 삭제
+        userRepository.delete(user);
+
+        // RT 삭제
+        RefreshToken refreshToken = refreshTokenRepository.findByRefreshToken(jwtUtils.getRefreshTokenFromHeader(request))
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_JWT));
+        refreshTokenRepository.delete(refreshToken);
+
+        // 소셜 로그인 해제 (TODO: 깃허브 추가하기)
+        if (user.getSocialType() == SocialType.KAKAO) {
+            kakaoOAuthClient.unlink(user.getLoginId());
+        }
     }
 }

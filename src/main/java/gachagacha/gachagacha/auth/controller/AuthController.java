@@ -52,4 +52,10 @@ public class AuthController {
     public void logout(HttpServletRequest request) {
         authService.logout(request);
     }
+
+    @Operation(summary = "회원 탈퇴")
+    @DeleteMapping("/withdraw")
+    public void withdraw(HttpServletRequest request) {
+        authService.withdraw(request);
+    }
 }

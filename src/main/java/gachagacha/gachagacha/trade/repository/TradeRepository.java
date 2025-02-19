@@ -22,4 +22,6 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
     Optional<Trade> findFirstByItemAndTradeStatusOrderByCreatedAtAsc(Item item, TradeStatus tradeStatus);
 
     Slice<Trade> findBySeller(User seller, Pageable pageable);
+    List<Trade> findBySeller(User seller);
+    List<Trade> findByBuyer(User buyer);
 }
