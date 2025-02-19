@@ -18,7 +18,7 @@ public class Trade extends BaseEntity {
     private long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "seller_id", nullable = false)
+    @JoinColumn(name = "seller_id")
     private User seller;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -46,5 +46,13 @@ public class Trade extends BaseEntity {
         this.buyer = buyer;
         this.tradeStatus = TradeStatus.COMPLETED;
         this.transactionDate = LocalDateTime.now().withNano(0);
+    }
+
+    public void softDeleteBySeller() {
+        seller = null;
+    }
+
+    public void softDeleteByBuyer() {
+        buyer = null;
     }
 }

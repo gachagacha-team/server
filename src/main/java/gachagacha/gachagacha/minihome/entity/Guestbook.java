@@ -15,11 +15,11 @@ public class Guestbook extends BaseEntity {
     private long id;
 
     @ManyToOne
-    @JoinColumn(name = "minihome_id", nullable = false)
+    @JoinColumn(name = "minihome_id")
     private Minihome minihome;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
     @Column(nullable = false)
@@ -38,5 +38,13 @@ public class Guestbook extends BaseEntity {
 
     public void edit(String content) {
         this.content = content;
+    }
+
+    public void softDeleteByMinihomeUser() {
+        minihome = null;
+    }
+
+    public void softDeleteByUser() {
+        user = null;
     }
 }

@@ -44,15 +44,16 @@ public class MinihomeController {
     @Operation(summary = "방명록 수정")
     @Parameter(name = "guestbookId", description = "수정할 방명록 id")
     @PutMapping("/guestbooks/{guestbookId}")
-    public GuestbookResponse editGuestBook(@PathVariable long guestbookId, @RequestBody EditGuestbookRequest editGuestbookRequest) {
-        return minihomeService.editGuestbook(guestbookId, editGuestbookRequest);
+    public GuestbookResponse editGuestBook(@PathVariable long guestbookId, @RequestBody EditGuestbookRequest editGuestbookRequest,
+                                           HttpServletRequest request) {
+        return minihomeService.editGuestbook(guestbookId, editGuestbookRequest, request);
     }
 
     @Operation(summary = "방명록 삭제")
     @Parameter(name = "guestbookId", description = "삭제할 방명록 id")
     @DeleteMapping("/guestbooks/{guestbookId}")
-    public void deleteGuestBook(@PathVariable long guestbookId) {
-        minihomeService.deleteGuestbook(guestbookId);
+    public void deleteGuestBook(@PathVariable long guestbookId, HttpServletRequest request) {
+        minihomeService.deleteGuestbook(guestbookId, request);
     }
 
     @Operation(summary = "미니홈 리스트 조회(가입순, 인기순)(무한스크롤)")
