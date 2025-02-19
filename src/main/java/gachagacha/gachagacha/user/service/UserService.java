@@ -12,6 +12,7 @@ import gachagacha.gachagacha.user.repository.FollowRepository;
 import gachagacha.gachagacha.user.repository.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.Random;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -59,10 +61,14 @@ public class UserService {
 
     @Transactional
     public void follow(FollowRequest followRequest, HttpServletRequest request) {
+        log.info("dto = {}", followRequest.getFolloweeUserNickname());
         User follower = userRepository.findByNickname(jwtUtils.getUserNicknameFromHeader(request))
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
+        log.info("follower = {}", follower.getNickname());
         User followee = userRepository.findByNickname(followRequest.getFolloweeUserNickname())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
+        log.info("followee = {}", followee.getNickname());
+
 
         validateSelfFollow(follower, followee);
         validateDuplicatedFollow(follower, followee);
