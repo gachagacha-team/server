@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @NoArgsConstructor
@@ -16,7 +18,11 @@ public class RefreshToken {
     
     private String refreshToken;
 
+    @Column(nullable = false, columnDefinition = "DATETIME(0)")
+    private LocalDateTime expires_at;
+
     public RefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
+        this.expires_at = LocalDateTime.now().plusDays(30l);
     }
 }

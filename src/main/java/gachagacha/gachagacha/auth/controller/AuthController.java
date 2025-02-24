@@ -41,19 +41,19 @@ public class AuthController {
         response.sendRedirect(redirectUrl);
     }
 
-    @Operation(summary = "토큰 재발급", description = "액세스토큰 만료 시 액세스토큰과 리프레시토큰을 재발급받는다.")
+    @Operation(summary = "토큰 재발급", description = "access token 만료 시 access token과 refresh token을 재발급받는다. 헤더에 refresh token을 포함시켜야 한다.")
     @PostMapping("/tokens/renew")
     public JwtDto renewTokens(HttpServletRequest request) {
         return authService.renewTokens(request);
     }
 
-    @Operation(summary = "로그아웃")
+    @Operation(summary = "로그아웃", description = "헤더에 refresh token을 포함시켜야 한다.")
     @DeleteMapping("/logout")
     public void logout(HttpServletRequest request) {
         authService.logout(request);
     }
 
-    @Operation(summary = "회원 탈퇴")
+    @Operation(summary = "회원 탈퇴", description = "헤더에 refresh token을 포함시켜야 한다.")
     @DeleteMapping("/withdraw")
     public void withdraw(HttpServletRequest request) {
         authService.withdraw(request);
