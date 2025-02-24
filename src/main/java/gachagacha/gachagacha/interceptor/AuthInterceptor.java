@@ -1,6 +1,6 @@
 package gachagacha.gachagacha.interceptor;
 
-import gachagacha.gachagacha.auth.jwt.JwtUtils;
+import gachagacha.gachagacha.jwt.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
