@@ -68,7 +68,7 @@ public class User {
 
     public UserEntity toUserEntity() {
         return new UserEntity(
-                0l,
+                id,
                 socialType,
                 loginId,
                 nickname,

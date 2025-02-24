@@ -152,11 +152,11 @@ public class AuthService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_JWT));
         refreshTokenRepository.delete(refreshTokenEntity);
 
-        // user, userItem, minihome, attendance 엔티티 삭제
-        userRemover.delete(user);
+        // userItem, minihome, attendance, user 엔티티 삭제
         userItemRemover.deleteByUser(user);
         minihomeRemover.delete(minihome);
         attendanceRemover.deleteByUser(user);
+        userRemover.delete(user);
 
         // 소셜 로그인 해제 (TODO: 깃허브 추가하기)
         if (user.getSocialType() == SocialType.KAKAO) {
