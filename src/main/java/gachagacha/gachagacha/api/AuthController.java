@@ -44,7 +44,7 @@ public class AuthController {
     @Operation(summary = "회원가입")
     @PostMapping(value = "/join")
     public void join(@RequestPart(value = "data") JoinRequest joinRequest, @RequestPart(value = "profileImageFile", required = false) MultipartFile file, HttpServletResponse response) throws IOException {
-        User user = authService.join(joinRequest.getNickname(), SocialType.find(joinRequest.getSocialType()), joinRequest.getLoginId(), file);
+        User user = authService.join(joinRequest.getNickname(), SocialType.of(joinRequest.getSocialType()), joinRequest.getLoginId(), file);
         JwtDto jwtDto = jwtUtils.generateJwt(user);
         tokenService.save(jwtDto.getRefreshToken());
         String redirectUrl = "http://localhost:5173/auth"

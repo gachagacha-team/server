@@ -28,7 +28,7 @@ public class Attendance {
 
     public AttendanceEntity toEntity() {
         return new AttendanceEntity(
-                0l,
+                id,
                 date,
                 userId,
                 bonusCoin

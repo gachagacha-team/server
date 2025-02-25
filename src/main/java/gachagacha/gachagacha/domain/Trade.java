@@ -34,14 +34,6 @@ public class Trade {
         this.transactionDate = LocalDateTime.now().withNano(0);
     }
 
-    public void softDeleteBySeller() {
-        sellerId = -1;
-    }
-
-    public void softDeleteByBuyer() {
-        buyerId = -1;
-    }
-
     public TradeEntity toTradeEntity() {
         return new TradeEntity(
                 id,
