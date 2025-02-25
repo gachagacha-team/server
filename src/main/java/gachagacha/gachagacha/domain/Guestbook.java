@@ -1,8 +1,6 @@
 package gachagacha.gachagacha.domain;
 
 import gachagacha.gachagacha.entity.GuestbookEntity;
-import gachagacha.gachagacha.entity.UserEntity;
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,19 +26,6 @@ public class Guestbook {
                 content,
                 null
         );
-    }
-
-//    public static Guestbook fromEntity(GuestbookEntity guestbookEntity, UserEntity userEntity) {
-//        Guestbook guestbook = new Guestbook();
-//        guestbook.minihomeId = guestbookEntity.getMinihomeId();
-//        guestbook.authorName = userEntity.getNickname();
-//        guestbook.content = guestbookEntity.getContent();
-//        guestbook.createdAt = guestbookEntity.getCreatedAt();
-//        return guestbook;
-//    }
-
-    public void edit(String content) {
-        this.content = content;
     }
 
     public void setId(long id) {

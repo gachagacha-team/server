@@ -23,7 +23,7 @@ public class Follow {
 
     public FollowEntity toFollowEntity() {
         return new FollowEntity(
-                0l,
+                id,
                 followeeId,
                 followerId
         );

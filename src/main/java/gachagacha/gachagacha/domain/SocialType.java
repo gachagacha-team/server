@@ -16,7 +16,7 @@ public enum SocialType {
 
     private final String name;
 
-    public static SocialType find(String name) {
+    public static SocialType of(String name) {
         return Arrays.stream(SocialType.values())
                 .filter(loginType -> loginType.getName().equals(name))
                 .findAny()
