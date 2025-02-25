@@ -6,15 +6,18 @@ import gachagacha.gachagacha.implementation.trade.TradeReader;
 import gachagacha.gachagacha.implementation.trade.TradeRemover;
 import gachagacha.gachagacha.implementation.trade.TradeUpdater;
 import gachagacha.gachagacha.implementation.user.UserReader;
-import gachagacha.gachagacha.implementation.user.UserUpdator;
+import gachagacha.gachagacha.implementation.user.UserUpdater;
 import gachagacha.gachagacha.implementation.userItem.UserItemAppender;
 import gachagacha.gachagacha.implementation.userItem.UserItemReader;
 import gachagacha.gachagacha.implementation.userItem.UserItemRemover;
+import gachagacha.gachagacha.support.exception.ErrorCode;
+import gachagacha.gachagacha.support.exception.customException.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -30,7 +33,7 @@ public class TradeService {
     private final TradeReader tradeReader;
     private final UserItemAppender userItemAppender;
     private final TradeRemover tradeRemover;
-    private final UserUpdator userUpdator;
+    private final UserUpdater userUpdater;
     private final TradeUpdater tradeUpdater;
 
     public List<Trade> readOnSaleProductsByItem(Item item) {
@@ -41,23 +44,40 @@ public class TradeService {
         return tradeReader.findBySeller(user, pageable);
     }
 
-    public void registerTrade(UserItem userItem, User user) {
-        userItemRemover.delete(userItem);
+    @Transactional
+    public void registerTrade(User user, UserItem userItem) {
+        validateUserItemAuthorization(user, userItem);
 
         user.decreaseScoreForSaleItem(userItem.getItem(), userItemReader.findAllByUser(user));
-
-        userUpdator.update(user);
+        userItemRemover.delete(userItem);
+        userUpdater.update(user);
         tradeAppender.save(Trade.of(user, userItem.getItem()));
     }
 
-    public void cancelTrade(Trade trade, User user) {
+    private void validateUserItemAuthorization(User user, UserItem userItem) {
+        if (userItem.getUserId() != user.getId()) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED);
+        }
+    }
+
+    @Transactional
+    public void cancelTrade(User user, Trade trade) {
+        validateTradeAuthorization(user, trade);
+
         user.increaseScoreByItem(trade.getItem(), userItemReader.findAllByUser(user));
         userItemAppender.addUserItem(UserItem.of(user, trade.getItem()));
-        userUpdator.update(user);
+        userUpdater.update(user);
         tradeRemover.delete(trade);
     }
 
-    public void purchase(Item item, User buyer) {
+    private void validateTradeAuthorization(User user, Trade trade) {
+        if (trade.getSellerId() != user.getId()) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED);
+        }
+    }
+
+    @Transactional
+    public void purchase(User buyer, Item item) {
         Trade trade = tradeReader.findOnSaleProductByItem(item);
         User seller = userReader.findById(trade.getSellerId());
 
@@ -68,8 +88,8 @@ public class TradeService {
         trade.processTrade(buyer);
 
         userItemAppender.addUserItem(UserItem.of(buyer, item));
-        userUpdator.update(buyer);
-        userUpdator.update(seller);
+        userUpdater.update(buyer);
+        userUpdater.update(seller);
         tradeUpdater.update(trade);
     }
 

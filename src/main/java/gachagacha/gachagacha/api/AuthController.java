@@ -6,7 +6,8 @@ import gachagacha.gachagacha.jwt.JwtDto;
 import gachagacha.gachagacha.jwt.JwtUtils;
 import gachagacha.gachagacha.service.AuthService;
 import gachagacha.gachagacha.api.dto.JoinRequest;
-import gachagacha.gachagacha.service.TokenService;
+import gachagacha.gachagacha.service.OAuthService;
+import gachagacha.gachagacha.service.UserService;
 import gachagacha.gachagacha.support.api_response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,20 +25,21 @@ import java.io.IOException;
 public class AuthController {
 
     private final AuthService authService;
-    private final TokenService tokenService;
+    private final OAuthService oAuthService;
     private final JwtUtils jwtUtils;
+    private final UserService userService;
 
     @Operation(summary = "깃허브 로그인 리다이렉트 URL", description = "깃허브 로그인 시 다음 URL로 리다이렉트된다.")
     @GetMapping("/login/oauth2/code/github")
     public void authWithGithub(@RequestParam(name = "code") String code, HttpServletResponse response) throws IOException {
-        String redirectUrl = authService.authWithGithub(code);
+        String redirectUrl = oAuthService.authWithGithub(code);
         response.sendRedirect(redirectUrl);
     }
 
     @Operation(summary = "카카오 로그인 리다이렉트 URL", description = "카카오 로그인 시 다음 URL로 리다이렉트된다.")
     @GetMapping("/login/oauth2/code/kakao")
     public void authWithKakao(@RequestParam(name = "code") String code, HttpServletResponse response) throws IOException {
-        String redirectUrl = authService.authWithKakao(code);
+        String redirectUrl = oAuthService.authWithKakao(code);
         response.sendRedirect(redirectUrl);
     }
 
@@ -46,7 +48,7 @@ public class AuthController {
     public void join(@RequestPart(value = "data") JoinRequest joinRequest, @RequestPart(value = "profileImageFile", required = false) MultipartFile file, HttpServletResponse response) throws IOException {
         User user = authService.join(joinRequest.getNickname(), SocialType.of(joinRequest.getSocialType()), joinRequest.getLoginId(), file);
         JwtDto jwtDto = jwtUtils.generateJwt(user);
-        tokenService.save(jwtDto.getRefreshToken());
+        authService.saveRefreshToken(jwtDto.getRefreshToken());
         String redirectUrl = "http://localhost:5173/auth"
                 + "?accessToken=" + jwtDto.getAccessToken()
                 + "&refreshToken=" + jwtDto.getRefreshToken();
@@ -69,6 +71,8 @@ public class AuthController {
     @Operation(summary = "회원 탈퇴", description = "헤더에 refresh token을 포함시켜야 한다.")
     @DeleteMapping("/withdraw")
     public void withdraw(HttpServletRequest request) {
-        authService.withdraw(jwtUtils.getUserNicknameFromHeader(request), jwtUtils.getRefreshTokenFromHeader(request));
+        User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
+        authService.withdraw(user, jwtUtils.getRefreshTokenFromHeader(request));
+        oAuthService.unlink(user);
     }
 }

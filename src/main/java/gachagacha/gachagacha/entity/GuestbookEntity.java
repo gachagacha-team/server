@@ -17,31 +17,19 @@ public class GuestbookEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "guestbook_id")
-    private long id;
+    private Long id;
 
     @Column(nullable = false)
-    private long minihomeId;
+    private Long minihomeId;
 
     @Column(nullable = false)
-    private long userId;
+    private Long userId;
 
     @Column(nullable = false)
     private String content;
 
-    public static GuestbookEntity fromDomain(Guestbook guestbook) {
-        GuestbookEntity guestbookEntity = new GuestbookEntity();
-        guestbookEntity.minihomeId = guestbook.getMinihomeId();
-        guestbookEntity.userId = guestbook.getUserId();
-        guestbookEntity.content = guestbook.getContent();
-        return guestbookEntity;
-    }
-
     public Guestbook toGuestbook() {
         return new Guestbook(id, minihomeId, userId, content, getCreatedAt());
-    }
-
-    public void editContent(String content) {
-        this.content = content;
     }
 
     public void updateFromGuestbook(Guestbook guestbook) {

@@ -19,7 +19,7 @@ public class UserEntity extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private long id;
+    private Long id;
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
@@ -49,14 +49,6 @@ public class UserEntity extends BaseEntity {
         return new User(id, socialType, loginId, nickname, coin, score,
                 new ProfileImage(profileImageEntity.getUploadFileName(), profileImageEntity.getStoreFileName()),
                 backgrounds);
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public int getCoinAmount() {
-        return this.getCoin().getCoin();
     }
 
     public void updateFromUser(User user) {

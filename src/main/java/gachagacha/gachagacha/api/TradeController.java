@@ -59,7 +59,7 @@ public class TradeController {
     @PostMapping("/items/{itemId}/purchase")
     public ApiResponse purchase(@PathVariable long itemId, HttpServletRequest request) {
         User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
-        tradeService.purchase(Item.findById(itemId), user);
+        tradeService.purchase(user, Item.findById(itemId));
         return ApiResponse.success();
     }
 
@@ -118,11 +118,7 @@ public class TradeController {
     public ApiResponse addProduct(@RequestBody AddProductRequest addProductRequest, HttpServletRequest request) {
         User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
         UserItem userItem = itemService.readById(addProductRequest.getUserItemId());
-        if (userItem.getUserId() != user.getId()) {
-            throw new BusinessException(ErrorCode.UNAUTHORIZED);
-        }
-
-        tradeService.registerTrade(userItem, user);
+        tradeService.registerTrade(user, userItem);
         return ApiResponse.success();
     }
 
@@ -132,11 +128,7 @@ public class TradeController {
     public ApiResponse cancelTrade(@PathVariable long productId, HttpServletRequest request) {
         User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
         Trade trade = tradeService.readById(productId);
-        if (trade.getSellerId() != user.getId()) {
-            throw new BusinessException(ErrorCode.UNAUTHORIZED);
-        }
-
-        tradeService.cancelTrade(trade, user);
+        tradeService.cancelTrade(user, trade);
         return ApiResponse.success();
     }
 }

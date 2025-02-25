@@ -3,11 +3,10 @@ package gachagacha.gachagacha.service;
 import gachagacha.gachagacha.domain.*;
 import gachagacha.gachagacha.implementation.userItem.UserItemReader;
 import gachagacha.gachagacha.implementation.userItem.UserItemAppender;
-import gachagacha.gachagacha.implementation.user.UserUpdator;
+import gachagacha.gachagacha.implementation.user.UserUpdater;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -17,20 +16,17 @@ public class ItemService {
 
     private final UserItemAppender userItemAppender;
     private final UserItemReader userItemReader;
-    private final UserUpdator userUpdator;
+    private final UserUpdater userUpdater;
 
+    @Transactional
     public Item gacha(User user) {
         user.deductCoinForGacha();
         Item item = Item.gacha();
         user.increaseScoreByItem(item, userItemReader.findAllByUser(user));
 
         userItemAppender.save(UserItem.of(user, item));
-        userUpdator.update(user);
+        userUpdater.update(user);
         return item;
-    }
-
-    public Page<UserItem> readUserItems(User user, Pageable pageable) {
-        return userItemReader.findAllByUser(user, pageable);
     }
 
     public UserItem readById(long userItemId) {

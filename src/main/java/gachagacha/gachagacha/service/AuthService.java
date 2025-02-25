@@ -21,8 +21,6 @@ import gachagacha.gachagacha.jwt.JwtUtils;
 import gachagacha.gachagacha.support.exception.ErrorCode;
 import gachagacha.gachagacha.support.exception.customException.BusinessException;
 import gachagacha.gachagacha.domain.SocialType;
-import gachagacha.gachagacha.oauth.client.GithubOAuthClient;
-import gachagacha.gachagacha.oauth.client.KakaoOAuthClient;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.*;
 import org.springframework.stereotype.Service;
@@ -30,7 +28,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -45,42 +42,13 @@ public class AuthService {
     private final TradeRemover tradeRemover;
     private final GuestbookRemover guestbookRemover;
     private final JwtUtils jwtUtils;
-    private final GithubOAuthClient githubOAuthClient;
-    private final KakaoOAuthClient kakaoOAuthClient;
     private final RefreshTokenRepository refreshTokenRepository;
     private final MinihomeRemover minihomeRemover;
     private final MinihomeReader minihomeReader;
     private final UserRemover userRemover;
     private final UserItemRemover userItemRemover;
 
-    public String authWithGithub(String code) {
-        String accessToken = githubOAuthClient.fetchOAuthToken(code);
-        long loginId = githubOAuthClient.fetchOAuthLoginId(accessToken);
-        return generateRedirectUrl(loginId, SocialType.GITHUB);
-    }
-
-    public String authWithKakao(String code) {
-        String accessToken = kakaoOAuthClient.fetchOAuthToken(code);
-        long loginId = kakaoOAuthClient.fetchOAuthLoginId(accessToken);
-        return generateRedirectUrl(loginId, SocialType.KAKAO);
-    }
-
-    private String generateRedirectUrl(long loginId, SocialType socialType) {
-        Optional<User> optionalUser = userReader.findBySocialTypeAndLoginId(socialType, loginId);
-        if (optionalUser.isPresent()) {
-            User user = optionalUser.get();
-            JwtDto jwtDto = jwtUtils.generateJwt(user);
-            refreshTokenRepository.save(new RefreshTokenEntity(jwtDto.getRefreshToken()));
-            return "http://localhost:5173/auth"
-                    + "?accessToken=" + jwtDto.getAccessToken()
-                    + "&refreshToken=" + jwtDto.getRefreshToken();
-        } else {
-            return "http://localhost:5173/join"
-                    + "?socialType=" + socialType.getName()
-                    + "&loginId=" + loginId;
-        }
-    }
-
+    @Transactional
     public User join(String nickname, SocialType socialType, Long loginId, MultipartFile file) throws IOException {
         validateDuplicatedUser(socialType, loginId);
         validateDuplicatedNickname(nickname);
@@ -131,8 +99,7 @@ public class AuthService {
     }
 
     @Transactional
-    public void withdraw(String nickname, String refreshToken) {
-        User user = userReader.findByNickname(nickname);
+    public void withdraw(User user, String refreshToken) {
         Minihome minihome = minihomeReader.findByUser(user);
 
         // trade 엔티티 soft delete
@@ -157,10 +124,9 @@ public class AuthService {
         minihomeRemover.delete(minihome);
         attendanceRemover.deleteByUser(user);
         userRemover.delete(user);
+    }
 
-        // 소셜 로그인 해제 (TODO: 깃허브 추가하기)
-        if (user.getSocialType() == SocialType.KAKAO) {
-            kakaoOAuthClient.unlink(user.getLoginId());
-        }
+    public void saveRefreshToken(String refreshToken) {
+        refreshTokenRepository.save(new RefreshTokenEntity(refreshToken));
     }
 }

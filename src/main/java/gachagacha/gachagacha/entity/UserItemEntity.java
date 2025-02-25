@@ -18,21 +18,14 @@ public class UserItemEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_item_id")
-    private long id;
+    private Long id;
 
     @Enumerated(value = EnumType.STRING)
     @Column(nullable = false)
     private Item item;
 
     @Column(nullable = false)
-    private long userId;
-
-    public static UserItemEntity create(Item item, long userId) {
-        UserItemEntity userItemEntity = new UserItemEntity();
-        userItemEntity.item = item;
-        userItemEntity.userId = userId;
-        return userItemEntity;
-    }
+    private Long userId;
 
     public UserItem toUserItem() {
         return new UserItem(id, item, userId);

@@ -12,15 +12,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 public class Guestbook {
 
-    private long id;
-    private long minihomeId;
-    private long userId;
+    private Long id;
+    private Long minihomeId;
+    private Long userId;
     private String content;
     private LocalDateTime createdAt;
 
     public static Guestbook of(long minihomeId, long userId, String content) {
         return new Guestbook(
-                0l,
+                null,
                 minihomeId,
                 userId,
                 content,

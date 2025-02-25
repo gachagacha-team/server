@@ -12,14 +12,14 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class Attendance {
 
-    private long id;
+    private Long id;
     private LocalDate date;
     private long userId;
     private int bonusCoin;
 
     public static Attendance of(LocalDate date, long userId, int bonusCoin) {
         return new Attendance(
-                0l,
+                null,
                 date,
                 userId,
                 bonusCoin

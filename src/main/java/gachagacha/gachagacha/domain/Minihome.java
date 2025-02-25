@@ -8,14 +8,14 @@ import lombok.Getter;
 @AllArgsConstructor
 public class Minihome {
 
-    private long id;
-    private long userId;
+    private Long id;
+    private Long userId;
     private int totalVisitorCnt;
     private String layout;
 
     public static Minihome of(long userId) {
         return new Minihome(
-                0l,
+                null,
                 userId,
                 0,
                 null

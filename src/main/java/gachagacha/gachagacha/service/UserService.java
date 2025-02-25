@@ -8,10 +8,11 @@ import gachagacha.gachagacha.support.exception.customException.BusinessException
 import gachagacha.gachagacha.implementation.attendance.AttendanceAppender;
 import gachagacha.gachagacha.implementation.attendance.AttendanceReader;
 import gachagacha.gachagacha.implementation.user.UserReader;
-import gachagacha.gachagacha.implementation.user.UserUpdator;
+import gachagacha.gachagacha.implementation.user.UserUpdater;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Random;
@@ -22,7 +23,7 @@ import java.util.Random;
 public class UserService {
 
     private final UserReader userReader;
-    private final UserUpdator userUpdator;
+    private final UserUpdater userUpdater;
     private final AttendanceAppender attendanceAppender;
     private final AttendanceReader attendanceReader;
 
@@ -39,6 +40,7 @@ public class UserService {
         return user.getCoin();
     }
 
+    @Transactional
     public Attendance attend(User user) {
         LocalDate date = LocalDate.now();
         validateDuplicatedAttendance(user, date);
@@ -48,7 +50,7 @@ public class UserService {
         attendanceAppender.save(attendance);
 
         user.addCoin(bonusCoin);
-        userUpdator.update(user);
+        userUpdater.update(user);
         return attendance;
     }
 
