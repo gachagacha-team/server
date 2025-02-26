@@ -41,13 +41,13 @@ public class UserEntity extends BaseEntity {
 
     @Column(nullable = false)
     @Embedded
-    private ProfileImageEntity profileImageEntity;
+    private ProfileImage profileImage;
 
     private List<Background> backgrounds = new ArrayList<>();
 
     public User toUser() {
         return new User(id, socialType, loginId, nickname, coin, score,
-                new ProfileImage(profileImageEntity.getUploadFileName(), profileImageEntity.getStoreFileName()),
+                profileImage,
                 backgrounds);
     }
 
@@ -55,7 +55,7 @@ public class UserEntity extends BaseEntity {
         this.nickname = user.getNickname();
         this.coin = user.getCoin();
         this.score = user.getScore();
-        this.profileImageEntity = user.getProfileImage().toEntity();
+        this.profileImage = user.getProfileImage();
         this.backgrounds = user.getBackgrounds();
     }
 }

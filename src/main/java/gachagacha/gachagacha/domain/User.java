@@ -74,7 +74,7 @@ public class User {
                 nickname,
                 coin,
                 score,
-                profileImage.toEntity(),
+                profileImage,
                 backgrounds
         );
     }
