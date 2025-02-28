@@ -49,7 +49,7 @@ public class OAuthService {
 //                    + "?accessToken=" + jwtDto.getAccessToken()
 //                    + "&refreshToken=" + jwtDto.getRefreshToken();
         } else {
-            return "https://gacha-ruddy.vercel.app/auth"
+            return "https://gacha-ruddy.vercel.app/join"
                     + "?socialType=" + socialType.getName()
                     + "&loginId=" + loginId;
 //            return "http://localhost:5173/join"
