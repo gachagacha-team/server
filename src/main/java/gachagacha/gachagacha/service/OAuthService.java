@@ -42,14 +42,14 @@ public class OAuthService {
             User user = optionalUser.get();
             JwtDto jwtDto = jwtUtils.generateJwt(user);
             refreshTokenRepository.save(new RefreshTokenEntity(jwtDto.getRefreshToken()));
-            return "https://gacha-holajjms-projects.vercel.app/auth"
+            return "https://gacha-ruddy.vercel.app/auth"
                     + "?accessToken=" + jwtDto.getAccessToken()
                     + "&refreshToken=" + jwtDto.getRefreshToken();
 //            return "http://localhost:5173/auth"
 //                    + "?accessToken=" + jwtDto.getAccessToken()
 //                    + "&refreshToken=" + jwtDto.getRefreshToken();
         } else {
-            return "https://gacha-holajjms-projects.vercel.app/auth"
+            return "https://gacha-ruddy.vercel.app/auth"
                     + "?socialType=" + socialType.getName()
                     + "&loginId=" + loginId;
 //            return "http://localhost:5173/join"

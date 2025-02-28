@@ -49,7 +49,7 @@ public class AuthController {
         User user = authService.join(joinRequest.getNickname(), SocialType.of(joinRequest.getSocialType()), joinRequest.getLoginId(), file);
         JwtDto jwtDto = jwtUtils.generateJwt(user);
         authService.saveRefreshToken(jwtDto.getRefreshToken());
-        String redirectUrl = "https://gacha-holajjms-projects.vercel.app/" +
+        String redirectUrl = "https://gacha-ruddy.vercel.app/" +
                 "auth"
                 + "?accessToken=" + jwtDto.getAccessToken()
                 + "&refreshToken=" + jwtDto.getRefreshToken();
