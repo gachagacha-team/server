@@ -1,13 +1,15 @@
 package gachagacha.gachagacha.api;
 
 import gachagacha.gachagacha.api.dto.*;
+import gachagacha.gachagacha.domain.guestbook.Guestbook;
+import gachagacha.gachagacha.domain.minihome.Minihome;
+import gachagacha.gachagacha.domain.user.User;
 import gachagacha.gachagacha.jwt.JwtUtils;
-import gachagacha.gachagacha.domain.*;
-import gachagacha.gachagacha.service.GuestbookService;
-import gachagacha.gachagacha.service.MinihomeService;
+import gachagacha.gachagacha.domain.guestbook.GuestbookService;
+import gachagacha.gachagacha.domain.minihome.MinihomeService;
 import gachagacha.gachagacha.support.api_response.ApiResponse;
-import gachagacha.gachagacha.service.FollowService;
-import gachagacha.gachagacha.service.UserService;
+import gachagacha.gachagacha.domain.follow.FollowService;
+import gachagacha.gachagacha.domain.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.http.HttpServletRequest;

@@ -1,5 +1,9 @@
 package gachagacha.gachagacha.domain;
 
+import gachagacha.gachagacha.domain.item.Item;
+import gachagacha.gachagacha.domain.trade.Trade;
+import gachagacha.gachagacha.domain.trade.TradeStatus;
+import gachagacha.gachagacha.domain.user.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

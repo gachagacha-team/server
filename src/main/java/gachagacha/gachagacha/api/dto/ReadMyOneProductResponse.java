@@ -1,7 +1,7 @@
 package gachagacha.gachagacha.api.dto;
 
-import gachagacha.gachagacha.domain.Trade;
-import gachagacha.gachagacha.domain.TradeStatus;
+import gachagacha.gachagacha.domain.trade.Trade;
+import gachagacha.gachagacha.domain.trade.TradeStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 

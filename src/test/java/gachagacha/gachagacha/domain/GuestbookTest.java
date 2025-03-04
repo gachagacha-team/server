@@ -1,5 +1,6 @@
 package gachagacha.gachagacha.domain;
 
+import gachagacha.gachagacha.domain.guestbook.Guestbook;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 

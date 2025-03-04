@@ -1,13 +1,15 @@
 package gachagacha.gachagacha.api;
 
 import gachagacha.gachagacha.api.dto.*;
-import gachagacha.gachagacha.domain.*;
-import gachagacha.gachagacha.support.exception.ErrorCode;
-import gachagacha.gachagacha.support.exception.customException.BusinessException;
+import gachagacha.gachagacha.domain.item.Item;
+import gachagacha.gachagacha.domain.item.ItemGrade;
+import gachagacha.gachagacha.domain.item.UserItem;
+import gachagacha.gachagacha.domain.trade.Trade;
+import gachagacha.gachagacha.domain.user.User;
 import gachagacha.gachagacha.jwt.JwtUtils;
-import gachagacha.gachagacha.service.ItemService;
-import gachagacha.gachagacha.service.TradeService;
-import gachagacha.gachagacha.service.UserService;
+import gachagacha.gachagacha.domain.item.ItemService;
+import gachagacha.gachagacha.domain.trade.TradeService;
+import gachagacha.gachagacha.domain.user.UserService;
 import gachagacha.gachagacha.support.api_response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -86,30 +88,30 @@ public class TradeController {
         );
     }
 
-    @Operation(summary = "상품 등록 시 등록할 내가 가진 아이템 리스트 조회(페이지네이션)")
-    @GetMapping("/items/me/forSale")
-    public ApiResponse<Page<UserItemForSaleResponse>> readMyItemsForSale(HttpServletRequest request, @PageableDefault(size = 10) Pageable pageable) {
+    @Operation(summary = "내가 가진 아이템 리스트 조회(페이지네이션)(미니홈 꾸미기, 상품 등록시 사용됨)")
+    @GetMapping("/items/me")
+    public ApiResponse<Page<UserItemsForSaleResponse>> readMyItemsForSale(HttpServletRequest request, @PageableDefault(size = 10) Pageable pageable) {
         User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
-
-        Map<Item, Integer> userItemCountMap = Arrays.stream(Item.values())
+        Map<Item, List<UserItem>> userItemsMap = Arrays.stream(Item.values())
                 .map(item -> {
-                    int userItemCnt = itemService.readUserItemsByItem(user, item).size();
-                    return userItemCnt > 0 ? Map.entry(item, userItemCnt) : null;
+                    List<UserItem> userItems = itemService.readUserItemsByItem(user, item);
+                    if (userItems.size() == 0) return null;
+                    return Map.entry(item, userItems);
                 })
                 .filter(Objects::nonNull)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        List<UserItemForSaleResponse> data = userItemCountMap.keySet().stream()
+        List<UserItemsForSaleResponse> data = userItemsMap.keySet().stream()
                 .map(item -> {
                     int stock = tradeService.readOnSaleProductsByItem(item).size();
-                    return UserItemForSaleResponse.of(item, userItemCountMap.get(item), stock, itemsImageApiEndpoint);
+                    return UserItemsForSaleResponse.of(item, userItemsMap.get(item), stock, itemsImageApiEndpoint);
                 })
                 .toList();
 
         int start = (int) pageable.getOffset();
         int end = Math.min(start + pageable.getPageSize(), data.size());
-        List<UserItemForSaleResponse> pagedList = data.subList(start, end);
-        Page<UserItemForSaleResponse> page = new PageImpl<>(pagedList, pageable, data.size());
+        List<UserItemsForSaleResponse> pagedList = data.subList(start, end);
+        Page<UserItemsForSaleResponse> page = new PageImpl<>(pagedList, pageable, data.size());
         return ApiResponse.success(page);
     }
 

@@ -16,13 +16,13 @@ public class ExceptionHandlers {
     public ApiResponse handleBusinessException(BusinessException e) {
         log.info("handle BusinessException, message = {}", e.getMessage());
         ErrorCode errorCode = e.getErrorCode();
-        return ApiResponse.error(new ErrorResponse(errorCode.getHttpStatus(), errorCode.getMessage()));
+        return ApiResponse.error(new ErrorResponse(errorCode.getCode(), errorCode.getHttpStatus(), errorCode.getMessage()));
     }
 
     @ExceptionHandler
     public ApiResponse handleJwtException(CustomJwtException e) {
         log.info("handle CustomJwtException, message = {}", e.getMessage());
         ErrorCode errorCode = e.getErrorCode();
-        return ApiResponse.error(new ErrorResponse(errorCode.getHttpStatus(), errorCode.getMessage()));
+        return ApiResponse.error(new ErrorResponse(errorCode.getCode(), errorCode.getHttpStatus(), errorCode.getMessage()));
     }
 }

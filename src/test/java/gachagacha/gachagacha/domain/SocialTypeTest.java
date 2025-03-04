@@ -1,5 +1,6 @@
 package gachagacha.gachagacha.domain;
 
+import gachagacha.gachagacha.domain.user.SocialType;
 import gachagacha.gachagacha.support.exception.ErrorCode;
 import gachagacha.gachagacha.support.exception.customException.BusinessException;
 import org.junit.jupiter.api.Test;

@@ -1,8 +1,8 @@
 package gachagacha.gachagacha.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import gachagacha.gachagacha.domain.Minihome;
-import gachagacha.gachagacha.domain.User;
+import gachagacha.gachagacha.domain.minihome.Minihome;
+import gachagacha.gachagacha.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
