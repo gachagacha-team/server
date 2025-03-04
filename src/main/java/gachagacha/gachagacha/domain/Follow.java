@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Follow {
 
-    private long id;
-    private long followeeId;
-    private long followerId;
+    private Long id;
+    private Long followeeId;
+    private Long followerId;
 
     public static Follow of(long followeeId, long followerId) {
         Follow follow = new Follow();
@@ -23,7 +23,7 @@ public class Follow {
 
     public FollowEntity toFollowEntity() {
         return new FollowEntity(
-                0l,
+                id,
                 followeeId,
                 followerId
         );

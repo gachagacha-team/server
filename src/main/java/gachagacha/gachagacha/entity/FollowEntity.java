@@ -18,20 +18,13 @@ public class FollowEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "follow_id")
-    private long id;
+    private Long id;
 
     @Column(nullable = false)
     private long followeeId;
 
     @Column(nullable = false)
     private long followerId;
-
-    public static FollowEntity create(long followeeId, long followerId) {
-        FollowEntity follow = new FollowEntity();
-        follow.followeeId = followeeId;
-        follow.followerId = followerId;
-        return follow;
-    }
 
     public Follow toFollow() {
         return new Follow(id, followeeId, followerId);

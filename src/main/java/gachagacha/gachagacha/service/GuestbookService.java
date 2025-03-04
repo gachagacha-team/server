@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +36,7 @@ public class GuestbookService {
         return guestbookAppender.save(minihome, author, content);
     }
 
+    @Transactional
     public long editGuestbook(Guestbook guestbook, User user, String content) {
         validateAccessAuthorization(user, guestbook);
         return guestbookUpdater.update(guestbook, content);

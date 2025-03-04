@@ -21,12 +21,12 @@ public class TradeEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "trade_id")
-    private long id;
+    private Long id;
 
     @Column(nullable = false)
-    private long sellerId;
+    private Long sellerId;
 
-    private long buyerId;
+    private Long buyerId;
 
     @Enumerated(value = EnumType.STRING)
     private Item item;
@@ -36,14 +36,6 @@ public class TradeEntity extends BaseEntity {
     private TradeStatus tradeStatus;
 
     private LocalDateTime transactionDate;
-
-    public static TradeEntity create(long sellerId, Item item) {
-        TradeEntity trade = new TradeEntity();
-        trade.sellerId = sellerId;
-        trade.item = item;
-        trade.tradeStatus = TradeStatus.ON_SALE;
-        return trade;
-    }
 
     public Trade toTrade() {
         return new Trade(id, sellerId, buyerId, item, tradeStatus, transactionDate);

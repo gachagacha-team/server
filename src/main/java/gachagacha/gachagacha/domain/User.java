@@ -12,7 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
-    private long id;
+    private Long id;
     private SocialType socialType;
     private Long loginId;
     private String nickname;
@@ -25,7 +25,7 @@ public class User {
 
     public static User of(String nickname, SocialType socialType, Long loginId, ProfileImage profileImage) {
         return new User(
-                0,
+                null,
                 socialType,
                 loginId,
                 nickname,
@@ -44,7 +44,7 @@ public class User {
         long saleItemRemainCount = userItems.stream()
                 .filter(userItem -> userItem.getItem() == saleItem)
                 .count();
-        if (saleItemRemainCount == 0) {
+        if (saleItemRemainCount == 1) {
             score.decrease(saleItem.getItemGrade().getScore());
         }
     }
@@ -53,7 +53,7 @@ public class User {
         long saleItemRemainCount = userItems.stream()
                 .filter(userItem -> userItem.getItem() == addedItem)
                 .count();
-        if (saleItemRemainCount == 0) { // 현재 아이템 개수가 0 -> 1개로 변경되며 스코어도 올라가야 함
+        if (saleItemRemainCount == 0) {
             score.increase(addedItem.getItemGrade().getScore());
         }
     }
@@ -74,7 +74,7 @@ public class User {
                 nickname,
                 coin,
                 score,
-                profileImage.toEntity(),
+                profileImage,
                 backgrounds
         );
     }

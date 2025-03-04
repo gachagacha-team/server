@@ -16,22 +16,16 @@ public class MinihomeEntity extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "minihome_id")
-    private long id;
+    private Long id;
 
     @Column(nullable = false)
-    private long userId;
+    private Long userId;
 
     @Column(nullable = false)
     private int totalVisitorCnt;
 
     @Lob
     private String layout;
-
-    public static MinihomeEntity create() {
-        MinihomeEntity miniHome = new MinihomeEntity();
-        miniHome.totalVisitorCnt = 0;
-        return miniHome;
-    }
 
     public Minihome toMinihome() {
         return new Minihome(id, userId, totalVisitorCnt, layout);

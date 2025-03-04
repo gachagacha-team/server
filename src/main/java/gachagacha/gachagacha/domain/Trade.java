@@ -10,18 +10,18 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class Trade {
 
-    private long id;
-    private long sellerId;
-    private long buyerId;
+    private Long id;
+    private Long sellerId;
+    private Long buyerId;
     private Item item;
     private TradeStatus tradeStatus;
     private LocalDateTime transactionDate;
 
     public static Trade of(User seller, Item item) {
         return new Trade(
-                0l,
+                null,
                 seller.getId(),
-                0l,
+                null,
                 item,
                 TradeStatus.ON_SALE,
                 null
@@ -32,14 +32,6 @@ public class Trade {
         this.buyerId = buyer.getId();
         this.tradeStatus = TradeStatus.COMPLETED;
         this.transactionDate = LocalDateTime.now().withNano(0);
-    }
-
-    public void softDeleteBySeller() {
-        sellerId = -1;
-    }
-
-    public void softDeleteByBuyer() {
-        buyerId = -1;
     }
 
     public TradeEntity toTradeEntity() {

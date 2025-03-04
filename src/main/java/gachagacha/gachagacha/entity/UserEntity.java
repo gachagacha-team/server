@@ -19,7 +19,7 @@ public class UserEntity extends BaseEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
-    private long id;
+    private Long id;
 
     @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
@@ -41,29 +41,21 @@ public class UserEntity extends BaseEntity {
 
     @Column(nullable = false)
     @Embedded
-    private ProfileImageEntity profileImageEntity;
+    private ProfileImage profileImage;
 
     private List<Background> backgrounds = new ArrayList<>();
 
     public User toUser() {
         return new User(id, socialType, loginId, nickname, coin, score,
-                new ProfileImage(profileImageEntity.getUploadFileName(), profileImageEntity.getStoreFileName()),
+                profileImage,
                 backgrounds);
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public int getCoinAmount() {
-        return this.getCoin().getCoin();
     }
 
     public void updateFromUser(User user) {
         this.nickname = user.getNickname();
         this.coin = user.getCoin();
         this.score = user.getScore();
-        this.profileImageEntity = user.getProfileImage().toEntity();
+        this.profileImage = user.getProfileImage();
         this.backgrounds = user.getBackgrounds();
     }
 }

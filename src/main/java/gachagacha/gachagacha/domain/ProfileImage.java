@@ -1,14 +1,17 @@
 package gachagacha.gachagacha.domain;
 
-import gachagacha.gachagacha.entity.ProfileImageEntity;
+import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.UUID;
 
 @Getter
+@Embeddable
 @AllArgsConstructor
+@NoArgsConstructor
 public class ProfileImage {
 
     private String uploadFileName;
@@ -24,9 +27,5 @@ public class ProfileImage {
             String storeFileName = UUID.randomUUID() + "." + ext;
             return new ProfileImage(originalFilename, storeFileName);
         }
-    }
-
-    public ProfileImageEntity toEntity() {
-        return new ProfileImageEntity(uploadFileName, storeFileName);
     }
 }

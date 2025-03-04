@@ -8,13 +8,13 @@ import lombok.Getter;
 @AllArgsConstructor
 public class UserItem {
 
-    private long id;
+    private Long id;
     private Item item;
-    private long userId;
+    private Long userId;
 
     public static UserItem of(User user, Item item) {
         return new UserItem(
-                0l,
+                null,
                 item,
                 user.getId()
         );
