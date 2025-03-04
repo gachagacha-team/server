@@ -1,7 +1,6 @@
 package gachagacha.gachagacha.domain.follow;
 
-import gachagacha.gachagacha.BaseEntity;
-import gachagacha.gachagacha.domain.follow.Follow;
+import gachagacha.gachagacha.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

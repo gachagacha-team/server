@@ -1,8 +1,11 @@
-package gachagacha.gachagacha.support.api_response;
+package gachagacha.gachagacha.api.response;
 
 import lombok.Getter;
+import lombok.ToString;
+
 
 @Getter
+@ToString
 public class ApiResponse<S> {
 
     private final ResultType result;

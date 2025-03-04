@@ -1,8 +1,6 @@
 package gachagacha.gachagacha.domain.item;
 
-import gachagacha.gachagacha.BaseEntity;
-import gachagacha.gachagacha.domain.item.Item;
-import gachagacha.gachagacha.domain.item.UserItem;
+import gachagacha.gachagacha.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

@@ -1,6 +1,10 @@
 package gachagacha.gachagacha.api;
 
-import gachagacha.gachagacha.api.dto.*;
+import gachagacha.gachagacha.api.dto.response.UserItemsForSaleResponse;
+import gachagacha.gachagacha.api.dto.request.AddProductRequest;
+import gachagacha.gachagacha.api.dto.response.ReadAllProductsResponse;
+import gachagacha.gachagacha.api.dto.response.ReadMyOneProductResponse;
+import gachagacha.gachagacha.api.dto.response.ReadOneProductResponse;
 import gachagacha.gachagacha.domain.item.Item;
 import gachagacha.gachagacha.domain.item.ItemGrade;
 import gachagacha.gachagacha.domain.item.UserItem;
@@ -10,7 +14,7 @@ import gachagacha.gachagacha.jwt.JwtUtils;
 import gachagacha.gachagacha.domain.item.ItemService;
 import gachagacha.gachagacha.domain.trade.TradeService;
 import gachagacha.gachagacha.domain.user.UserService;
-import gachagacha.gachagacha.support.api_response.ApiResponse;
+import gachagacha.gachagacha.api.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.http.HttpServletRequest;

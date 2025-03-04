@@ -18,8 +18,8 @@ public class LogFilter implements Filter {
         String method = httpRequest.getMethod();
 
         try {
-            log.info("REQUEST [{}][{} {}]", traceId, method, requestURI);
             MDC.put("traceId", traceId); // MDC에 저장
+            log.info("REQUEST [{}][{} {}]", traceId, method, requestURI);
             chain.doFilter(request, response);
         } catch (Exception e) {
             throw e;

@@ -1,13 +1,15 @@
-package gachagacha.gachagacha.api.dto;
+package gachagacha.gachagacha.api.dto.response;
 
 import gachagacha.gachagacha.domain.item.Item;
 import gachagacha.gachagacha.domain.item.UserItem;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.List;
 
 @Getter
+@ToString
 @AllArgsConstructor
 public class UserItemsForSaleResponse {
 
