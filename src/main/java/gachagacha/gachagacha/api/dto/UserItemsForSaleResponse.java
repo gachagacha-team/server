@@ -14,6 +14,7 @@ public class UserItemsForSaleResponse {
     private long itemId;
     private String imageUrl;
     private String itemGrade;
+    private int itemCnt;
     private List<Long> userItemIds;
     private String itemName;
     private int price;
@@ -27,6 +28,7 @@ public class UserItemsForSaleResponse {
                 item.getItemId(),
                 itemsImageApiEndpoint + item.getImageFileName(),
                 item.getItemGrade().getViewName(),
+                userItemIds.size(),
                 userItemIds,
                 item.getViewName(),
                 item.getItemGrade().getPrice(),
