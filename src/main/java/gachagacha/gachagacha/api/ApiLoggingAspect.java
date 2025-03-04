@@ -34,6 +34,10 @@ public class ApiLoggingAspect {
         String className = joinPoint.getTarget().getClass().getSimpleName();
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         String methodName = signature.getMethod().getName();
-        log.info("Response from [{}.{}], Response data: {}", className, methodName, returnObj.toString());
+        if (returnObj != null) {
+            log.info("Response from [{}.{}], Response data: {}", className, methodName, returnObj.toString());
+        } else {
+            log.info("Response from [{}.{}], Response data: {}", className, methodName, null);
+        }
     }
 }
