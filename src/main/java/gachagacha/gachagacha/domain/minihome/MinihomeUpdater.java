@@ -1,6 +1,5 @@
 package gachagacha.gachagacha.domain.minihome;
 
-import gachagacha.gachagacha.domain.item.entity.MinihomeEntity;
 import gachagacha.gachagacha.support.exception.ErrorCode;
 import gachagacha.gachagacha.support.exception.customException.BusinessException;
 import lombok.RequiredArgsConstructor;

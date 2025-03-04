@@ -1,6 +1,5 @@
 package gachagacha.gachagacha.domain.follow;
 
-import gachagacha.gachagacha.domain.item.entity.FollowEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

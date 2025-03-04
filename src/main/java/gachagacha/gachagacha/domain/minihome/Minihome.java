@@ -1,6 +1,5 @@
 package gachagacha.gachagacha.domain.minihome;
 
-import gachagacha.gachagacha.domain.item.entity.MinihomeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

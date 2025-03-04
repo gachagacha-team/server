@@ -1,7 +1,6 @@
 package gachagacha.gachagacha.domain.item;
 
 import gachagacha.gachagacha.domain.user.User;
-import gachagacha.gachagacha.domain.item.entity.UserItemEntity;
 import gachagacha.gachagacha.support.exception.ErrorCode;
 import gachagacha.gachagacha.support.exception.customException.BusinessException;
 import lombok.RequiredArgsConstructor;

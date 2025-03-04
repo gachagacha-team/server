@@ -1,6 +1,5 @@
 package gachagacha.gachagacha.domain.attendance;
 
-import gachagacha.gachagacha.domain.item.entity.AttendanceEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

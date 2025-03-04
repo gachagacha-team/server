@@ -1,6 +1,5 @@
 package gachagacha.gachagacha.domain.follow;
 
-import gachagacha.gachagacha.domain.item.entity.FollowEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

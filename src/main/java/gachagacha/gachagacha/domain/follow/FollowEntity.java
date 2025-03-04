@@ -1,4 +1,4 @@
-package gachagacha.gachagacha.domain.item.entity;
+package gachagacha.gachagacha.domain.follow;
 
 import gachagacha.gachagacha.BaseEntity;
 import gachagacha.gachagacha.domain.follow.Follow;

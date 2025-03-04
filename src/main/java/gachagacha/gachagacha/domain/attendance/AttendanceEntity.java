@@ -1,4 +1,4 @@
-package gachagacha.gachagacha.domain.item.entity;
+package gachagacha.gachagacha.domain.attendance;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

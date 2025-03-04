@@ -1,7 +1,5 @@
 package gachagacha.gachagacha.domain.item;
 
-import gachagacha.gachagacha.domain.item.Item;
-import gachagacha.gachagacha.domain.item.entity.UserItemEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

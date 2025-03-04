@@ -1,7 +1,6 @@
 package gachagacha.gachagacha.domain.item;
 
 import gachagacha.gachagacha.domain.user.User;
-import gachagacha.gachagacha.domain.item.entity.UserItemEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

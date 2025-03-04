@@ -1,7 +1,6 @@
 package gachagacha.gachagacha.domain.trade;
 
 import gachagacha.gachagacha.domain.item.Item;
-import gachagacha.gachagacha.domain.item.entity.TradeEntity;
 import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;

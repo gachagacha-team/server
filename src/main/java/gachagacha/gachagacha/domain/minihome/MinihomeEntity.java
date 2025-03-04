@@ -1,4 +1,4 @@
-package gachagacha.gachagacha.domain.item.entity;
+package gachagacha.gachagacha.domain.minihome;
 
 import gachagacha.gachagacha.BaseEntity;
 import gachagacha.gachagacha.domain.minihome.Minihome;

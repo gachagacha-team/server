@@ -1,6 +1,5 @@
 package gachagacha.gachagacha.domain.follow;
 
-import gachagacha.gachagacha.domain.item.entity.FollowEntity;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;

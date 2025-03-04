@@ -1,6 +1,5 @@
 package gachagacha.gachagacha.domain.trade;
 
-import gachagacha.gachagacha.domain.item.entity.TradeEntity;
 import gachagacha.gachagacha.support.exception.ErrorCode;
 import gachagacha.gachagacha.support.exception.customException.BusinessException;
 import lombok.RequiredArgsConstructor;

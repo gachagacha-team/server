@@ -1,6 +1,5 @@
 package gachagacha.gachagacha.domain.item;
 
-import gachagacha.gachagacha.domain.item.entity.UserItemEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

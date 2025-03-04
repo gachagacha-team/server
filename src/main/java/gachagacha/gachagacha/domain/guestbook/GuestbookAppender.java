@@ -2,7 +2,6 @@ package gachagacha.gachagacha.domain.guestbook;
 
 import gachagacha.gachagacha.domain.minihome.Minihome;
 import gachagacha.gachagacha.domain.user.User;
-import gachagacha.gachagacha.domain.item.entity.GuestbookEntity;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
 

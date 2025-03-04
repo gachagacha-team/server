@@ -29,7 +29,6 @@ public class UserReader {
         return userRepository.findByNickname(nickname).isPresent();
     }
 
-
     public Optional<User> findBySocialTypeAndLoginId(SocialType socialType, long loginId) {
         return userRepository.findBySocialTypeAndLoginId(socialType, loginId)
                 .map(userEntity -> userEntity.toUser());

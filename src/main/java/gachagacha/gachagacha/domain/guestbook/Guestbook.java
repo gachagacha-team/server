@@ -1,6 +1,5 @@
 package gachagacha.gachagacha.domain.guestbook;
 
-import gachagacha.gachagacha.domain.item.entity.GuestbookEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

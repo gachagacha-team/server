@@ -2,7 +2,6 @@ package gachagacha.gachagacha.domain.trade;
 
 import gachagacha.gachagacha.domain.item.Item;
 import gachagacha.gachagacha.domain.user.User;
-import gachagacha.gachagacha.domain.item.entity.TradeEntity;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
