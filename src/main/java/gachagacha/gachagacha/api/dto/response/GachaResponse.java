@@ -1,11 +1,13 @@
-package gachagacha.gachagacha.api.dto;
+package gachagacha.gachagacha.api.dto.response;
 
 import gachagacha.gachagacha.domain.item.Item;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class GachaResponse {
 

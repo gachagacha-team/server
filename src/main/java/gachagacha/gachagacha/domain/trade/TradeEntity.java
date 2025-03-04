@@ -1,9 +1,7 @@
 package gachagacha.gachagacha.domain.trade;
 
-import gachagacha.gachagacha.BaseEntity;
+import gachagacha.gachagacha.domain.BaseEntity;
 import gachagacha.gachagacha.domain.item.Item;
-import gachagacha.gachagacha.domain.trade.Trade;
-import gachagacha.gachagacha.domain.trade.TradeStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

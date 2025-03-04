@@ -1,4 +1,4 @@
-package gachagacha.gachagacha;
+package gachagacha.gachagacha.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;

@@ -1,13 +1,15 @@
-package gachagacha.gachagacha.api.dto;
+package gachagacha.gachagacha.api.dto.response;
 
 import gachagacha.gachagacha.domain.trade.Trade;
 import gachagacha.gachagacha.domain.trade.TradeStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import java.time.LocalDateTime;
 
 @Getter
+@ToString
 @NoArgsConstructor
 public class ReadMyOneProductResponse {
 

@@ -1,8 +1,8 @@
 package gachagacha.gachagacha.api;
 
-import gachagacha.gachagacha.api.dto.GachaResponse;
-import gachagacha.gachagacha.api.dto.BackgroundResponse;
-import gachagacha.gachagacha.api.dto.UserItemResponse;
+import gachagacha.gachagacha.api.dto.response.GachaResponse;
+import gachagacha.gachagacha.api.dto.response.BackgroundResponse;
+import gachagacha.gachagacha.api.dto.response.UserItemResponse;
 import gachagacha.gachagacha.domain.item.Item;
 import gachagacha.gachagacha.domain.item.ItemGrade;
 import gachagacha.gachagacha.domain.item.UserItem;
@@ -13,7 +13,7 @@ import gachagacha.gachagacha.support.exception.customException.BusinessException
 import gachagacha.gachagacha.jwt.JwtUtils;
 import gachagacha.gachagacha.domain.item.ItemService;
 import gachagacha.gachagacha.domain.user.UserService;
-import gachagacha.gachagacha.support.api_response.ApiResponse;
+import gachagacha.gachagacha.api.response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.http.HttpServletRequest;

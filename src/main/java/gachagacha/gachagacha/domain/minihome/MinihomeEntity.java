@@ -1,7 +1,6 @@
 package gachagacha.gachagacha.domain.minihome;
 
-import gachagacha.gachagacha.BaseEntity;
-import gachagacha.gachagacha.domain.minihome.Minihome;
+import gachagacha.gachagacha.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

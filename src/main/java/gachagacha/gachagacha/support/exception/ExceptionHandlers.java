@@ -2,8 +2,8 @@ package gachagacha.gachagacha.support.exception;
 
 import gachagacha.gachagacha.support.exception.customException.BusinessException;
 import gachagacha.gachagacha.support.exception.customException.CustomJwtException;
-import gachagacha.gachagacha.support.api_response.ApiResponse;
-import gachagacha.gachagacha.support.api_response.ErrorResponse;
+import gachagacha.gachagacha.api.response.ApiResponse;
+import gachagacha.gachagacha.api.response.ErrorResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;

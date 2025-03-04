@@ -1,10 +1,12 @@
-package gachagacha.gachagacha.api.dto;
+package gachagacha.gachagacha.api.dto.response;
 
 import gachagacha.gachagacha.domain.user.Background;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 
 @Getter
+@ToString
 @AllArgsConstructor
 public class BackgroundResponse {
 
