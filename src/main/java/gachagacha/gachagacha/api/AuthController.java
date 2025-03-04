@@ -2,7 +2,6 @@ package gachagacha.gachagacha.api;
 
 import gachagacha.gachagacha.domain.user.SocialType;
 import gachagacha.gachagacha.domain.user.User;
-import gachagacha.gachagacha.jwt.JwtDto;
 import gachagacha.gachagacha.jwt.JwtUtils;
 import gachagacha.gachagacha.domain.auth.AuthService;
 import gachagacha.gachagacha.api.dto.JoinRequest;
@@ -32,30 +31,23 @@ public class AuthController {
     @Operation(summary = "깃허브 로그인 리다이렉트 URL", description = "깃허브 로그인 시 다음 URL로 리다이렉트된다.")
     @GetMapping("/login/oauth2/code/github")
     public void authWithGithub(@RequestParam(name = "code") String code, HttpServletResponse response) throws IOException {
-        String redirectUrl = oAuthService.authWithGithub(code);
+        long loginId = oAuthService.authWithGithub(code);
+        String redirectUrl = authService.generateRedirectUrl(loginId, SocialType.GITHUB);
         response.sendRedirect(redirectUrl);
     }
 
     @Operation(summary = "카카오 로그인 리다이렉트 URL", description = "카카오 로그인 시 다음 URL로 리다이렉트된다.")
     @GetMapping("/login/oauth2/code/kakao")
     public void authWithKakao(@RequestParam(name = "code") String code, HttpServletResponse response) throws IOException {
-        String redirectUrl = oAuthService.authWithKakao(code);
+        long loginId = oAuthService.authWithKakao(code);
+        String redirectUrl = authService.generateRedirectUrl(loginId, SocialType.KAKAO);
         response.sendRedirect(redirectUrl);
     }
 
     @Operation(summary = "회원가입")
     @PostMapping(value = "/join")
     public void join(@RequestPart(value = "data") JoinRequest joinRequest, @RequestPart(value = "profileImageFile", required = false) MultipartFile file, HttpServletResponse response) throws IOException {
-        User user = authService.join(joinRequest.getNickname(), SocialType.of(joinRequest.getSocialType()), joinRequest.getLoginId(), file);
-        JwtDto jwtDto = jwtUtils.generateJwt(user);
-        authService.saveRefreshToken(jwtDto.getRefreshToken());
-//        String redirectUrl = "https://gacha-ruddy.vercel.app/" +
-//                "auth"
-//                + "?accessToken=" + jwtDto.getAccessToken()
-//                + "&refreshToken=" + jwtDto.getRefreshToken();
-        String redirectUrl = "http://localhost:5173/auth"
-                + "?accessToken=" + jwtDto.getAccessToken()
-                + "&refreshToken=" + jwtDto.getRefreshToken();
+        String redirectUrl = authService.join(joinRequest.getNickname(), SocialType.of(joinRequest.getSocialType()), joinRequest.getLoginId(), file);
         response.sendRedirect(redirectUrl);
     }
 

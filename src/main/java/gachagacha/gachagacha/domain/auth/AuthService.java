@@ -6,7 +6,6 @@ import gachagacha.gachagacha.domain.item.UserItemRemover;
 import gachagacha.gachagacha.domain.user.*;
 import gachagacha.gachagacha.domain.minihome.Minihome;
 import gachagacha.gachagacha.domain.guestbook.ProfileImage;
-import gachagacha.gachagacha.domain.item.entity.RefreshTokenEntity;
 import gachagacha.gachagacha.domain.attendance.AttendanceRemover;
 import gachagacha.gachagacha.domain.follow.FollowRemover;
 import gachagacha.gachagacha.domain.guestbook.GuestbookRemover;
@@ -19,6 +18,7 @@ import gachagacha.gachagacha.support.exception.customException.BusinessException
 import gachagacha.gachagacha.domain.user.SocialType;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.*;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +29,9 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class AuthService {
 
+    @Value("${client.address}")
+    private String clientAddress;
+
     private final ProfileImageService profileImageService;
     private final UserAppender userAppender;
     private final MinihomeAppender minihomeAppender;
@@ -38,16 +41,14 @@ public class AuthService {
     private final TradeRemover tradeRemover;
     private final GuestbookRemover guestbookRemover;
     private final JwtUtils jwtUtils;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final TokenProcessor tokenProcessor;
     private final MinihomeRemover minihomeRemover;
     private final MinihomeReader minihomeReader;
     private final UserRemover userRemover;
     private final UserItemRemover userItemRemover;
 
-    private final TokenProcessor tokenProcessor;
-
     @Transactional
-    public User join(String nickname, SocialType socialType, Long loginId, MultipartFile file) throws IOException {
+    public String join(String nickname, SocialType socialType, Long loginId, MultipartFile file) throws IOException {
         validateDuplicatedUser(socialType, loginId);
         validateDuplicatedNickname(nickname);
 
@@ -62,7 +63,11 @@ public class AuthService {
         Minihome minihome = Minihome.of(userId);
         minihomeAppender.save(minihome);
 
-        return user;
+        JwtDto jwtDto = jwtUtils.generateJwt(user);
+        tokenProcessor.save(jwtDto.getRefreshToken());
+        return clientAddress + "/auth"
+                + "?accessToken=" + jwtDto.getAccessToken()
+                + "&refreshToken=" + jwtDto.getRefreshToken();
     }
 
     private void validateDuplicatedUser(SocialType socialType, long loginId) {
@@ -79,21 +84,18 @@ public class AuthService {
 
     public JwtDto renewTokens(HttpServletRequest request) {
         jwtUtils.validateTokenFromHeader(request);
-        RefreshTokenEntity refreshTokenEntity = refreshTokenRepository.findByRefreshToken(jwtUtils.getRefreshTokenFromHeader(request))
-                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_JWT));
+        tokenProcessor.delete(jwtUtils.getRefreshTokenFromHeader(request));
 
-        refreshTokenRepository.delete(refreshTokenEntity);
         User user = userReader.findByNickname(jwtUtils.getUserNicknameFromHeader(request));
         JwtDto jwtDto = jwtUtils.generateJwt(user);
-        refreshTokenRepository.save(new RefreshTokenEntity(jwtDto.getRefreshToken()));
+        tokenProcessor.save(jwtDto.getRefreshToken());
         return jwtDto;
     }
 
     public void logout(HttpServletRequest request) {
         jwtUtils.validateTokenFromHeader(request);
-        RefreshTokenEntity refreshTokenEntity = refreshTokenRepository.findByRefreshToken(jwtUtils.getRefreshTokenFromHeader(request))
-                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_JWT));
-        refreshTokenRepository.delete(refreshTokenEntity);
+        String refreshToken = jwtUtils.getRefreshTokenFromHeader(request);
+        tokenProcessor.delete(refreshToken);
     }
 
     @Transactional
@@ -113,9 +115,7 @@ public class AuthService {
         followRemover.deleteByFollower(user);
 
         // RT 삭제
-        RefreshTokenEntity refreshTokenEntity = refreshTokenRepository.findByRefreshToken(refreshToken)
-                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_JWT));
-        refreshTokenRepository.delete(refreshTokenEntity);
+        tokenProcessor.delete(refreshToken);
 
         // userItem, minihome, attendance, user 엔티티 삭제
         userItemRemover.deleteByUser(user);
@@ -124,8 +124,21 @@ public class AuthService {
         userRemover.delete(user);
     }
 
-    public void saveRefreshToken(String refreshToken) {
-        tokenProcessor.saveRefreshToken(refreshToken, null);
-//        refreshTokenRepository.save(new RefreshTokenEntity(refreshToken));
+    public String generateRedirectUrl(long loginId, SocialType socialType) {
+        return userReader.findBySocialTypeAndLoginId(socialType, loginId)
+                .map(user -> {
+                    // 가입된 사용자 -> 토큰 발급(로그인)
+                    JwtDto jwtDto = jwtUtils.generateJwt(user);
+                    tokenProcessor.save(jwtDto.getRefreshToken());
+                    return clientAddress + "/auth"
+                            + "?accessToken=" + jwtDto.getAccessToken()
+                            + "&refreshToken=" + jwtDto.getRefreshToken();
+                })
+                .orElseGet(() -> {
+                    // 새로운 사용자 -> 회원가입 폼으로
+                    return clientAddress + "/join"
+                            + "?socialType=" + socialType.getName()
+                            + "&loginId=" + loginId;
+                });
     }
 }

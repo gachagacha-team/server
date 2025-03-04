@@ -3,6 +3,7 @@ server:
   ssl.key-store: ${SSL_KEY_STORE}
   ssl.key-store-type: ${SSL_KEY_STORE_TYPE}
   ssl.key-store-password: ${SSL_KEY_STORE_PASSWORD}
+
 spring:
   datasource:
     url: ${DATASOURCE_URL}
@@ -39,9 +40,13 @@ springdoc:
     display-request-duration: true
     operations-sorter: alph
     path: /
+
 logging:
   discord:
     webhook-url: ${DISCORD_WEBHOOK_URL}
+
+client:
+  address: http://localhost:5173
 
 file:
   profile: /uploads/profile/
