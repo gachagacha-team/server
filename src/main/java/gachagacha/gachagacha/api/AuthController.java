@@ -1,13 +1,13 @@
 package gachagacha.gachagacha.api;
 
-import gachagacha.gachagacha.domain.SocialType;
-import gachagacha.gachagacha.domain.User;
+import gachagacha.gachagacha.domain.user.SocialType;
+import gachagacha.gachagacha.domain.user.User;
 import gachagacha.gachagacha.jwt.JwtDto;
 import gachagacha.gachagacha.jwt.JwtUtils;
-import gachagacha.gachagacha.service.AuthService;
+import gachagacha.gachagacha.domain.auth.AuthService;
 import gachagacha.gachagacha.api.dto.JoinRequest;
-import gachagacha.gachagacha.service.OAuthService;
-import gachagacha.gachagacha.service.UserService;
+import gachagacha.gachagacha.domain.auth.OAuthService;
+import gachagacha.gachagacha.domain.user.UserService;
 import gachagacha.gachagacha.support.api_response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;

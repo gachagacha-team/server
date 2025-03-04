@@ -1,6 +1,6 @@
 package gachagacha.gachagacha.jwt;
 
-import gachagacha.gachagacha.domain.User;
+import gachagacha.gachagacha.domain.user.User;
 import gachagacha.gachagacha.support.exception.ErrorCode;
 import gachagacha.gachagacha.support.exception.customException.CustomJwtException;
 import io.jsonwebtoken.*;

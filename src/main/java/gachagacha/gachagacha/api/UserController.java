@@ -1,14 +1,14 @@
 package gachagacha.gachagacha.api;
 
 import gachagacha.gachagacha.api.dto.*;
-import gachagacha.gachagacha.domain.Follow;
+import gachagacha.gachagacha.domain.follow.Follow;
 import gachagacha.gachagacha.jwt.JwtUtils;
-import gachagacha.gachagacha.domain.Attendance;
-import gachagacha.gachagacha.domain.Coin;
-import gachagacha.gachagacha.domain.User;
+import gachagacha.gachagacha.domain.attendance.Attendance;
+import gachagacha.gachagacha.domain.user.Coin;
+import gachagacha.gachagacha.domain.user.User;
 import gachagacha.gachagacha.support.api_response.ApiResponse;
-import gachagacha.gachagacha.service.FollowService;
-import gachagacha.gachagacha.service.UserService;
+import gachagacha.gachagacha.domain.follow.FollowService;
+import gachagacha.gachagacha.domain.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.http.HttpServletRequest;

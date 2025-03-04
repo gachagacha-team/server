@@ -1,7 +1,7 @@
 package gachagacha.gachagacha.api.dto;
 
-import gachagacha.gachagacha.domain.Attendance;
-import gachagacha.gachagacha.domain.User;
+import gachagacha.gachagacha.domain.attendance.Attendance;
+import gachagacha.gachagacha.domain.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,6 +1,6 @@
 package gachagacha.gachagacha.api.dto;
 
-import gachagacha.gachagacha.domain.Coin;
+import gachagacha.gachagacha.domain.user.Coin;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

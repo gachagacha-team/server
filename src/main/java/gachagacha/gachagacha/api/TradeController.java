@@ -1,13 +1,15 @@
 package gachagacha.gachagacha.api;
 
 import gachagacha.gachagacha.api.dto.*;
-import gachagacha.gachagacha.domain.*;
-import gachagacha.gachagacha.support.exception.ErrorCode;
-import gachagacha.gachagacha.support.exception.customException.BusinessException;
+import gachagacha.gachagacha.domain.item.Item;
+import gachagacha.gachagacha.domain.item.ItemGrade;
+import gachagacha.gachagacha.domain.item.UserItem;
+import gachagacha.gachagacha.domain.trade.Trade;
+import gachagacha.gachagacha.domain.user.User;
 import gachagacha.gachagacha.jwt.JwtUtils;
-import gachagacha.gachagacha.service.ItemService;
-import gachagacha.gachagacha.service.TradeService;
-import gachagacha.gachagacha.service.UserService;
+import gachagacha.gachagacha.domain.item.ItemService;
+import gachagacha.gachagacha.domain.trade.TradeService;
+import gachagacha.gachagacha.domain.user.UserService;
 import gachagacha.gachagacha.support.api_response.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

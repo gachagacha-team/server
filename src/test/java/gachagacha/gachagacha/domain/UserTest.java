@@ -1,5 +1,10 @@
 package gachagacha.gachagacha.domain;
 
+import gachagacha.gachagacha.domain.item.Item;
+import gachagacha.gachagacha.domain.item.UserItem;
+import gachagacha.gachagacha.domain.guestbook.ProfileImage;
+import gachagacha.gachagacha.domain.user.SocialType;
+import gachagacha.gachagacha.domain.user.User;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
