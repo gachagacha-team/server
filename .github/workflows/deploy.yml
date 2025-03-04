@@ -64,9 +64,5 @@ jobs:
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/gachagacha
-            existing_container=$(docker ps -a -q -f name=gachagacha)
-            if [ -n "$existing_container" ]; then
-              sudo docker rm -f $existing_container
-              sleep 3 
-            fi
-            sudo docker run -d --name gachagacha --network host -p 8080:8080 -v gachagacha-uploads:/uploads -e SPRING_PROFILES_ACTIVE=prod ${{ secrets.DOCKER_USERNAME }}/gachagacha:latest
+            sudo docker-compose down
+            sudo docker-compose up -d
