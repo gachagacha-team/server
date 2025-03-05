@@ -6,6 +6,7 @@ import gachagacha.gachagacha.api.dto.response.UserItemResponse;
 import gachagacha.gachagacha.domain.item.Item;
 import gachagacha.gachagacha.domain.item.ItemGrade;
 import gachagacha.gachagacha.domain.item.UserItem;
+import gachagacha.gachagacha.domain.lotto.LottoProcessor;
 import gachagacha.gachagacha.domain.user.Background;
 import gachagacha.gachagacha.domain.user.User;
 import gachagacha.gachagacha.support.exception.ErrorCode;
@@ -31,6 +32,7 @@ public class ItemController {
     private final JwtUtils jwtUtils;
     private final ItemService itemService;
     private final UserService userService;
+    private final LottoProcessor lottoProcessor;
 
     @Value("${image.api.endpoints.items}")
     private String itemsImageApiEndpoint;
@@ -42,8 +44,9 @@ public class ItemController {
     @PostMapping("/gacha")
     public ApiResponse<GachaResponse> gacha(HttpServletRequest request) {
         User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
-        Item item = itemService.gacha(user);
-        return ApiResponse.success(GachaResponse.of(item, itemsImageApiEndpoint));
+        Item addedItem = itemService.gacha(user);
+        lottoProcessor.checkAndPublishLotteryEvent(user, addedItem);
+        return ApiResponse.success(GachaResponse.of(addedItem, itemsImageApiEndpoint));
     }
 
     @Operation(summary = "사용자가 보유한 아이템 리스트 조회")

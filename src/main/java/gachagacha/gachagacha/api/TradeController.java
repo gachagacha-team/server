@@ -8,6 +8,7 @@ import gachagacha.gachagacha.api.dto.response.ReadOneProductResponse;
 import gachagacha.gachagacha.domain.item.Item;
 import gachagacha.gachagacha.domain.item.ItemGrade;
 import gachagacha.gachagacha.domain.item.UserItem;
+import gachagacha.gachagacha.domain.lotto.LottoProcessor;
 import gachagacha.gachagacha.domain.trade.Trade;
 import gachagacha.gachagacha.domain.user.User;
 import gachagacha.gachagacha.jwt.JwtUtils;
@@ -35,6 +36,8 @@ public class TradeController {
     private final UserService userService;
     private final ItemService itemService;
     private final JwtUtils jwtUtils;
+    private final LottoProcessor lottoProcessor;
+
     @Value("${image.api.endpoints.items}")
     private String itemsImageApiEndpoint;
 
@@ -65,7 +68,9 @@ public class TradeController {
     @PostMapping("/items/{itemId}/purchase")
     public ApiResponse purchase(@PathVariable long itemId, HttpServletRequest request) {
         User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
-        tradeService.purchase(user, Item.findById(itemId));
+        Item purchaseItem = Item.findById(itemId);
+        tradeService.purchase(user, purchaseItem);
+        lottoProcessor.checkAndPublishLotteryEvent(user, purchaseItem);
         return ApiResponse.success();
     }
 
