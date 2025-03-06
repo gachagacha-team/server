@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
-public class TradeController {
+public class MarketController {
 
     private final TradeService tradeService;
     private final UserService userService;
@@ -74,7 +74,7 @@ public class TradeController {
         return ApiResponse.success();
     }
 
-    @Operation(summary = "내 상품 조회")
+    @Operation(summary = "내 판매 목록 조회")
     @Parameter(name = "grade", description = "조회할 상품의 아이템 등급(S, A, B, C, D)(생략 시 모든 상품 조회)")
     @Parameter(name = "pageable", description = "최신순(sort=createdAt,desc), 오래된순(sort=createdAt,asc)")
     @GetMapping("/products/me")
@@ -97,7 +97,17 @@ public class TradeController {
         );
     }
 
-    @Operation(summary = "내가 가진 아이템 리스트 조회(페이지네이션)(미니홈 꾸미기, 상품 등록시 사용됨)")
+    @Operation(summary = "판매 취소")
+    @Parameter(name = "productId", description = "취소할 상품 id")
+    @DeleteMapping("/products/{productId}")
+    public ApiResponse cancelTrade(@PathVariable long productId, HttpServletRequest request) {
+        User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
+        Trade trade = tradeService.readById(productId);
+        tradeService.cancelTrade(user, trade);
+        return ApiResponse.success();
+    }
+
+    @Operation(summary = "상품 등록 시 내가 가진 아이템 조회(페이지네이션)")
     @GetMapping("/items/me")
     public ApiResponse<Page<UserItemsForSaleResponse>> readMyItemsForSale(HttpServletRequest request, @PageableDefault(size = 10) Pageable pageable) {
         User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
@@ -130,16 +140,6 @@ public class TradeController {
         User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
         UserItem userItem = itemService.readById(addProductRequest.getUserItemId());
         tradeService.registerTrade(user, userItem);
-        return ApiResponse.success();
-    }
-
-    @Operation(summary = "등록된 상품 취소")
-    @Parameter(name = "productId", description = "취소할 상품 id")
-    @DeleteMapping("/products/{productId}")
-    public ApiResponse cancelTrade(@PathVariable long productId, HttpServletRequest request) {
-        User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
-        Trade trade = tradeService.readById(productId);
-        tradeService.cancelTrade(user, trade);
         return ApiResponse.success();
     }
 }

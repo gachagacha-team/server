@@ -14,6 +14,7 @@ public class ReadOneProductResponse {
 
     private String name;
     private String grade;
+    private int price;
     private int stock;
     private String imageUrl;
 
@@ -21,6 +22,7 @@ public class ReadOneProductResponse {
         return new ReadOneProductResponse(
                 item.getViewName(),
                 item.getItemGrade().getViewName(),
+                item.getItemGrade().getPrice(),
                 stock,
                 itemsImageApiEndpoint + item.getImageFileName());
     }
