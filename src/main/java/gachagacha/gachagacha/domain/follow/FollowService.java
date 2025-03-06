@@ -1,12 +1,8 @@
 package gachagacha.gachagacha.domain.follow;
 
-import gachagacha.gachagacha.domain.follow.Follow;
 import gachagacha.gachagacha.domain.user.User;
 import gachagacha.gachagacha.support.exception.ErrorCode;
 import gachagacha.gachagacha.support.exception.customException.BusinessException;
-import gachagacha.gachagacha.domain.follow.FollowReader;
-import gachagacha.gachagacha.domain.follow.FollowRemover;
-import gachagacha.gachagacha.domain.follow.FollowAppender;
 import gachagacha.gachagacha.domain.user.UserReader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -40,10 +36,6 @@ public class FollowService {
         }
     }
 
-    public void unfollow(User followee, User follower) {
-        followRemover.delete(followee, follower);
-    }
-
     public int readFollowersCnt(User user) {
         return followReader.findByFollowee(user).size();
     }
@@ -64,5 +56,9 @@ public class FollowService {
 
     public boolean isFollowing(User follower, User followee) {
         return followReader.existsByFolloweeAndFollower(followee, follower);
+    }
+
+    public void removeFollow(User followee, User follower) {
+        followRemover.delete(followee, follower);
     }
 }
