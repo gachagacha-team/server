@@ -46,7 +46,7 @@ public class ItemController {
     @Operation(summary = "아이템북 조회 - 전체 아이템과 사용자가 보유한 아이템 조회")
     @Parameter(name = "nickname", description = "미니홈 유저 닉네임")
     @Parameter(name = "grade", description = "조회할 아이템 등급(S, A, B, C, D)(생략 시 모든 아이템 조회)")
-    @GetMapping("/items/{nickname}")
+    @GetMapping("/itembook/{nickname}")
     public ApiResponse<List<UserItemResponse>> getItems(@PathVariable String nickname, @RequestParam(value = "grade", required = false) String grade, HttpServletRequest request) {
         String currentUserNickname = jwtUtils.getUserNicknameFromHeader(request);
         if (!currentUserNickname.equals(nickname)) {
@@ -64,8 +64,13 @@ public class ItemController {
     }
 
     @Operation(summary = "미니홈 꾸미기 - 사용자가 보유한 아이템 조회(페이지네이션)")
-    @GetMapping("/items/me")
-    public ApiResponse<Page<UserItemsResponse>> readMyItems(HttpServletRequest request, @PageableDefault(size = 10) Pageable pageable) {
+    @GetMapping("/items/{nickname}")
+    public ApiResponse<Page<UserItemsResponse>> readMyItems(@PathVariable String nickname, HttpServletRequest request, @PageableDefault(size = 10) Pageable pageable) {
+        String currentUserNickname = jwtUtils.getUserNicknameFromHeader(request);
+        if (!currentUserNickname.equals(nickname)) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED);
+        }
+
         User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
         Map<Item, List<UserItem>> userItemsMap = Arrays.stream(Item.values())
                 .map(item -> {
