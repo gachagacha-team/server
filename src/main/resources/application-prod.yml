@@ -49,7 +49,7 @@ logging:
     webhook-url: ${DISCORD_WEBHOOK_URL}
 
 client:
-  address: https://gacha-ruddy.vercel.app/
+  address: http://localhost:5173
 
 file:
   profile: /uploads/profile/
