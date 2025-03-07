@@ -1,19 +1,15 @@
 package gachagacha.gachagacha.api;
 
 import gachagacha.gachagacha.api.dto.request.FollowRequest;
+import gachagacha.gachagacha.api.dto.request.UnfollowRequest;
 import gachagacha.gachagacha.api.dto.response.FollowerResponse;
 import gachagacha.gachagacha.api.dto.response.FollowingResponse;
-import gachagacha.gachagacha.api.dto.request.UnfollowRequest;
-import gachagacha.gachagacha.api.dto.response.AttendanceResponse;
-import gachagacha.gachagacha.api.dto.response.CoinResponse;
-import gachagacha.gachagacha.domain.follow.Follow;
-import gachagacha.gachagacha.jwt.JwtUtils;
-import gachagacha.gachagacha.domain.attendance.Attendance;
-import gachagacha.gachagacha.domain.user.Coin;
-import gachagacha.gachagacha.domain.user.User;
 import gachagacha.gachagacha.api.response.ApiResponse;
+import gachagacha.gachagacha.domain.follow.Follow;
 import gachagacha.gachagacha.domain.follow.FollowService;
+import gachagacha.gachagacha.domain.user.User;
 import gachagacha.gachagacha.domain.user.UserService;
+import gachagacha.gachagacha.jwt.JwtUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-public class UserController {
+public class FollowController {
 
     private final JwtUtils jwtUtils;
     private final UserService userService;
@@ -33,22 +29,6 @@ public class UserController {
 
     @Value("${image.api.endpoints.profile}")
     private String profileImageApiEndpoint;
-
-    @Operation(summary = "코인 조회")
-    @GetMapping("/coin")
-    public ApiResponse<CoinResponse> getCoin(HttpServletRequest request) {
-        Coin coin = userService.getCoin(jwtUtils.getUserNicknameFromHeader(request));
-        return ApiResponse.success(CoinResponse.of(coin));
-    }
-
-    @Operation(summary = "출석체크")
-    @PostMapping("/attend")
-    public ApiResponse<AttendanceResponse> attend(HttpServletRequest request) {
-        String nickname = jwtUtils.getUserNicknameFromHeader(request);
-        User user = userService.readUserByNickname(nickname);
-        Attendance attendance = userService.attend(user);
-        return ApiResponse.success(AttendanceResponse.of(attendance, user));
-    }
 
     @Operation(summary = "팔로우")
     @PostMapping("/users/follow")
@@ -64,7 +44,16 @@ public class UserController {
     public ApiResponse unfollow(@RequestBody UnfollowRequest unfollowRequest, HttpServletRequest request) {
         User followee = userService.readUserByNickname(unfollowRequest.getFolloweeUserNickname());
         User follower = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
-        followService.unfollow(followee, follower);
+        followService.removeFollow(followee, follower);
+        return ApiResponse.success();
+    }
+
+    @Operation(summary = "내 팔로워 삭제")
+    @DeleteMapping("/users/follower/{nickname}")
+    public ApiResponse removeFollower(@PathVariable String nickname, HttpServletRequest request) {
+        User follower = userService.readUserByNickname(nickname);
+        User followee = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
+        followService.removeFollow(followee, follower);
         return ApiResponse.success();
     }
 

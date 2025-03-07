@@ -1,8 +1,6 @@
 package gachagacha.gachagacha.api;
 
-import gachagacha.gachagacha.api.dto.response.GachaResponse;
-import gachagacha.gachagacha.api.dto.response.BackgroundResponse;
-import gachagacha.gachagacha.api.dto.response.UserItemResponse;
+import gachagacha.gachagacha.api.dto.response.*;
 import gachagacha.gachagacha.domain.item.Item;
 import gachagacha.gachagacha.domain.item.ItemGrade;
 import gachagacha.gachagacha.domain.item.UserItem;
@@ -19,10 +17,17 @@ import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -38,18 +43,10 @@ public class ItemController {
     @Value("${image.api.endpoints.backgrounds}")
     private String backgroundsImageApiEndpoint;
 
-    @Operation(summary = "아이템 뽑기")
-    @PostMapping("/gacha")
-    public ApiResponse<GachaResponse> gacha(HttpServletRequest request) {
-        User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
-        Item item = itemService.gacha(user);
-        return ApiResponse.success(GachaResponse.of(item, itemsImageApiEndpoint));
-    }
-
-    @Operation(summary = "사용자가 보유한 아이템 리스트 조회")
+    @Operation(summary = "아이템북 조회 - 전체 아이템과 사용자가 보유한 아이템 조회")
     @Parameter(name = "nickname", description = "미니홈 유저 닉네임")
     @Parameter(name = "grade", description = "조회할 아이템 등급(S, A, B, C, D)(생략 시 모든 아이템 조회)")
-    @GetMapping("/items/{nickname}")
+    @GetMapping("/itembook/{nickname}")
     public ApiResponse<List<UserItemResponse>> getItems(@PathVariable String nickname, @RequestParam(value = "grade", required = false) String grade, HttpServletRequest request) {
         String currentUserNickname = jwtUtils.getUserNicknameFromHeader(request);
         if (!currentUserNickname.equals(nickname)) {
@@ -66,7 +63,36 @@ public class ItemController {
                 ).toList());
     }
 
-    @Operation(summary = "사용자가 보유한 배경 리스트 조회")
+    @Operation(summary = "미니홈 꾸미기 - 사용자가 보유한 아이템 조회(페이지네이션)")
+    @GetMapping("/items/{nickname}")
+    public ApiResponse<Page<UserItemsResponse>> readMyItems(@PathVariable String nickname, HttpServletRequest request, @PageableDefault(size = 10) Pageable pageable) {
+        String currentUserNickname = jwtUtils.getUserNicknameFromHeader(request);
+        if (!currentUserNickname.equals(nickname)) {
+            throw new BusinessException(ErrorCode.UNAUTHORIZED);
+        }
+
+        User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
+        Map<Item, List<UserItem>> userItemsMap = Arrays.stream(Item.values())
+                .map(item -> {
+                    List<UserItem> userItems = itemService.readUserItemsByItem(user, item);
+                    if (userItems.size() == 0) return null;
+                    return Map.entry(item, userItems);
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+
+        List<UserItemsResponse> data = userItemsMap.keySet().stream()
+                .map(item -> UserItemsResponse.of(item, userItemsMap.get(item), itemsImageApiEndpoint))
+                .toList();
+
+        int start = (int) pageable.getOffset();
+        int end = Math.min(start + pageable.getPageSize(), data.size());
+        List<UserItemsResponse> pagedList = data.subList(start, end);
+        Page<UserItemsResponse> page = new PageImpl<>(pagedList, pageable, data.size());
+        return ApiResponse.success(page);
+    }
+
+    @Operation(summary = "미니홈 꾸미기 - 사용자가 보유한 배경 조회")
     @Parameter(name = "nickname", description = "미니홈 유저 닉네임")
     @GetMapping("/backgrounds/{nickname}")
     public ApiResponse<List<BackgroundResponse>> readAllBackgrounds(@PathVariable String nickname, HttpServletRequest request) {

@@ -1,10 +1,6 @@
 package gachagacha.gachagacha.domain.item;
 
-import gachagacha.gachagacha.domain.item.Item;
-import gachagacha.gachagacha.domain.item.UserItem;
 import gachagacha.gachagacha.domain.user.User;
-import gachagacha.gachagacha.domain.item.UserItemReader;
-import gachagacha.gachagacha.domain.item.UserItemAppender;
 import gachagacha.gachagacha.domain.user.UserUpdater;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

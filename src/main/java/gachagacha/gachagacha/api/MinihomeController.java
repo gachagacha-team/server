@@ -1,12 +1,15 @@
 package gachagacha.gachagacha.api;
 
+import gachagacha.gachagacha.api.dto.response.AttendanceResponse;
+import gachagacha.gachagacha.api.dto.response.CoinResponse;
 import gachagacha.gachagacha.api.dto.response.MinihomeResponse;
 import gachagacha.gachagacha.api.dto.request.AddGuestbookRequest;
 import gachagacha.gachagacha.api.dto.request.EditGuestbookRequest;
-import gachagacha.gachagacha.api.dto.response.ExploreMinihomeResponse;
 import gachagacha.gachagacha.api.dto.response.GuestbookResponse;
+import gachagacha.gachagacha.domain.attendance.Attendance;
 import gachagacha.gachagacha.domain.guestbook.Guestbook;
 import gachagacha.gachagacha.domain.minihome.Minihome;
+import gachagacha.gachagacha.domain.user.Coin;
 import gachagacha.gachagacha.domain.user.User;
 import gachagacha.gachagacha.jwt.JwtUtils;
 import gachagacha.gachagacha.domain.guestbook.GuestbookService;
@@ -22,7 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
 
 @Slf4j
@@ -100,25 +102,19 @@ public class MinihomeController {
         return ApiResponse.success();
     }
 
-    @Operation(summary = "미니홈 리스트 조회(가입순, 인기순)(무한스크롤)")
-    @Parameter(name = "pageable", description = "가입순(sort=createdAt,desc), 인기순(sort=totalVisitorCnt,desc)")
-    @GetMapping("/explore/minihome")
-    public ApiResponse<Slice<ExploreMinihomeResponse>> explore(Pageable pageable) {
-        return ApiResponse.success(minihomeService.explore(pageable)
-                .map(minihome -> {
-                    User user = userService.readUserById(minihome.getUserId());
-                    return ExploreMinihomeResponse.of(minihome, user, profileImageApiEndpoint);
-                }));
+    @Operation(summary = "코인 조회")
+    @GetMapping("/coin")
+    public ApiResponse<CoinResponse> getCoin(HttpServletRequest request) {
+        Coin coin = userService.getCoin(jwtUtils.getUserNicknameFromHeader(request));
+        return ApiResponse.success(CoinResponse.of(coin));
     }
 
-    @Operation(summary = "미니홈 리스트 조회(스코어순)(무한스크롤)")
-    @Parameter(name = "pageable", description = "스코어순(sort=score,desc)")
-    @GetMapping("/explore/minihome/score")
-    public ApiResponse<Slice<ExploreMinihomeResponse>> exploreByScore(Pageable pageable) {
-        return ApiResponse.success(minihomeService.exploreByScore(pageable)
-                .map(minihome -> {
-                    User user = userService.readUserById(minihome.getUserId());
-                    return ExploreMinihomeResponse.of(minihome, user, profileImageApiEndpoint);
-                }));
+    @Operation(summary = "출석체크")
+    @PostMapping("/attend")
+    public ApiResponse<AttendanceResponse> attend(HttpServletRequest request) {
+        String nickname = jwtUtils.getUserNicknameFromHeader(request);
+        User user = userService.readUserByNickname(nickname);
+        Attendance attendance = userService.attend(user);
+        return ApiResponse.success(AttendanceResponse.of(attendance, user));
     }
 }
