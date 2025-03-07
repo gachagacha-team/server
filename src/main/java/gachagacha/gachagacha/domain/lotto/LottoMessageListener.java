@@ -1,44 +1,96 @@
 package gachagacha.gachagacha.domain.lotto;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import gachagacha.gachagacha.api.sse.SseEmitters;
-import gachagacha.gachagacha.domain.lotto.dto.IssuedLotto;
-import gachagacha.gachagacha.domain.lotto.dto.LotteryIssuanceEvent;
+import gachagacha.gachagacha.domain.user.User;
 import gachagacha.gachagacha.domain.user.UserReader;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.redis.connection.Message;
-import org.springframework.data.redis.connection.MessageListener;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Range;
+import org.springframework.data.redis.connection.stream.*;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.data.redis.core.StreamOperations;
+import org.springframework.data.redis.stream.StreamListener;
+import org.springframework.data.redis.stream.StreamMessageListenerContainer;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+
+import java.time.Duration;
+import java.util.Map;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class LottoMessageListener implements MessageListener {
+public class LottoMessageListener implements StreamListener<String, MapRecord<String, String, String>>, InitializingBean {
 
-    private final RedisTemplate<String, LotteryIssuanceEvent> redisTemplate;
-    private final ObjectMapper objectMapper;
     private final LottoProcessor lottoProcessor;
+    private final StreamMessageListenerContainer listenerContainer;
+    private final RedisTemplate<String, String> redisTemplate;
     private final UserReader userReader;
     private final SseEmitters sseEmitters;
 
+    @Value("${spring.data.redis.stream.lotto-issued}")
+    private String streamKey;
+    private final String CONSUMER_GROUP_NAME = "default-group";
+    private final String CONSUMER_NAME = "default-name";
+
     @Override
-    public void onMessage(Message message, byte[] pattern) {
+    public void onMessage(MapRecord<String, String, String> message) {
+        log.info("Redis Stream consume. stream = {}, message = {}", streamKey, message.toString());
         try {
-            String publishMessage = redisTemplate
-                    .getStringSerializer().deserialize(message.getBody());
-            IssuedLotto issuedLotto = objectMapper.readValue(publishMessage, IssuedLotto.class);
-            log.info("Redis subscribe. message = {}", issuedLotto.toString());
-
-            // 로또 저장
-            Lotto savedLotto = lottoProcessor.save(Lotto.of(issuedLotto.getUserId(), issuedLotto.isWon(), issuedLotto.getRewardCoin()));
-
-            // SSE로 알리기
-            sseEmitters.issuedLotto(savedLotto, userReader.findById(savedLotto.getUserId()));
-        } catch (JsonProcessingException e) {
-            log.error(e.getMessage());
+            process(message);
+        } catch (Exception e) {
+            log.error("메시지 처리 중 예외 발생");
         }
+    }
+
+    private void process(MapRecord<String, String, String> message) {
+        Map<String, String> map = message.getValue();
+        Lotto lotto = Lotto.of(Long.valueOf(map.get("userId")), Boolean.valueOf(map.get("won")), Integer.valueOf(map.get("rewardCoin")));
+        Lotto savedLotto = lottoProcessor.save(lotto);
+        User user = userReader.findById(savedLotto.getUserId());
+        sseEmitters.issuedLotto(savedLotto, user);
+        redisTemplate.opsForStream().acknowledge(streamKey, CONSUMER_GROUP_NAME, message.getId());
+    }
+
+    @Scheduled(fixedRate = 10000)
+    public void pendingMessageScheduler() {
+        log.info("Start pending message scheduler");
+        StreamOperations<String, String, String> streamOps = redisTemplate.opsForStream();
+        PendingMessagesSummary summary = streamOps.pending(streamKey, CONSUMER_GROUP_NAME);
+        long totalPendingMessagesCount = summary.getTotalPendingMessages();
+        if (totalPendingMessagesCount > 0) {
+            PendingMessages pendingMessages = streamOps.pending(streamKey, CONSUMER_GROUP_NAME, Range.closed("0", "+"), totalPendingMessagesCount);
+            RecordId[] pendingMessageIds = pendingMessages.stream()
+                    .map(pendingMessage -> pendingMessage.getId())
+                    .toArray(RecordId[]::new);
+            streamOps.claim(streamKey, CONSUMER_GROUP_NAME, CONSUMER_NAME, Duration.ofMillis(0), pendingMessageIds)
+                    .stream()
+                    .forEach(message -> {
+                        log.info("Retry pending message = {}", message.getValue());
+                        process(message);
+                    });
+        }
+    }
+
+    @Override
+    public void afterPropertiesSet() {
+        if (!Boolean.TRUE.equals(redisTemplate.hasKey(streamKey))) {
+            redisTemplate.opsForStream().createGroup(streamKey, ReadOffset.from("0"), CONSUMER_GROUP_NAME);
+        } else {
+            boolean groupExists = redisTemplate.opsForStream()
+                    .groups(streamKey)
+                    .stream()
+                    .anyMatch(group -> group.groupName().equals(CONSUMER_GROUP_NAME));
+            if (!groupExists) {
+                redisTemplate.opsForStream().createGroup(streamKey, ReadOffset.latest(), CONSUMER_GROUP_NAME);
+            }
+        }
+
+        Consumer consumer = Consumer.from(CONSUMER_GROUP_NAME, CONSUMER_NAME);
+        StreamOffset<String> streamOffset = StreamOffset.create(streamKey, ReadOffset.lastConsumed());
+        listenerContainer.receive(consumer, streamOffset, this);
+        listenerContainer.start();
     }
 }

@@ -10,8 +10,8 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-@Component
 @Slf4j
+@Component
 public class SseEmitters {
 
     private final Map<String, SseEmitter> emitters = new ConcurrentHashMap<>();
@@ -34,12 +34,17 @@ public class SseEmitters {
 
     public void issuedLotto(Lotto lotto, User user) {
         SseEmitter sseEmitter = emitters.get(user.getNickname());
-        try {
-            sseEmitter.send(SseEmitter.event()
-                    .name("lotto")
-                    .data(new LottoResponse(lotto.getId(), lotto.isWon(), lotto.getRewardCoin())));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+        if (sseEmitter == null) {
+            log.info("SSE transmission failed: Could not find SSE emitter for user {}", user.getNickname());
+        } else {
+            try {
+                sseEmitter.send(SseEmitter.event()
+                        .name("lotto")
+                        .data(new LottoResponse(lotto.getId(), lotto.isWon(), lotto.getRewardCoin())));
+                log.info("SSE transmission successful");
+            } catch (IOException e) {
+                log.error("SSE transmission failed: Error occurred during SSE transmission", e);
+            }
         }
     }
 }

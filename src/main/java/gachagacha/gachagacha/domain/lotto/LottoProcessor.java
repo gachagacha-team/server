@@ -2,7 +2,6 @@ package gachagacha.gachagacha.domain.lotto;
 
 import gachagacha.gachagacha.domain.item.Item;
 import gachagacha.gachagacha.domain.item.UserItemRepository;
-import gachagacha.gachagacha.domain.lotto.dto.LotteryIssuanceEvent;
 import gachagacha.gachagacha.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Async;
@@ -36,7 +35,7 @@ public class LottoProcessor {
         boolean addedItemIsOne = userItemsMap.getOrDefault(addedItem, 0L) == 1;
 
         if (hasAllItemsOfGrade && addedItemIsOne) {
-            lottoMessagePublisher.publishLotteryIssuanceEvent(new LotteryIssuanceEvent(user.getId()));
+            lottoMessagePublisher.publishLottoIssuanceEvent(user.getId());
         }
     }
 

@@ -1,20 +1,15 @@
 package gachagacha.gachagacha.config;
 
-import gachagacha.gachagacha.domain.lotto.dto.LotteryIssuanceEvent;
-import gachagacha.gachagacha.domain.lotto.LottoMessageListener;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
-import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.ChannelTopic;
-import org.springframework.data.redis.listener.RedisMessageListenerContainer;
-import org.springframework.data.redis.listener.adapter.MessageListenerAdapter;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
+import org.springframework.data.redis.stream.StreamMessageListenerContainer;
 
+@Slf4j
 @Configuration
 public class RedisConfig {
 
@@ -33,29 +28,7 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, LotteryIssuanceEvent> lotteryIssuanceEventRedisTemplate() {
-        RedisTemplate<String, LotteryIssuanceEvent> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory());
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(LotteryIssuanceEvent.class));
-        return redisTemplate;
-    }
-
-    @Bean
-    public RedisMessageListenerContainer redisMessageListener(MessageListenerAdapter listenerAdapter, ChannelTopic channelTopic) {
-        RedisMessageListenerContainer container = new RedisMessageListenerContainer();
-        container.setConnectionFactory(redisConnectionFactory());
-        container.addMessageListener(listenerAdapter, channelTopic);
-        return container;
-    }
-
-    @Bean
-    public ChannelTopic channelTopic() {
-        return new ChannelTopic("lotto:issued");
-    }
-
-    @Bean
-    public MessageListenerAdapter listenerAdapter(LottoMessageListener lottoMessageListener) {
-        return new MessageListenerAdapter(lottoMessageListener, "onMessage");
+    public StreamMessageListenerContainer createStreamMessageListenerContainer() {
+        return StreamMessageListenerContainer.create(redisConnectionFactory());
     }
 }

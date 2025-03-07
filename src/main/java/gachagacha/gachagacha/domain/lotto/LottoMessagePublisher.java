@@ -1,8 +1,12 @@
 package gachagacha.gachagacha.domain.lotto;
 
-import gachagacha.gachagacha.domain.lotto.dto.LotteryIssuanceEvent;
+import gachagacha.gachagacha.domain.lotto.dto.LottoIssuanceEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.connection.stream.ObjectRecord;
+import org.springframework.data.redis.connection.stream.RecordId;
+import org.springframework.data.redis.connection.stream.StreamRecords;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
@@ -11,10 +15,17 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class LottoMessagePublisher {
 
-    private final RedisTemplate<String, LotteryIssuanceEvent> redisTemplate;
+    private final RedisTemplate<String, String> redisTemplate;
 
-    public void publishLotteryIssuanceEvent(LotteryIssuanceEvent message) {
-        log.info("Redis publish. topic = {}, message = {}", "lotto:issuance:event", message.toString());
-        redisTemplate.convertAndSend("lotto:issuance:event", message);
+    @Value("${spring.data.redis.stream.lotto-issuance-requests}")
+    private String streamKey;
+
+    public void publishLottoIssuanceEvent(long userId) {
+        LottoIssuanceEvent lottoIssuanceEvent = new LottoIssuanceEvent(userId);
+        ObjectRecord<String, LottoIssuanceEvent> record = StreamRecords.newRecord()
+                .ofObject(lottoIssuanceEvent)
+                .withStreamKey(streamKey);
+        RecordId recordId = redisTemplate.opsForStream().add(record);
+        log.info("Redis Stream publish. stream = {}, record id = {}, message = {}", streamKey, recordId, lottoIssuanceEvent.toString());
     }
 }
