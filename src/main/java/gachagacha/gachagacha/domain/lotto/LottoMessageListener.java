@@ -57,6 +57,12 @@ public class LottoMessageListener implements StreamListener<String, MapRecord<St
     @Scheduled(fixedRate = 10000)
     public void pendingMessageScheduler() {
         log.info("Start pending message scheduler");
+
+        if (Boolean.FALSE.equals(redisTemplate.hasKey(streamKey))) {
+            log.info("Stream key '{}' does not exist. Skipping pending message processing.", streamKey);
+            return;
+        }
+
         StreamOperations<String, String, String> streamOps = redisTemplate.opsForStream();
         PendingMessagesSummary summary = streamOps.pending(streamKey, CONSUMER_GROUP_NAME);
         long totalPendingMessagesCount = summary.getTotalPendingMessages();

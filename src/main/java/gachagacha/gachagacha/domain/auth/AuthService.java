@@ -1,5 +1,7 @@
 package gachagacha.gachagacha.domain.auth;
 
+import gachagacha.gachagacha.dd.DecorationProcessor;
+import gachagacha.gachagacha.dd.dto.Decoration;
 import gachagacha.gachagacha.domain.minihome.MinihomeReader;
 import gachagacha.gachagacha.domain.minihome.MinihomeRemover;
 import gachagacha.gachagacha.domain.item.UserItemRemover;
@@ -46,6 +48,7 @@ public class AuthService {
     private final MinihomeReader minihomeReader;
     private final UserRemover userRemover;
     private final UserItemRemover userItemRemover;
+    private final DecorationProcessor decorationProcessor;
 
     @Transactional
     public String join(String nickname, SocialType socialType, Long loginId, MultipartFile file) throws IOException {
@@ -62,6 +65,9 @@ public class AuthService {
 
         Minihome minihome = Minihome.of(userId);
         minihomeAppender.save(minihome);
+
+        Decoration decoration = new Decoration(1l, null);
+        decorationProcessor.save(decoration, userId);
 
         JwtDto jwtDto = jwtUtils.generateJwt(user);
         tokenProcessor.save(jwtDto.getRefreshToken());

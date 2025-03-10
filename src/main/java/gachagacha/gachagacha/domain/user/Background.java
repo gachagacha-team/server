@@ -1,7 +1,11 @@
 package gachagacha.gachagacha.domain.user;
 
+import gachagacha.gachagacha.support.exception.ErrorCode;
+import gachagacha.gachagacha.support.exception.customException.BusinessException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+
+import java.util.Arrays;
 
 @Getter
 @RequiredArgsConstructor
@@ -14,4 +18,11 @@ public enum Background {
 
     private final long id;
     private final String imageFileName;
+
+    public static Background findById(long id) {
+        return Arrays.stream(Background.values())
+                .filter(background -> background.id == id)
+                .findFirst()
+                .orElseThrow(() -> new BusinessException(ErrorCode.INVALID_BACKGROUND_ID));
+    }
 }

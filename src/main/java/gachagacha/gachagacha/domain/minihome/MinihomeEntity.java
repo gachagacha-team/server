@@ -23,16 +23,12 @@ public class MinihomeEntity extends BaseEntity {
     @Column(nullable = false)
     private int totalVisitorCnt;
 
-    @Lob
-    private String layout;
-
     public Minihome toMinihome() {
-        return new Minihome(id, userId, totalVisitorCnt, layout);
+        return new Minihome(id, userId, totalVisitorCnt);
     }
 
     public void updateFromMinihome(Minihome minihome) {
         this.userId = minihome.getUserId();
         this.totalVisitorCnt = minihome.getTotalVisitorCnt();
-        this.layout = minihome.getLayout();
     }
 }
