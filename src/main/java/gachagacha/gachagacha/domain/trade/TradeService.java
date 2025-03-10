@@ -1,8 +1,12 @@
 package gachagacha.gachagacha.domain.trade;
 
-import gachagacha.gachagacha.dd.DecorationProcessor;
+import gachagacha.gachagacha.api.sse.SseEmitters;
+import gachagacha.gachagacha.domain.decoration.DecorationProcessor;
 import gachagacha.gachagacha.domain.item.Item;
 import gachagacha.gachagacha.domain.item.UserItem;
+import gachagacha.gachagacha.domain.notification.Notification;
+import gachagacha.gachagacha.domain.notification.NotificationProcessor;
+import gachagacha.gachagacha.domain.notification.NotificationType;
 import gachagacha.gachagacha.domain.user.User;
 import gachagacha.gachagacha.domain.user.UserReader;
 import gachagacha.gachagacha.domain.user.UserUpdater;
@@ -35,6 +39,8 @@ public class TradeService {
     private final UserUpdater userUpdater;
     private final TradeUpdater tradeUpdater;
     private final DecorationProcessor decorationProcessor;
+    private final SseEmitters sseEmitters;
+    private final NotificationProcessor notificationProcessor;
 
     public List<Trade> readOnSaleProductsByItem(Item item) {
         return tradeReader.findOnSaleProductsByItem(item);
@@ -94,6 +100,10 @@ public class TradeService {
         userUpdater.update(buyer);
         userUpdater.update(seller);
         tradeUpdater.update(trade);
+
+        Notification notification = Notification.of(NotificationType.TRADE_COMPLETED, new Notification.TradeCompletedNotification(item.getViewName(), item.getItemGrade().getPrice()));
+        Long notificationId = notificationProcessor.saveNotification(notification, seller);
+        sseEmitters.tradeComplete(seller, trade.getItem(), notificationId);
     }
 
     public Trade readById(long tradeId) {
