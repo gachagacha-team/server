@@ -1,5 +1,6 @@
-package gachagacha.gachagacha.dd.dto;
+package gachagacha.gachagacha.api.dto.response;
 
+import gachagacha.gachagacha.domain.decoration.Decoration;
 import gachagacha.gachagacha.domain.user.Background;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

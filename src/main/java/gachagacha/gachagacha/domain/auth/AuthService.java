@@ -1,7 +1,7 @@
 package gachagacha.gachagacha.domain.auth;
 
-import gachagacha.gachagacha.dd.DecorationProcessor;
-import gachagacha.gachagacha.dd.dto.Decoration;
+import gachagacha.gachagacha.domain.decoration.DecorationProcessor;
+import gachagacha.gachagacha.domain.decoration.Decoration;
 import gachagacha.gachagacha.domain.minihome.MinihomeReader;
 import gachagacha.gachagacha.domain.minihome.MinihomeRemover;
 import gachagacha.gachagacha.domain.item.UserItemRemover;

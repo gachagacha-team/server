@@ -1,4 +1,4 @@
-package gachagacha.gachagacha.dd;
+package gachagacha.gachagacha.api.dto.request;
 
 import lombok.Getter;
 
