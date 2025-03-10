@@ -1,4 +1,4 @@
-package gachagacha.gachagacha.dd.dto;
+package gachagacha.gachagacha.domain.decoration;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

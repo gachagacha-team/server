@@ -14,7 +14,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.*;
@@ -26,9 +25,6 @@ public class FollowController {
     private final JwtUtils jwtUtils;
     private final UserService userService;
     private final FollowService followService;
-
-    @Value("${image.api.endpoints.profile}")
-    private String profileImageApiEndpoint;
 
     @Operation(summary = "팔로우")
     @PostMapping("/users/follow")
@@ -67,7 +63,7 @@ public class FollowController {
         return ApiResponse.success(followers.map(follow -> {
             User follower = userService.readUserById(follow.getFollowerId());
             boolean isFollowing = followService.isFollowing(currentUser, follower);
-            return FollowerResponse.of(follower, followee, currentUser, isFollowing, profileImageApiEndpoint);
+            return FollowerResponse.of(follower, followee, currentUser, isFollowing);
         }));
     }
 
@@ -80,7 +76,7 @@ public class FollowController {
         return ApiResponse.success(followers.map(follow -> {
             User followee = userService.readUserById(follow.getFolloweeId());
             boolean isFollowing = followService.isFollowing(currentUser, followee);
-            return FollowingResponse.of(followee, currentUser, isFollowing, profileImageApiEndpoint);
+            return FollowingResponse.of(followee, currentUser, isFollowing);
         }));
     }
 }

@@ -13,8 +13,7 @@ public class FollowerResponse {
 
     private long userId;
     private String nickname;
-    private String profileImageStoreFileName;
-
+    private long profileId;
     @JsonProperty("isFollowing")
     private boolean isFollowing; // 조회하는 사용자가 이 사용자를 팔로우하는지 여부
 
@@ -24,11 +23,11 @@ public class FollowerResponse {
     @JsonProperty("isCurrentUser")
     private boolean isCurrentUser; // 조회된 사용자가 현재 조회 중인 사용자 본인인지 여부
 
-    public static FollowerResponse of(User follower, User followee, User currentUser, boolean isFollowing, String profileImageApiEndpoint) {
+    public static FollowerResponse of(User follower, User followee, User currentUser, boolean isFollowing) {
         return new FollowerResponse(
                 follower.getId(),
                 follower.getNickname(),
-                profileImageApiEndpoint + follower.getProfileImage().getStoreFileName(),
+                  follower.getProfile().getId(),
                 isFollowing,
                 currentUser.getId() == followee.getId(),
                 currentUser.getId() == follower.getId());
@@ -40,9 +39,5 @@ public class FollowerResponse {
 
     public String getNickname() {
         return nickname;
-    }
-
-    public String getProfileImageStoreFileName() {
-        return profileImageStoreFileName;
     }
 }

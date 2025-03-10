@@ -1,6 +1,5 @@
-package gachagacha.gachagacha.dd;
+package gachagacha.gachagacha.domain.decoration;
 
-import gachagacha.gachagacha.dd.dto.Decoration;
 import gachagacha.gachagacha.domain.item.UserItem;
 import gachagacha.gachagacha.domain.user.User;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +24,9 @@ public class DecorationProcessor {
 
     public boolean isUsedInMinihomeDecoration(UserItem userItem, User user) {
         Decoration decoration = redisTemplate.opsForValue().get(DECORATION_PREFIX + user.getId());
+        if (decoration.getItems() == null) {
+            return false;
+        }
         return decoration.getItems().stream()
                 .anyMatch(decorationItem -> decorationItem.getUserItemId() == userItem.getId());
     }

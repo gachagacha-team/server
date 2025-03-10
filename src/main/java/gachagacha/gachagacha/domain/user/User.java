@@ -1,6 +1,5 @@
 package gachagacha.gachagacha.domain.user;
 
-import gachagacha.gachagacha.domain.guestbook.ProfileImage;
 import gachagacha.gachagacha.domain.item.Item;
 import gachagacha.gachagacha.domain.item.UserItem;
 import lombok.AllArgsConstructor;
@@ -20,12 +19,12 @@ public class User {
     private String nickname;
     private Coin coin;
     private Score score;
-    private ProfileImage profileImage;
+    private Profile profile;
     private List<Background> backgrounds = new ArrayList<>();
 
     private static final int GACHA_COST = 1000;
 
-    public static User of(String nickname, SocialType socialType, Long loginId, ProfileImage profileImage) {
+    public static User of(String nickname, SocialType socialType, Long loginId, Profile profile) {
         return new User(
                 null,
                 socialType,
@@ -33,7 +32,7 @@ public class User {
                 nickname,
                 new Coin(),
                 new Score(),
-                profileImage,
+                profile,
                 List.of(Background.WHITE, Background.SKYBLUE, Background.CLOUD_GROUND)
         );
     }
@@ -76,7 +75,7 @@ public class User {
                 nickname,
                 coin,
                 score,
-                profileImage,
+                profile,
                 backgrounds
         );
     }

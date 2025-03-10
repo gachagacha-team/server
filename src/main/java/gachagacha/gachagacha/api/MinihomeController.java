@@ -22,7 +22,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
@@ -38,9 +37,6 @@ public class MinihomeController {
     private final GuestbookService guestbookService;
     private final JwtUtils jwtUtils;
 
-    @Value("${image.api.endpoints.profile}")
-    private String profileImageApiEndpoint;
-
     @Operation(summary = "미니홈 조회")
     @Parameter(name = "nickname", description = "미니홈 유저 닉네임")
     @GetMapping("/minihomes/{nickname}")
@@ -51,7 +47,7 @@ public class MinihomeController {
         int followersCnt = followService.readFollowersCnt(minihomeUser);
         int followingsCnt = followService.readFollowingsCnt(minihomeUser);
         boolean isFollowing = followService.isFollowing(currentUser, minihomeUser);
-        return ApiResponse.success(MinihomeResponse.of(currentUser, minihomeUser, minihome, followersCnt, followingsCnt, isFollowing, profileImageApiEndpoint));
+        return ApiResponse.success(MinihomeResponse.of(currentUser, minihomeUser, minihome, followersCnt, followingsCnt, isFollowing));
     }
 
     @Operation(summary = "방명록 조회(페이지네이션)")

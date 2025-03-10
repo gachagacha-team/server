@@ -1,7 +1,6 @@
 package gachagacha.gachagacha.domain.user;
 
 import gachagacha.gachagacha.domain.BaseEntity;
-import gachagacha.gachagacha.domain.guestbook.ProfileImage;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -39,15 +38,14 @@ public class UserEntity extends BaseEntity {
     @Embedded
     private Score score;
 
-    @Column(nullable = false)
-    @Embedded
-    private ProfileImage profileImage;
+    @Enumerated(value = EnumType.STRING)
+    private Profile profile;
 
     private List<Background> backgrounds = new ArrayList<>();
 
     public User toUser() {
         return new User(id, socialType, loginId, nickname, coin, score,
-                profileImage,
+                profile,
                 backgrounds);
     }
 
@@ -55,7 +53,7 @@ public class UserEntity extends BaseEntity {
         this.nickname = user.getNickname();
         this.coin = user.getCoin();
         this.score = user.getScore();
-        this.profileImage = user.getProfileImage();
+        this.profile = user.getProfile();
         this.backgrounds = user.getBackgrounds();
     }
 }

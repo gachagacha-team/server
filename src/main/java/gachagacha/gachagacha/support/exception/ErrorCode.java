@@ -21,6 +21,7 @@ ErrorCode {
     INVALID_BACKGROUND_ID(202, HttpStatus.BAD_REQUEST, "잘못된 배경 id 입니다."),
     INVALID_TRADE_STATUS(203, HttpStatus.BAD_REQUEST, "잘못된 거래 상태 입니다."),
     INVALID_ITEM_GRADE(204, HttpStatus.BAD_REQUEST, "잘못된 아이템 등급입니다."),
+    INVALID_PROFILE_ID(205, HttpStatus.BAD_REQUEST, "잘못된 프로필 id 입니다."),
 
     // Not Found
     NOT_FOUND_USER(301, HttpStatus.NOT_FOUND, "사용자를 찾을 수 없습니다."),
@@ -40,7 +41,7 @@ ErrorCode {
     CANNOT_EDIT_COMPLETED_TRADE(407, HttpStatus.BAD_REQUEST, "판매 완료된 거래는 수정이 불가합니다."),
     CANNOT_SELF_FOLLOW(408, HttpStatus.BAD_REQUEST, "자기 자신에게는 팔로우가 불가합니다."),
     ALREADY_FOLLOWING(409, HttpStatus.BAD_REQUEST, "이미 팔로우된 상태입니다."),
-    CANNOT_REGISTER_TRADE(409, HttpStatus.BAD_REQUEST, "미니홈 꾸미기에 사용중인 아이템은 판매가 불가합니다.")
+    CANNOT_REGISTER_TRADE(410, HttpStatus.BAD_REQUEST, "미니홈 꾸미기에 사용중인 아이템은 판매가 불가합니다.")
     ;
 
     private final long code;

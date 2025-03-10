@@ -1,8 +1,10 @@
-package gachagacha.gachagacha.dd;
+package gachagacha.gachagacha.api;
 
+import gachagacha.gachagacha.api.dto.request.UpdateDecorationRequest;
 import gachagacha.gachagacha.api.response.ApiResponse;
-import gachagacha.gachagacha.dd.dto.Decoration;
-import gachagacha.gachagacha.dd.dto.ReadDecorationResponse;
+import gachagacha.gachagacha.domain.decoration.Decoration;
+import gachagacha.gachagacha.api.dto.response.ReadDecorationResponse;
+import gachagacha.gachagacha.domain.decoration.DecorationService;
 import gachagacha.gachagacha.domain.user.Background;
 import gachagacha.gachagacha.domain.user.User;
 import gachagacha.gachagacha.domain.user.UserService;
@@ -25,8 +27,7 @@ public class DecorationController {
 
     @Operation(summary = "꾸미기 공간 저장")
     @PutMapping("/decoration/{nickname}")
-    public ApiResponse updateDecoration(@PathVariable String nickname,
-                                                                                       @RequestBody UpdateDecorationRequest requestDto) {
+    public ApiResponse updateDecoration(@PathVariable String nickname, @RequestBody UpdateDecorationRequest requestDto) {
         List<Decoration.DecorationItem> decorationItems = requestDto.getItems().stream()
                 .map(decorationItemRequest -> Decoration.DecorationItem.of(decorationItemRequest.getItemId(), decorationItemRequest.getUserItemId(), decorationItemRequest.getX(), decorationItemRequest.getY()))
                 .toList();

@@ -12,7 +12,7 @@ import lombok.ToString;
 public class FollowingResponse {
     private Long userId;
     private String nickname;
-    private String profileImageStoreFileName;
+    private long profileId;
 
     @JsonProperty("isFollowing")
     private boolean isFollowing;
@@ -20,11 +20,11 @@ public class FollowingResponse {
     @JsonProperty("isCurrentUser")
     private boolean isCurrentUser; // 조회된 사용자가 현재 조회 중인 사용자 본인인지 여부
 
-    public static FollowingResponse of(User followee, User currentUser, boolean isFollowing, String profileImageApiEndpoint) {
+    public static FollowingResponse of(User followee, User currentUser, boolean isFollowing) {
         return new FollowingResponse(
                 followee.getId(),
                 followee.getNickname(),
-                profileImageApiEndpoint + followee.getProfileImage().getStoreFileName(),
+                followee.getProfile().getId(),
                 isFollowing,
                 followee.getId() == currentUser.getId());
     }
@@ -34,9 +34,5 @@ public class FollowingResponse {
 
     public String getNickname() {
         return nickname;
-    }
-
-    public String getProfileImageStoreFileName() {
-        return profileImageStoreFileName;
     }
 }

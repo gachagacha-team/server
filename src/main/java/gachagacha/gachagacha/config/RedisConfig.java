@@ -1,6 +1,7 @@
 package gachagacha.gachagacha.config;
 
-import gachagacha.gachagacha.dd.dto.Decoration;
+import gachagacha.gachagacha.domain.decoration.Decoration;
+import gachagacha.gachagacha.domain.notification.Notification;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -37,11 +38,39 @@ public class RedisConfig {
     }
 
     @Bean
-    public RedisTemplate<String, Decoration> redisTemplate() {
+    public RedisTemplate<String, Decoration> redisTemplateForDecoration() {
         RedisTemplate<String, Decoration> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Decoration.class));
+        return redisTemplate;
+    }
+
+    @Bean
+    public RedisTemplate<String, Notification> redisTemplateForNotification() {
+        RedisTemplate<String, Notification> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Notification.class));
+        return redisTemplate;
+    }
+
+    @Bean
+    public RedisTemplate<String, Long> longRedisTemplate() {
+        RedisTemplate<String, Long> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Long.class));
+        return redisTemplate;
+    }
+
+    @Bean
+    public RedisTemplate<String, Boolean> booleanRedisTemplate() {
+        RedisTemplate<String, Boolean> redisTemplate = new RedisTemplate<>();
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
+        redisTemplate.setKeySerializer(new StringRedisSerializer());
+        redisTemplate.setHashKeySerializer(new Jackson2JsonRedisSerializer<>(Long.class));
+        redisTemplate.setHashValueSerializer(new Jackson2JsonRedisSerializer<>(Boolean.class));
         return redisTemplate;
     }
 }

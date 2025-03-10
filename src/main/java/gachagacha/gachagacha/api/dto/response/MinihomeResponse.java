@@ -30,13 +30,12 @@ public class MinihomeResponse {
     @JsonProperty(value = "totalVisitorCnt")
     private int totalVisitorCnt;
 
-    @JsonProperty(value = "profileImageStoreFileName")
-    private String profileImageStoreFileName;
+    private long profileId;
 
     @JsonProperty(value = "isFollowing")
     private boolean isFollowing;
 
-    public static MinihomeResponse of(User currentUser, User minihomeUser, Minihome minihome, int followersCnt, int followingsCnt, boolean isFollowing, String profileImageApiEndpoint) {
+    public static MinihomeResponse of(User currentUser, User minihomeUser, Minihome minihome, int followersCnt, int followingsCnt, boolean isFollowing) {
         return new MinihomeResponse(
                 minihomeUser.getNickname().equals(currentUser.getNickname()),
                 minihomeUser.getNickname(),
@@ -44,7 +43,7 @@ public class MinihomeResponse {
                 followersCnt,
                 followingsCnt,
                 minihome.getTotalVisitorCnt(),
-                profileImageApiEndpoint + minihomeUser.getProfileImage().getStoreFileName(),
+                minihomeUser.getProfile().getId(),
                 isFollowing
         );
     }

@@ -1,6 +1,9 @@
 package gachagacha.gachagacha.api.sse;
 
+import gachagacha.gachagacha.api.dto.response.NotificationsResponse;
+import gachagacha.gachagacha.domain.item.Item;
 import gachagacha.gachagacha.domain.lotto.Lotto;
+import gachagacha.gachagacha.domain.notification.NotificationType;
 import gachagacha.gachagacha.domain.user.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -32,15 +35,45 @@ public class SseEmitters {
         return emitter;
     }
 
-    public void issuedLotto(Lotto lotto, User user) {
+    public void issuedLotto(Lotto lotto, User user, Long notificationId) {
         SseEmitter sseEmitter = emitters.get(user.getNickname());
         if (sseEmitter == null) {
             log.info("SSE transmission failed: Could not find SSE emitter for user {}", user.getNickname());
         } else {
             try {
+                NotificationsResponse.NotificationDto notificationDto = new NotificationsResponse.NotificationDto(
+                        notificationId,
+                        NotificationType.LOTTO_ISSUED,
+                        false,
+                        new NotificationsResponse.LottoIssuedNotification(lotto.getId(), lotto.isWon(), lotto.getRewardCoin())
+                );
                 sseEmitter.send(SseEmitter.event()
                         .name("lotto")
-                        .data(new LottoResponse(lotto.getId(), lotto.isWon(), lotto.getRewardCoin())));
+                        .data(notificationDto)
+                );
+                log.info("SSE transmission successful");
+            } catch (IOException e) {
+                log.error("SSE transmission failed: Error occurred during SSE transmission", e);
+            }
+        }
+    }
+
+    public void tradeComplete(User seller, Item item, Long notificationId) {
+        SseEmitter sseEmitter = emitters.get(seller.getNickname());
+        if (sseEmitter == null) {
+            log.info("SSE transmission failed: Could not find SSE emitter for user {}", seller.getNickname());
+        } else {
+            try {
+                NotificationsResponse.NotificationDto notificationDto = new NotificationsResponse.NotificationDto(
+                        notificationId,
+                        NotificationType.TRADE_COMPLETED,
+                        false,
+                        new NotificationsResponse.TradeCompletedNotification(item.getViewName(), item.getItemGrade().getPrice())
+                );
+                sseEmitter.send(SseEmitter.event()
+                        .name("sold item")
+                        .data(notificationDto)
+                );
                 log.info("SSE transmission successful");
             } catch (IOException e) {
                 log.error("SSE transmission failed: Error occurred during SSE transmission", e);
