@@ -40,6 +40,7 @@ ErrorCode {
     CANNOT_EDIT_COMPLETED_TRADE(407, HttpStatus.BAD_REQUEST, "판매 완료된 거래는 수정이 불가합니다."),
     CANNOT_SELF_FOLLOW(408, HttpStatus.BAD_REQUEST, "자기 자신에게는 팔로우가 불가합니다."),
     ALREADY_FOLLOWING(409, HttpStatus.BAD_REQUEST, "이미 팔로우된 상태입니다."),
+    CANNOT_REGISTER_TRADE(409, HttpStatus.BAD_REQUEST, "미니홈 꾸미기에 사용중인 아이템은 판매가 불가합니다.")
     ;
 
     private final long code;

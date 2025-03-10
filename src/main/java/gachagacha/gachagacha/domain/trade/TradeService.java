@@ -1,5 +1,6 @@
 package gachagacha.gachagacha.domain.trade;
 
+import gachagacha.gachagacha.dd.DecorationProcessor;
 import gachagacha.gachagacha.domain.item.Item;
 import gachagacha.gachagacha.domain.item.UserItem;
 import gachagacha.gachagacha.domain.user.User;
@@ -33,6 +34,7 @@ public class TradeService {
     private final TradeRemover tradeRemover;
     private final UserUpdater userUpdater;
     private final TradeUpdater tradeUpdater;
+    private final DecorationProcessor decorationProcessor;
 
     public List<Trade> readOnSaleProductsByItem(Item item) {
         return tradeReader.findOnSaleProductsByItem(item);
@@ -45,6 +47,9 @@ public class TradeService {
     @Transactional
     public void registerTrade(User user, UserItem userItem) {
         validateUserItemAuthorization(user, userItem);
+        if (decorationProcessor.isUsedInMinihomeDecoration(userItem, user)) {
+            throw new BusinessException(ErrorCode.CANNOT_REGISTER_TRADE);
+        }
 
         user.decreaseScoreForSaleItem(userItem.getItem(), userItemReader.findAllByUser(user));
         userItemRemover.delete(userItem);
