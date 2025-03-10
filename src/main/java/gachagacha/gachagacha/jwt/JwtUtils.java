@@ -23,9 +23,6 @@ public class JwtUtils {
     private final Key signingKey;
     private final JwtParser jwtParser;
 
-    @Value("${image.api.endpoints.profile}")
-    private String profileImageApiEndpoint;
-
     public JwtUtils(@Value("${jwt.secret}") String secretKey) {
         this.signingKey = Keys.hmacShaKeyFor(secretKey.getBytes());
         this.jwtParser = Jwts.parserBuilder().setSigningKey(signingKey).build();
@@ -34,7 +31,7 @@ public class JwtUtils {
     public JwtDto generateJwt(User user) {
         Claims claims = Jwts.claims();
         claims.put("nickname", user.getNickname());
-        claims.put("profile", profileImageApiEndpoint + user.getProfileImage().getStoreFileName());
+        claims.put("profileId", user.getProfile().getId());
         return new JwtDto(generateAccessToken(claims), generateRefreshToken(claims));
     }
 

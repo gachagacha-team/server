@@ -7,7 +7,6 @@ import gachagacha.gachagacha.domain.minihome.MinihomeRemover;
 import gachagacha.gachagacha.domain.item.UserItemRemover;
 import gachagacha.gachagacha.domain.user.*;
 import gachagacha.gachagacha.domain.minihome.Minihome;
-import gachagacha.gachagacha.domain.guestbook.ProfileImage;
 import gachagacha.gachagacha.domain.attendance.AttendanceRemover;
 import gachagacha.gachagacha.domain.follow.FollowRemover;
 import gachagacha.gachagacha.domain.guestbook.GuestbookRemover;
@@ -23,9 +22,6 @@ import lombok.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -34,7 +30,6 @@ public class AuthService {
     @Value("${client.address}")
     private String clientAddress;
 
-    private final ProfileImageService profileImageService;
     private final UserAppender userAppender;
     private final MinihomeAppender minihomeAppender;
     private final UserReader userReader;
@@ -51,16 +46,11 @@ public class AuthService {
     private final DecorationProcessor decorationProcessor;
 
     @Transactional
-    public String join(String nickname, SocialType socialType, Long loginId, MultipartFile file) throws IOException {
+    public String join(String nickname, SocialType socialType, Long loginId, Profile profile) {
         validateDuplicatedUser(socialType, loginId);
         validateDuplicatedNickname(nickname);
 
-        ProfileImage profileImage = ProfileImage.of(file);
-        if (file != null) {
-            profileImageService.storeProfileImage(file, profileImage.getStoreFileName());
-        }
-
-        User user = User.of(nickname, socialType, loginId, profileImage);
+        User user = User.of(nickname, socialType, loginId, profile);
         long userId = userAppender.save(user);
 
         Minihome minihome = Minihome.of(userId);

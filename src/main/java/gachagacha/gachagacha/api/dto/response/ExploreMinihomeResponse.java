@@ -15,13 +15,13 @@ public class ExploreMinihomeResponse {
 
     private String nickname;
     private int totalVisitorCnt;
-    private String profileImageStoreFileName;
+    private long profileId;
 
-    public static ExploreMinihomeResponse of(Minihome minihome, User user, String profileImageApiEndpoint) {
+    public static ExploreMinihomeResponse of(Minihome minihome, User user) {
         return new ExploreMinihomeResponse(
                 user.getNickname(),
                 minihome.getTotalVisitorCnt(),
-                profileImageApiEndpoint + user.getProfileImage().getStoreFileName()
+               user.getProfile().getId()
         );
     }
 }

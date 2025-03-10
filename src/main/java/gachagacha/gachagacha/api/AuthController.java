@@ -1,5 +1,6 @@
 package gachagacha.gachagacha.api;
 
+import gachagacha.gachagacha.domain.user.Profile;
 import gachagacha.gachagacha.domain.user.SocialType;
 import gachagacha.gachagacha.domain.user.User;
 import gachagacha.gachagacha.jwt.JwtUtils;
@@ -14,7 +15,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -48,8 +48,8 @@ public class AuthController {
 
     @Operation(summary = "회원가입")
     @PostMapping(value = "/join")
-    public void join(@RequestPart(value = "data") JoinRequest joinRequest, @RequestPart(value = "profileImageFile", required = false) MultipartFile file, HttpServletResponse response) throws IOException {
-        String redirectUrl = authService.join(joinRequest.getNickname(), SocialType.of(joinRequest.getSocialType()), joinRequest.getLoginId(), file);
+    public void join(@RequestBody JoinRequest requestDto, HttpServletResponse response) throws IOException {
+        String redirectUrl = authService.join(requestDto.getNickname(), SocialType.of(requestDto.getSocialType()), requestDto.getLoginId(), Profile.findById(requestDto.getProfileId()));
         log.info("Redirect. redirect url = {}", redirectUrl);
         response.sendRedirect(redirectUrl);
     }
