@@ -33,6 +33,7 @@ public class AuthController {
     public void authWithGithub(@RequestParam(name = "code") String code, HttpServletResponse response) throws IOException {
         long loginId = oAuthService.authWithGithub(code);
         String redirectUrl = authService.generateRedirectUrl(loginId, SocialType.GITHUB);
+        log.info("Redirect. redirect url = {}", redirectUrl);
         response.sendRedirect(redirectUrl);
     }
 
@@ -41,6 +42,7 @@ public class AuthController {
     public void authWithKakao(@RequestParam(name = "code") String code, HttpServletResponse response) throws IOException {
         long loginId = oAuthService.authWithKakao(code);
         String redirectUrl = authService.generateRedirectUrl(loginId, SocialType.KAKAO);
+        log.info("Redirect. redirect url = {}", redirectUrl);
         response.sendRedirect(redirectUrl);
     }
 
@@ -48,6 +50,7 @@ public class AuthController {
     @PostMapping(value = "/join")
     public void join(@RequestPart(value = "data") JoinRequest joinRequest, @RequestPart(value = "profileImageFile", required = false) MultipartFile file, HttpServletResponse response) throws IOException {
         String redirectUrl = authService.join(joinRequest.getNickname(), SocialType.of(joinRequest.getSocialType()), joinRequest.getLoginId(), file);
+        log.info("Redirect. redirect url = {}", redirectUrl);
         response.sendRedirect(redirectUrl);
     }
 

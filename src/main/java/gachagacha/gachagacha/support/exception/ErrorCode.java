@@ -18,6 +18,7 @@ ErrorCode {
     // Bad Request
     INVALID_SOCIAL_TYPE(201, HttpStatus.BAD_REQUEST, "잘못된 socialType 입니다."),
     INVALID_ITEM_ID(202, HttpStatus.BAD_REQUEST, "잘못된 아이템 id 입니다."),
+    INVALID_BACKGROUND_ID(202, HttpStatus.BAD_REQUEST, "잘못된 배경 id 입니다."),
     INVALID_TRADE_STATUS(203, HttpStatus.BAD_REQUEST, "잘못된 거래 상태 입니다."),
     INVALID_ITEM_GRADE(204, HttpStatus.BAD_REQUEST, "잘못된 아이템 등급입니다."),
 

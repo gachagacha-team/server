@@ -33,9 +33,6 @@ public class MinihomeResponse {
     @JsonProperty(value = "profileImageStoreFileName")
     private String profileImageStoreFileName;
 
-    @JsonProperty(value = "layout")
-    private String layout;
-
     @JsonProperty(value = "isFollowing")
     private boolean isFollowing;
 
@@ -48,7 +45,6 @@ public class MinihomeResponse {
                 followingsCnt,
                 minihome.getTotalVisitorCnt(),
                 profileImageApiEndpoint + minihomeUser.getProfileImage().getStoreFileName(),
-                minihome.getLayout(),
                 isFollowing
         );
     }
