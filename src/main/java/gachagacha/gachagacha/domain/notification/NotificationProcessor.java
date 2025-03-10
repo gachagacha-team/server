@@ -6,6 +6,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
@@ -36,6 +37,9 @@ public class NotificationProcessor {
                         .put(NOTIFICATION_READ_KEY,
                                 notificationId,
                                 false);
+
+        notificationRedisTemplate.expire(NOTIFICATION_PREFIX + user.getId(), 30, TimeUnit.DAYS);
+        booleanRedisTemplate.expire(NOTIFICATION_READ_KEY, 30, TimeUnit.DAYS);
         return notificationId;
     }
 

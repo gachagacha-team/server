@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
@@ -28,7 +30,7 @@ public class Notification {
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class LottoIssuedNotification {
+    public static class LottoIssuedNotification implements Serializable {
 
         private Long lottoId;
         private boolean won;
@@ -38,7 +40,7 @@ public class Notification {
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class TradeCompletedNotification {
+    public static class TradeCompletedNotification implements Serializable {
 
         private String itemName;
         private int coin;
