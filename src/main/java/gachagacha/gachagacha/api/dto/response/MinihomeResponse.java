@@ -30,6 +30,7 @@ public class MinihomeResponse {
     @JsonProperty(value = "totalVisitorCnt")
     private int totalVisitorCnt;
 
+    @JsonProperty(value = "profileId")
     private long profileId;
 
     @JsonProperty(value = "isFollowing")
