@@ -63,7 +63,7 @@ public class LottoMessageListener implements StreamListener<String, MapRecord<St
         redisTemplate.opsForStream().acknowledge(streamKey, CONSUMER_GROUP_NAME, message.getId());
     }
 
-    @Scheduled(fixedRate = 10000)
+//    @Scheduled(fixedRate = 100000)
     public void pendingMessageScheduler() {
         if (Boolean.FALSE.equals(redisTemplate.hasKey(streamKey))) {
             log.info("Stream key '{}' does not exist. Skipping pending message processing.", streamKey);
