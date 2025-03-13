@@ -34,4 +34,8 @@ public class ItemService {
     public List<UserItem> readUserItemsByItem(User user, Item item) {
         return userItemReader.findAllByUserAndItem(user, item);
     }
+
+    public List<UserItem> readAllUserItems(User user) {
+        return userItemReader.findAllByUser(user);
+    }
 }
