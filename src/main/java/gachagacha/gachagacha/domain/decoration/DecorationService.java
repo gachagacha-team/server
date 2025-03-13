@@ -1,6 +1,5 @@
-package gachagacha.gachagacha.dd;
+package gachagacha.gachagacha.domain.decoration;
 
-import gachagacha.gachagacha.dd.dto.Decoration;
 import gachagacha.gachagacha.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

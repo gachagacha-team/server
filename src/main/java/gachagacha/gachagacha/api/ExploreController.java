@@ -8,7 +8,6 @@ import gachagacha.gachagacha.domain.user.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,9 +20,6 @@ public class ExploreController {
     private final MinihomeService minihomeService;
     private final UserService userService;
 
-    @Value("${image.api.endpoints.profile}")
-    private String profileImageApiEndpoint;
-
     @Operation(summary = "미니홈 리스트 조회(가입순, 인기순)(무한스크롤)")
     @Parameter(name = "pageable", description = "가입순(sort=createdAt,desc), 인기순(sort=totalVisitorCnt,desc)")
     @GetMapping("/explore/minihome")
@@ -31,7 +27,7 @@ public class ExploreController {
         return ApiResponse.success(minihomeService.explore(pageable)
                 .map(minihome -> {
                     User user = userService.readUserById(minihome.getUserId());
-                    return ExploreMinihomeResponse.of(minihome, user, profileImageApiEndpoint);
+                    return ExploreMinihomeResponse.of(minihome, user);
                 }));
     }
 
@@ -42,7 +38,7 @@ public class ExploreController {
         return ApiResponse.success(minihomeService.exploreByScore(pageable)
                 .map(minihome -> {
                     User user = userService.readUserById(minihome.getUserId());
-                    return ExploreMinihomeResponse.of(minihome, user, profileImageApiEndpoint);
+                    return ExploreMinihomeResponse.of(minihome, user);
                 }));
     }
 }

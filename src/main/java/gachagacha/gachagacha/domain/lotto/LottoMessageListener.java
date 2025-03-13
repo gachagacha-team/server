@@ -1,6 +1,9 @@
 package gachagacha.gachagacha.domain.lotto;
 
 import gachagacha.gachagacha.api.sse.SseEmitters;
+import gachagacha.gachagacha.domain.notification.Notification;
+import gachagacha.gachagacha.domain.notification.NotificationProcessor;
+import gachagacha.gachagacha.domain.notification.NotificationType;
 import gachagacha.gachagacha.domain.user.User;
 import gachagacha.gachagacha.domain.user.UserReader;
 import lombok.RequiredArgsConstructor;
@@ -29,6 +32,7 @@ public class LottoMessageListener implements StreamListener<String, MapRecord<St
     private final RedisTemplate<String, String> redisTemplate;
     private final UserReader userReader;
     private final SseEmitters sseEmitters;
+    private final NotificationProcessor notificationProcessor;
 
     @Value("${spring.data.redis.stream.lotto-issued}")
     private String streamKey;
@@ -50,14 +54,17 @@ public class LottoMessageListener implements StreamListener<String, MapRecord<St
         Lotto lotto = Lotto.of(Long.valueOf(map.get("userId")), Boolean.valueOf(map.get("won")), Integer.valueOf(map.get("rewardCoin")));
         Lotto savedLotto = lottoProcessor.save(lotto);
         User user = userReader.findById(savedLotto.getUserId());
-        sseEmitters.issuedLotto(savedLotto, user);
+
+
+        Notification notification = Notification.of(NotificationType.LOTTO_ISSUED, new Notification.LottoIssuedNotification(lotto.getId(), lotto.isWon(), lotto.getRewardCoin()));
+        Long notificationId = notificationProcessor.saveNotification(notification, user);
+        sseEmitters.issuedLotto(savedLotto, user, notificationId);
+
         redisTemplate.opsForStream().acknowledge(streamKey, CONSUMER_GROUP_NAME, message.getId());
     }
 
-    @Scheduled(fixedRate = 10000)
+//    @Scheduled(fixedRate = 100000)
     public void pendingMessageScheduler() {
-        log.info("Start pending message scheduler");
-
         if (Boolean.FALSE.equals(redisTemplate.hasKey(streamKey))) {
             log.info("Stream key '{}' does not exist. Skipping pending message processing.", streamKey);
             return;
@@ -67,6 +74,7 @@ public class LottoMessageListener implements StreamListener<String, MapRecord<St
         PendingMessagesSummary summary = streamOps.pending(streamKey, CONSUMER_GROUP_NAME);
         long totalPendingMessagesCount = summary.getTotalPendingMessages();
         if (totalPendingMessagesCount > 0) {
+            log.info("Start pending message scheduler");
             PendingMessages pendingMessages = streamOps.pending(streamKey, CONSUMER_GROUP_NAME, Range.closed("0", "+"), totalPendingMessagesCount);
             RecordId[] pendingMessageIds = pendingMessages.stream()
                     .map(pendingMessage -> pendingMessage.getId())
