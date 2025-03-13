@@ -1,6 +1,7 @@
 package gachagacha.gachagacha.api.dto.response;
 
 import gachagacha.gachagacha.domain.decoration.Decoration;
+import gachagacha.gachagacha.domain.item.Item;
 import gachagacha.gachagacha.domain.user.Background;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -17,11 +18,19 @@ public class ReadDecorationResponse {
     private DecorationBackgroundResponse background;
     private List<DecorationItemResponse> items;
 
-    public static ReadDecorationResponse of (String backgroundsImageApiEndpoint, Decoration decoration, Background background) {
+    public static ReadDecorationResponse of (Decoration decoration, Background background, String itemsImageApiEndpoint, String backgroundsImageApiEndpoint) {
         List<DecorationItemResponse> decorationItemResponses = new ArrayList<>();
         if (decoration.getItems() != null) {
             decorationItemResponses = decoration.getItems().stream()
-                    .map(itemPosition -> new DecorationItemResponse(itemPosition.getUserItemId(), itemPosition.getX(), itemPosition.getY()))
+                    .map(decorationItem -> {
+                        Item item = Item.findById(decorationItem.getItemId());
+                        return new ReadDecorationResponse.DecorationItemResponse(
+                                decorationItem.getUserItemId(),
+                                decorationItem.getX(),
+                                decorationItem.getY(),
+                                itemsImageApiEndpoint + item.getImageFileName()
+                        );
+                    })
                     .toList();
         }
         DecorationBackgroundResponse decorationBackgroundResponse = new DecorationBackgroundResponse(background.getId(), backgroundsImageApiEndpoint + background.getImageFileName());
@@ -40,8 +49,9 @@ public class ReadDecorationResponse {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class DecorationItemResponse {
-        private long userItemId;
+        private long subId;
         private int x;
         private int y;
+        private String imageUrl;
     }
 }
