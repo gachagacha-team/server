@@ -26,6 +26,7 @@ public class ReadDecorationResponse {
                         Item item = Item.findById(decorationItem.getItemId());
                         return new ReadDecorationResponse.DecorationItemResponse(
                                 decorationItem.getUserItemId(),
+                                decorationItem.getItemId(),
                                 decorationItem.getX(),
                                 decorationItem.getY(),
                                 itemsImageApiEndpoint + item.getImageFileName()
@@ -50,6 +51,7 @@ public class ReadDecorationResponse {
     @NoArgsConstructor
     public static class DecorationItemResponse {
         private long subId;
+        private long itemId;
         private int x;
         private int y;
         private String imageUrl;
