@@ -25,9 +25,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -72,17 +69,9 @@ public class ItemController {
         }
 
         User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
-        Map<Item, List<UserItem>> userItemsMap = Arrays.stream(Item.values())
-                .map(item -> {
-                    List<UserItem> userItems = itemService.readUserItemsByItem(user, item);
-                    if (userItems.size() == 0) return null;
-                    return Map.entry(item, userItems);
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-
-        List<UserItemsResponse> data = userItemsMap.keySet().stream()
-                .map(item -> UserItemsResponse.of(item, userItemsMap.get(item), itemsImageApiEndpoint))
+        List<UserItemsResponse> data = itemService.readAllUserItems(user)
+                .stream()
+                .map(userItem -> UserItemsResponse.of(userItem, itemsImageApiEndpoint))
                 .toList();
 
         int start = (int) pageable.getOffset();

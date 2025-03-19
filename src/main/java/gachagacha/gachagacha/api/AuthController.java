@@ -3,6 +3,7 @@ package gachagacha.gachagacha.api;
 import gachagacha.gachagacha.domain.user.Profile;
 import gachagacha.gachagacha.domain.user.SocialType;
 import gachagacha.gachagacha.domain.user.User;
+import gachagacha.gachagacha.jwt.JwtDto;
 import gachagacha.gachagacha.jwt.JwtUtils;
 import gachagacha.gachagacha.domain.auth.AuthService;
 import gachagacha.gachagacha.api.dto.request.JoinRequest;
@@ -56,7 +57,7 @@ public class AuthController {
 
     @Operation(summary = "토큰 재발급", description = "access token 만료 시 access token과 refresh token을 재발급받는다. 헤더에 refresh token을 포함시켜야 한다.")
     @PostMapping("/tokens/renew")
-    public ApiResponse renewTokens(HttpServletRequest request) {
+    public ApiResponse<JwtDto> renewTokens(HttpServletRequest request) {
         return ApiResponse.success(authService.renewTokens(request));
     }
 

@@ -17,6 +17,9 @@ public class GuestbookResponse {
     @JsonProperty(value = "guestbookId")
     private long guestbookId;
 
+    @JsonProperty(value = "profileId")
+    private long profileId;
+
     @JsonProperty(value = "nickname")
     private String nickname;
 
@@ -33,6 +36,7 @@ public class GuestbookResponse {
         if (author == null) {
             return new GuestbookResponse(
                     guestbook.getId(),
+                    -1,
                     "undefined",
                     guestbook.getContent(),
                     guestbook.getCreatedAt(),
@@ -40,6 +44,7 @@ public class GuestbookResponse {
         }
         return new GuestbookResponse(
                 guestbook.getId(),
+                author.getProfile().getId(),
                 author.getNickname(),
                 guestbook.getContent(),
                 guestbook.getCreatedAt(),
