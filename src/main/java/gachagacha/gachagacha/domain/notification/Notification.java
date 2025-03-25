@@ -31,17 +31,14 @@ public class Notification {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class LottoIssuedNotification implements Serializable {
-
-        private Long lottoId;
-        private boolean won;
-        private int rewardCoin;
+        private long lottoId;
+        private String itemGrade;
     }
 
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class TradeCompletedNotification implements Serializable {
-
         private String itemName;
         private int coin;
     }

@@ -12,4 +12,5 @@ import java.io.Serializable;
 public class LottoIssuanceEvent implements Serializable {
 
     private Long userId;
+    private String itemGrade;
 }

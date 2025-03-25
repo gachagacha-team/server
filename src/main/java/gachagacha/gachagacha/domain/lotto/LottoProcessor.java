@@ -35,7 +35,7 @@ public class LottoProcessor {
         boolean addedItemIsOne = userItemsMap.getOrDefault(addedItem, 0L) == 1;
 
         if (hasAllItemsOfGrade && addedItemIsOne) {
-            lottoMessagePublisher.publishLottoIssuanceEvent(user.getId());
+            lottoMessagePublisher.publishLottoIssuanceEvent(user.getId(), addedItem.getItemGrade());
         }
     }
 

@@ -1,6 +1,7 @@
 package gachagacha.gachagacha.domain.lotto;
 
 import gachagacha.gachagacha.api.sse.SseEmitters;
+import gachagacha.gachagacha.domain.item.ItemGrade;
 import gachagacha.gachagacha.domain.notification.Notification;
 import gachagacha.gachagacha.domain.notification.NotificationProcessor;
 import gachagacha.gachagacha.domain.notification.NotificationType;
@@ -51,14 +52,20 @@ public class LottoMessageListener implements StreamListener<String, MapRecord<St
 
     private void process(MapRecord<String, String, String> message) {
         Map<String, String> map = message.getValue();
-        Lotto lotto = Lotto.of(Long.valueOf(map.get("userId")), Boolean.valueOf(map.get("won")), Integer.valueOf(map.get("rewardCoin")));
+
+        Lotto lotto = Lotto.of(
+                Long.valueOf(map.get("userId")),
+                Boolean.valueOf(map.get("won")),
+                Integer.valueOf(map.get("rewardCoin")));
         Lotto savedLotto = lottoProcessor.save(lotto);
         User user = userReader.findById(savedLotto.getUserId());
 
+        Notification notification = Notification.of(
+                NotificationType.LOTTO_ISSUED,
+                new Notification.LottoIssuedNotification(savedLotto.getId(), map.get("itemGrade")));
 
-        Notification notification = Notification.of(NotificationType.LOTTO_ISSUED, new Notification.LottoIssuedNotification(lotto.getId(), lotto.isWon(), lotto.getRewardCoin()));
         Long notificationId = notificationProcessor.saveNotification(notification, user);
-        sseEmitters.issuedLotto(savedLotto, user, notificationId);
+        sseEmitters.issuedLotto(notification, user);
 
         redisTemplate.opsForStream().acknowledge(streamKey, CONSUMER_GROUP_NAME, message.getId());
     }

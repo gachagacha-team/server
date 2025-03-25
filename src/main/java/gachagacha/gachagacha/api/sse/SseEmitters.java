@@ -2,7 +2,7 @@ package gachagacha.gachagacha.api.sse;
 
 import gachagacha.gachagacha.api.dto.response.NotificationsResponse;
 import gachagacha.gachagacha.domain.item.Item;
-import gachagacha.gachagacha.domain.lotto.Lotto;
+import gachagacha.gachagacha.domain.notification.Notification;
 import gachagacha.gachagacha.domain.notification.NotificationType;
 import gachagacha.gachagacha.domain.user.User;
 import lombok.extern.slf4j.Slf4j;
@@ -35,18 +35,16 @@ public class SseEmitters {
         return emitter;
     }
 
-    public void issuedLotto(Lotto lotto, User user, Long notificationId) {
+    public void issuedLotto(Notification notification, User user) {
         SseEmitter sseEmitter = emitters.get(user.getNickname());
         if (sseEmitter == null) {
             log.info("SSE transmission failed: Could not find SSE emitter for user {}", user.getNickname());
         } else {
             try {
                 NotificationsResponse.NotificationDto notificationDto = new NotificationsResponse.NotificationDto(
-                        notificationId,
+                        notification.getId(),
                         NotificationType.LOTTO_ISSUED,
-                        false,
-                        new NotificationsResponse.LottoIssuedNotification(lotto.getId(), lotto.isWon(), lotto.getRewardCoin())
-                );
+                        notification.getData());
                 sseEmitter.send(SseEmitter.event()
                         .name("lotto")
                         .data(notificationDto)
@@ -67,7 +65,6 @@ public class SseEmitters {
                 NotificationsResponse.NotificationDto notificationDto = new NotificationsResponse.NotificationDto(
                         notificationId,
                         NotificationType.TRADE_COMPLETED,
-                        false,
                         new NotificationsResponse.TradeCompletedNotification(item.getViewName(), item.getItemGrade().getPrice())
                 );
                 sseEmitter.send(SseEmitter.event()
