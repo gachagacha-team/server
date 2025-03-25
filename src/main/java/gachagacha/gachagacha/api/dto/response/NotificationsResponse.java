@@ -1,5 +1,6 @@
 package gachagacha.gachagacha.api.dto.response;
 
+import gachagacha.gachagacha.domain.notification.Notification;
 import gachagacha.gachagacha.domain.notification.NotificationType;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,11 +11,15 @@ import java.util.List;
 @AllArgsConstructor
 public class NotificationsResponse {
 
+    private boolean hasNewNotification;
     private int count;
     private List<NotificationDto> notifications;
 
-    public static NotificationsResponse of(List<NotificationDto> notificationDtos) {
-        return new NotificationsResponse(notificationDtos.size(), notificationDtos);
+    public static NotificationsResponse of(boolean hasNewNotification, List<Notification> notifications) {
+        List<NotificationsResponse.NotificationDto> notificationDtos = notifications.stream()
+                .map(notification -> new NotificationDto(notification.getId(), notification.getType(), notification.getData()))
+                .toList();
+        return new NotificationsResponse(hasNewNotification, notificationDtos.size(), notificationDtos);
     }
 
     @Getter
@@ -22,7 +27,6 @@ public class NotificationsResponse {
     public static class NotificationDto {
         private long id;
         private NotificationType type;
-        private boolean isRead;
         private Object data;
     }
 
@@ -36,8 +40,6 @@ public class NotificationsResponse {
     @Getter
     @AllArgsConstructor
     public static class LottoIssuedNotification {
-        private Long lottoId;
-        private boolean isWon;
-        private int rewardCoin;
+        private String itemGrade;
     }
 }

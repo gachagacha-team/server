@@ -31,4 +31,11 @@ public class LottoEntity {
     public Lotto toLotto() {
         return new Lotto(id, userId, used, won, rewardCoin);
     }
+
+    public void updateFromLotto(Lotto lotto) {
+        this.userId = lotto.getUserId();
+        this.used = lotto.isUsed();
+        this.won = lotto.isWon();
+        this.rewardCoin = lotto.getRewardCoin();
+    }
 }

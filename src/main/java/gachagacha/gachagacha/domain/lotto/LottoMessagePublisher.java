@@ -1,5 +1,6 @@
 package gachagacha.gachagacha.domain.lotto;
 
+import gachagacha.gachagacha.domain.item.ItemGrade;
 import gachagacha.gachagacha.domain.lotto.dto.LottoIssuanceEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,8 +21,8 @@ public class LottoMessagePublisher {
     @Value("${spring.data.redis.stream.lotto-issuance-requests}")
     private String streamKey;
 
-    public void publishLottoIssuanceEvent(long userId) {
-        LottoIssuanceEvent lottoIssuanceEvent = new LottoIssuanceEvent(userId);
+    public void publishLottoIssuanceEvent(long userId, ItemGrade itemGrade) {
+        LottoIssuanceEvent lottoIssuanceEvent = new LottoIssuanceEvent(userId, itemGrade.getViewName());
         ObjectRecord<String, LottoIssuanceEvent> record = StreamRecords.newRecord()
                 .ofObject(lottoIssuanceEvent)
                 .withStreamKey(streamKey);

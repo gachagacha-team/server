@@ -32,4 +32,8 @@ public class Lotto {
                 rewardCoin
         );
     }
+
+    public void use() {
+        this.used = true;
+    }
 }

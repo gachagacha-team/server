@@ -25,11 +25,14 @@ public class DecorationController {
     @Value("${image.api.endpoints.backgrounds}")
     private String backgroundsImageApiEndpoint;
 
+    @Value("${image.api.endpoints.items}")
+    private String itemsImageApiEndpoint;
+
     @Operation(summary = "꾸미기 공간 저장")
     @PutMapping("/decoration/{nickname}")
     public ApiResponse updateDecoration(@PathVariable String nickname, @RequestBody UpdateDecorationRequest requestDto) {
         List<Decoration.DecorationItem> decorationItems = requestDto.getItems().stream()
-                .map(decorationItemRequest -> Decoration.DecorationItem.of(decorationItemRequest.getItemId(), decorationItemRequest.getUserItemId(), decorationItemRequest.getX(), decorationItemRequest.getY()))
+                .map(decorationItemRequest -> Decoration.DecorationItem.of(decorationItemRequest.getItemId(), decorationItemRequest.getSubId(), decorationItemRequest.getX(), decorationItemRequest.getY()))
                 .toList();
         Decoration decoration = Decoration.of(requestDto.getBackgroundId(), decorationItems);
         User user = userService.readUserByNickname(nickname);
@@ -43,7 +46,7 @@ public class DecorationController {
         User user = userService.readUserByNickname(nickname);
         Decoration decoration = decorationService.read(user);
         Background background = Background.findById(decoration.getBackgroundId());
-        ReadDecorationResponse readDecorationResponse = ReadDecorationResponse.of(backgroundsImageApiEndpoint, decoration, background);
+        ReadDecorationResponse readDecorationResponse = ReadDecorationResponse.of(decoration, background, itemsImageApiEndpoint, backgroundsImageApiEndpoint);
         return ApiResponse.success(readDecorationResponse);
     }
 }

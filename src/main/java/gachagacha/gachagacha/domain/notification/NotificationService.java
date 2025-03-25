@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -16,11 +17,11 @@ public class NotificationService {
         return notificationProcessor.readNotifications(user);
     }
 
-    public boolean isRead(long notificationId) {
-        return notificationProcessor.isRead(notificationId);
+    public Optional<Long> getLastReadNotificationId(User user) {
+        return notificationProcessor.getLastReadNotificationId(user);
     }
 
-    public void readOneNotification(long notificationId, User user) {
-        notificationProcessor.readOneNotification(notificationId);
+    public void markLastReadNotification(long lastReadNotificationId, User user) {
+        notificationProcessor.markLastReadNotification(lastReadNotificationId, user);
     }
 }
