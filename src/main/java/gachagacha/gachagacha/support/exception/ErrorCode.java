@@ -30,6 +30,7 @@ ErrorCode {
     NOT_FOUND_PRODUCT(304, HttpStatus.NOT_FOUND, "상품을 찾을 수 없습니다."),
     NOT_FOUND_GUESTBOOK(305, HttpStatus.NOT_FOUND, "방명록을 찾을 수 없습니다."),
     NOT_FOUND_FOLLOW(306, HttpStatus.NOT_FOUND, "팔로우 내역을 찾을 수 없습니다."),
+    NOT_FOUND_LOTTO(307, HttpStatus.NOT_FOUND, "복권을 찾을 수 없습니다."),
 
     // Business Error
     DUPLICATED_USER_REGISTRATION(401, HttpStatus.BAD_REQUEST, "이미 가입된 사용자입니다."),
@@ -41,7 +42,8 @@ ErrorCode {
     CANNOT_EDIT_COMPLETED_TRADE(407, HttpStatus.BAD_REQUEST, "판매 완료된 거래는 수정이 불가합니다."),
     CANNOT_SELF_FOLLOW(408, HttpStatus.BAD_REQUEST, "자기 자신에게는 팔로우가 불가합니다."),
     ALREADY_FOLLOWING(409, HttpStatus.BAD_REQUEST, "이미 팔로우된 상태입니다."),
-    CANNOT_REGISTER_TRADE(410, HttpStatus.BAD_REQUEST, "미니홈 꾸미기에 사용중인 아이템은 판매가 불가합니다.")
+    CANNOT_REGISTER_TRADE(410, HttpStatus.BAD_REQUEST, "미니홈 꾸미기에 사용중인 아이템은 판매가 불가합니다."),
+    ALREADY_USED_LOTTO(411, HttpStatus.BAD_REQUEST, "이미 사용한 복권입니다.")
     ;
 
     private final long code;
