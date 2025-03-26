@@ -79,4 +79,9 @@ public class User {
                 backgrounds
         );
     }
+
+    public void updateUserInfo(String nickname, Profile profile) {
+        this.nickname = nickname;
+        this.profile = profile;
+    }
 }

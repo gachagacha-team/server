@@ -1,5 +1,6 @@
 package gachagacha.gachagacha.api;
 
+import gachagacha.gachagacha.api.dto.request.UpdateUserInfoRequest;
 import gachagacha.gachagacha.domain.user.Profile;
 import gachagacha.gachagacha.domain.user.SocialType;
 import gachagacha.gachagacha.domain.user.User;
@@ -74,5 +75,13 @@ public class AuthController {
         User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
         authService.withdraw(user, jwtUtils.getRefreshTokenFromHeader(request));
         oAuthService.unlink(user);
+    }
+
+    @Operation(summary = "회원 정보 수정")
+    @PutMapping("/user_info")
+    public ApiResponse updateUserInfo(@RequestBody UpdateUserInfoRequest requestDto, HttpServletRequest request) {
+        User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
+        userService.updateUserInfo(user, requestDto.getNickname(), requestDto.getProfileId());
+        return ApiResponse.success();
     }
 }
