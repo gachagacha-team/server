@@ -55,4 +55,12 @@ public class UserService {
             throw new BusinessException(ErrorCode.ALREADY_ATTEND);
         }
     }
+
+    public void updateUserInfo(User user, String nickname, long profileId) {
+        if (userReader.existsByNickname(nickname)) {
+            throw new BusinessException(ErrorCode.DUPLICATED_NICKNAME);
+        }
+        user.updateUserInfo(nickname, Profile.findById(profileId));
+        userUpdater.update(user);
+    }
 }

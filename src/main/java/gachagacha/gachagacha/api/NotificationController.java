@@ -8,6 +8,7 @@ import gachagacha.gachagacha.domain.notification.NotificationService;
 import gachagacha.gachagacha.domain.user.User;
 import gachagacha.gachagacha.domain.user.UserService;
 import gachagacha.gachagacha.jwt.JwtUtils;
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +24,7 @@ public class NotificationController {
     private final UserService userService;
     private final NotificationService notificationService;
 
+    @Operation(summary = "알림 내역 조회")
     @GetMapping("/notifications")
     public ApiResponse<NotificationsResponse> readNotifications(HttpServletRequest request) {
         User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
@@ -38,6 +40,7 @@ public class NotificationController {
         return ApiResponse.success(NotificationsResponse.of(hasNewNotification, notifications));
     }
 
+    @Operation(summary = "알림 읽음 처리")
     @PutMapping("/notifications/mark")
     public ApiResponse readOneNotification(@RequestBody NotificationReadMarkRequest requestDto, HttpServletRequest request) {
         User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
