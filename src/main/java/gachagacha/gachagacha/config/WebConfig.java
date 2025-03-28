@@ -36,7 +36,8 @@ public class WebConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/", "/swagger-ui/**", "/v3/api-docs/**", "/css/**", "/*.ico", "/error",
                         "/login/oauth2/code/github", "/login/oauth2/code/kakao", "/join/**",
                         "/image/**",
-                        "/auth");
+                        "/auth",
+                        "/actuator/**");
     }
 
     @Bean
