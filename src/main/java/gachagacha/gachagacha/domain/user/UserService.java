@@ -56,6 +56,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public void updateUserInfo(User user, String nickname, long profileId) {
         if (userReader.existsByNickname(nickname)) {
             throw new BusinessException(ErrorCode.DUPLICATED_NICKNAME);
