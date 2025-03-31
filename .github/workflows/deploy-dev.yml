@@ -59,7 +59,7 @@ jobs:
         with:
           host: ${{ secrets.EC2_HOST_DEV }}
           username: ubuntu
-          key: ${{ secarets.EC2_PRIVATE_KEY }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/gachagacha
             existing_container=$(docker ps -a -q -f name=gachagacha)
