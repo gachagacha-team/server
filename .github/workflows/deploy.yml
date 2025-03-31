@@ -39,6 +39,7 @@ jobs:
           oauth.kakao.redirect_url: ${{ secrets.KAKAO_REDIRECT_URL }}
           oauth.kakao.admin_key: ${{ secrets.KAKAO_ADMIN_KEY }}
           logging.discord.webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          client.address: ${{ secrets.CLIENT_ADDRESS }}
 
       - name: build with gradle
         run: |

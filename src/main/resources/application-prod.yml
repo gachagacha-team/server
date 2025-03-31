@@ -49,7 +49,7 @@ logging:
     webhook-url: ${DISCORD_WEBHOOK_URL}
 
 client:
-  address: http://localhost:5173
+  address: ${CLIENT_ADDRESS}
 
 file:
   profile: /uploads/profile/
