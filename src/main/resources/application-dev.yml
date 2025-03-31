@@ -30,7 +30,7 @@ oauth:
     client_secret: ${OAUTH_GITHUB_CLIENT_SECRET}
   kakao:
     client_id: ${KAKAO_CLIENT_ID}
-    redirect_url: ${KAKAO_REDIRECT_URL}용
+    redirect_url: ${KAKAO_REDIRECT_URL}
     admin_key: ${KAKAO_ADMIN_KEY}
 
 springdoc:
@@ -43,9 +43,9 @@ springdoc:
     operations-sorter: alph
     path: /
 
-#logging:
-#  discord:
-#    webhook-url: ${DISCORD_WEBHOOK_URL}
+logging:
+  discord:
+    webhook-url: ${DISCORD_WEBHOOK_URL}
 
 client:
   address: http://localhost:5173
