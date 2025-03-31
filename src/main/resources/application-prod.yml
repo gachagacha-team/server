@@ -62,3 +62,8 @@ image:
   default:
     profile: default_profile.png
 
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
