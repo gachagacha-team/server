@@ -27,16 +27,16 @@ jobs:
           server.ssl.key-store: ${{ secrets.SSL_KEY_STORE }}
           server.ssl.key-store-type: ${{ secrets.SSL_KEY_STORE_TYPE }}
           server.ssl.key-store-password: ${{ secrets.SSL_KEY_STORE_PASSWORD }}
-#          spring.datasource.url: ${{ secrets.DATASOURCE_URL_DEV }}
-#          spring.datasource.username: ${{ secrets.DATASOURCE_USERNAME_DEV }}
-#          spring.datasource.password: ${{ secrets.DATASOURCE_PASSWORD_DEV }}
+          spring.datasource.url: ${{ secrets.DATASOURCE_URL_DEV }}
+          spring.datasource.username: ${{ secrets.DATASOURCE_USERNAME_DEV }}
+          spring.datasource.password: ${{ secrets.DATASOURCE_PASSWORD_DEV }}
           jwt.secret: ${{ secrets.JWT_SECRET }}
           oauth.github.client_id: ${{ secrets.OAUTH_GITHUB_CLIENT_ID_DEV }}
           oauth.github.client_secret: ${{ secrets.OAUTH_GITHUB_CLIENT_SECRET_DEV }}
           oauth.kakao.client_id: ${{ secrets.KAKAO_CLIENT_ID_DEV }}
           oauth.kakao.redirect_url: ${{ secrets.KAKAO_REDIRECT_URL_DEV }}
           oauth.kakao.admin_key: ${{ secrets.KAKAO_ADMIN_KEY_DEV }}
-          logging.discord.webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
+          logging.discord.webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL_DEV }}
 
       - name: build with gradle
         run: |
@@ -59,7 +59,7 @@ jobs:
         with:
           host: ${{ secrets.EC2_HOST_DEV }}
           username: ubuntu
-          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          key: ${{ secarets.EC2_PRIVATE_KEY }}
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/gachagacha
             existing_container=$(docker ps -a -q -f name=gachagacha)

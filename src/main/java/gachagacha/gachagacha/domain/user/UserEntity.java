@@ -11,7 +11,7 @@ import java.util.List;
 
 @Entity
 @Getter
-@Table(name = "user", uniqueConstraints = { @UniqueConstraint(columnNames = { "socialType", "loginId" }) })
+@Table(name = "users", uniqueConstraints = { @UniqueConstraint(columnNames = { "socialType", "loginId" }) })
 @AllArgsConstructor
 @NoArgsConstructor
 public class UserEntity extends BaseEntity {
