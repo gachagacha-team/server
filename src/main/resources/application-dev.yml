@@ -1,0 +1,68 @@
+server:
+  port: 8080
+  ssl.key-store: ${SSL_KEY_STORE}
+  ssl.key-store-type: ${SSL_KEY_STORE_TYPE}
+  ssl.key-store-password: ${SSL_KEY_STORE_PASSWORD}
+
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    username: sa
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      stream:
+        lotto-issuance-requests: lotto-issuance-requests
+        lotto-issued: lotto-issued
+jwt:
+  secret: ${JWT_SECRET}
+oauth:
+  github:
+    client_id: ${OAUTH_GITHUB_CLIENT_ID}
+    client_secret: ${OAUTH_GITHUB_CLIENT_SECRET}
+  kakao:
+    client_id: ${KAKAO_CLIENT_ID}
+    redirect_url: ${KAKAO_REDIRECT_URL}용
+    admin_key: ${KAKAO_ADMIN_KEY}
+
+springdoc:
+  packages-to-scan: gachagacha.gachagacha
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    disable-swagger-default-url: true
+    display-request-duration: true
+    operations-sorter: alph
+    path: /
+
+#logging:
+#  discord:
+#    webhook-url: ${DISCORD_WEBHOOK_URL}
+
+client:
+  address: http://localhost:5173
+
+file:
+  profile: /uploads/profile/
+
+image:
+  api:
+    endpoints:
+      items: /image/items/
+      backgrounds: /image/backgrounds/
+  default:
+    profile: default_profile.png
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
