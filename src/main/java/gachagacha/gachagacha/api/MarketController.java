@@ -46,11 +46,13 @@ public class MarketController {
     @GetMapping("/products")
     public ApiResponse<List<ReadAllProductsResponse>> readAllProducts(@RequestParam(value = "grade", required = false) String grade) {
         List<Item> items = (grade == null) ? Arrays.asList(Item.values()) : Item.getItemsByGrade(ItemGrade.findByViewName(grade));
+
         return ApiResponse.success(items.stream()
                 .map(item -> {
                     int stock = tradeService.readOnSaleProductsByItem(item).size();
                     return ReadAllProductsResponse.of(item, stock, itemsImageApiEndpoint);
                 })
+                .sorted(Comparator.comparing(ReadAllProductsResponse::isHasStock).reversed())
                 .toList());
     }
 
