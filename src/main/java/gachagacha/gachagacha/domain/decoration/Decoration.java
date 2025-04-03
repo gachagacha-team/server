@@ -1,5 +1,6 @@
 package gachagacha.gachagacha.domain.decoration;
 
+import gachagacha.gachagacha.domain.user.Background;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,8 +17,8 @@ public class Decoration implements Serializable {
     private long backgroundId;
     private List<DecorationItem> items = new ArrayList<>();
 
-    public static Decoration of(long backgroundId, List<DecorationItem> decorationItems) {
-        return new Decoration(backgroundId, decorationItems);
+    public static Decoration of(Background background, List<DecorationItem> decorationItems) {
+        return new Decoration(background.getId(), decorationItems);
     }
 
     @Getter
