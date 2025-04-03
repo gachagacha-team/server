@@ -32,7 +32,7 @@ public class GuestbookResponse {
     @JsonProperty(value = "isAuthor")
     private boolean isAuthor;
 
-    public static GuestbookResponse of(Guestbook guestbook, User author, String viewUserNickname) {
+    public static GuestbookResponse of(Guestbook guestbook, User author, Long viewUserId) {
         if (author == null) {
             return new GuestbookResponse(
                     guestbook.getId(),
@@ -48,6 +48,6 @@ public class GuestbookResponse {
                 author.getNickname(),
                 guestbook.getContent(),
                 guestbook.getCreatedAt(),
-                author.getNickname().equals(viewUserNickname));
+                author.getId() == viewUserId);
     }
 }

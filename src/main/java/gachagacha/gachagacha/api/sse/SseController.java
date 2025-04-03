@@ -1,5 +1,7 @@
 package gachagacha.gachagacha.api.sse;
 
+import gachagacha.gachagacha.domain.user.User;
+import gachagacha.gachagacha.domain.user.UserService;
 import gachagacha.gachagacha.jwt.JwtUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -17,12 +19,13 @@ public class SseController {
 
     private final SseEmitters sseEmitters;
     private final JwtUtils jwtUtils;
+    private final UserService userService;
 
     @GetMapping(value = "/connect", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> connect(HttpServletRequest request) {
-        String nickname = jwtUtils.getUserNicknameFromHeader(request);
+        User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         SseEmitter emitter = new SseEmitter(300000l);
-        sseEmitters.put(nickname, emitter);
+        sseEmitters.put(user.getNickname(), emitter);
         try {
             emitter.send(SseEmitter.event()
                     .name("connect")

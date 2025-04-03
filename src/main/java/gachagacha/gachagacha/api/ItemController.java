@@ -45,12 +45,11 @@ public class ItemController {
     @Parameter(name = "grade", description = "조회할 아이템 등급(S, A, B, C, D)(생략 시 모든 아이템 조회)")
     @GetMapping("/itembook/{nickname}")
     public ApiResponse<List<UserItemResponse>> getItems(@PathVariable String nickname, @RequestParam(value = "grade", required = false) String grade, HttpServletRequest request) {
-        String currentUserNickname = jwtUtils.getUserNicknameFromHeader(request);
-        if (!currentUserNickname.equals(nickname)) {
+        User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
+        if (!user.getNickname().equals(nickname)) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
         }
 
-        User user = userService.readUserByNickname(nickname);
         List<Item> items = (grade == null) ? Arrays.stream(Item.values()).toList() : Item.getItemsByGrade(ItemGrade.findByViewName(grade));
         return ApiResponse.success(items.stream()
                 .map(item -> {
@@ -63,12 +62,11 @@ public class ItemController {
     @Operation(summary = "미니홈 꾸미기 - 사용자가 보유한 아이템 조회(페이지네이션)")
     @GetMapping("/items/{nickname}")
     public ApiResponse<Page<UserItemsResponse>> readMyItems(@PathVariable String nickname, HttpServletRequest request, @PageableDefault(size = 10) Pageable pageable) {
-        String currentUserNickname = jwtUtils.getUserNicknameFromHeader(request);
-        if (!currentUserNickname.equals(nickname)) {
+        User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
+        if (!user.equals(nickname)) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
         }
 
-        User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
         List<UserItemsResponse> data = itemService.readAllUserItems(user)
                 .stream()
                 .map(userItem -> UserItemsResponse.of(userItem, itemsImageApiEndpoint))
@@ -85,12 +83,11 @@ public class ItemController {
     @Parameter(name = "nickname", description = "미니홈 유저 닉네임")
     @GetMapping("/backgrounds/{nickname}")
     public ApiResponse<List<BackgroundResponse>> readAllBackgrounds(@PathVariable String nickname, HttpServletRequest request) {
-        String currentUserNickname = jwtUtils.getUserNicknameFromHeader(request);
-        if (!currentUserNickname.equals(nickname)) {
+        User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
+        if (!user.equals(nickname)) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
         }
 
-        User user = userService.readUserByNickname(nickname);
         List<Background> backgrounds = user.getBackgrounds();
         return ApiResponse.success(backgrounds.stream()
                 .map(background -> BackgroundResponse.of(background, backgroundsImageApiEndpoint))

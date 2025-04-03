@@ -31,11 +31,6 @@ public class UserService {
         return userReader.findById(userId);
     }
 
-    public Coin getCoin(String nickname) {
-        User user = userReader.findByNickname(nickname);
-        return user.getCoin();
-    }
-
     @Transactional
     public Attendance attend(User user) {
         LocalDate date = LocalDate.now();

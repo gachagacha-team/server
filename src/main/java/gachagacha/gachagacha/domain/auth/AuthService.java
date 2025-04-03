@@ -50,8 +50,8 @@ public class AuthService {
         validateDuplicatedUser(socialType, loginId);
         validateDuplicatedNickname(nickname);
 
-        User user = User.of(nickname, socialType, loginId, profile);
-        long userId = userAppender.save(user);
+        long userId = userAppender.save(User.of(nickname, socialType, loginId, profile));
+        User savedUser = userReader.findById(userId);
 
         Minihome minihome = Minihome.of(userId);
         minihomeAppender.save(minihome);
@@ -59,7 +59,7 @@ public class AuthService {
         Decoration decoration = new Decoration(1l, null);
         decorationProcessor.save(decoration, userId);
 
-        JwtDto jwtDto = jwtUtils.generateJwt(user);
+        JwtDto jwtDto = jwtUtils.generateJwt(savedUser);
         tokenProcessor.save(jwtDto.getRefreshToken());
         return clientAddress + "/auth"
                 + "?accessToken=" + jwtDto.getAccessToken()
@@ -82,7 +82,7 @@ public class AuthService {
         jwtUtils.validateTokenFromHeader(request);
         tokenProcessor.delete(jwtUtils.getRefreshTokenFromHeader(request));
 
-        User user = userReader.findByNickname(jwtUtils.getUserNicknameFromHeader(request));
+        User user = userReader.findById(jwtUtils.getUserIdFromHeader(request));
         JwtDto jwtDto = jwtUtils.generateJwt(user);
         tokenProcessor.save(jwtDto.getRefreshToken());
         return jwtDto;
