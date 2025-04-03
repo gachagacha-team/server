@@ -111,26 +111,26 @@ public class MarketController {
     @GetMapping("/items/me")
     public ApiResponse<Page<UserItemsForSaleResponse>> readMyItemsForSale(HttpServletRequest request, @PageableDefault(size = 10) Pageable pageable) {
         User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
-        Map<Item, List<UserItem>> userItemsMap = Arrays.stream(Item.values())
-                .map(item -> {
-                    List<UserItem> userItems = itemService.readUserItemsByItem(user, item);
-                    if (userItems.size() == 0) return null;
-                    return Map.entry(item, userItems);
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        List<UserItemsForSaleResponse> data = userItemsMap.keySet().stream()
+        // 미니홈에 있는 아이템 제외하고 user item 리스트 조회
+        List<UserItem> userItems = itemService.readUserItemsExcludeDecorationItem(user);
+
+        // user item 리스트를 item 타입별로 그룹화
+        Map<Item, List<UserItem>> groupedByItem = userItems.stream()
+                .collect(Collectors.groupingBy(UserItem::getItem));
+
+        // 각 item마다 응답 생성
+        List<UserItemsForSaleResponse> responseDto = groupedByItem.keySet().stream()
                 .map(item -> {
                     int stock = tradeService.readOnSaleProductsByItem(item).size();
-                    return UserItemsForSaleResponse.of(item, userItemsMap.get(item), stock, itemsImageApiEndpoint);
+                    return UserItemsForSaleResponse.of(item, groupedByItem.get(item), stock, itemsImageApiEndpoint);
                 })
                 .toList();
 
         int start = (int) pageable.getOffset();
-        int end = Math.min(start + pageable.getPageSize(), data.size());
-        List<UserItemsForSaleResponse> pagedList = data.subList(start, end);
-        Page<UserItemsForSaleResponse> page = new PageImpl<>(pagedList, pageable, data.size());
+        int end = Math.min(start + pageable.getPageSize(), responseDto.size());
+        List<UserItemsForSaleResponse> pagedList = responseDto.subList(start, end);
+        Page<UserItemsForSaleResponse> page = new PageImpl<>(pagedList, pageable, responseDto.size());
         return ApiResponse.success(page);
     }
 
