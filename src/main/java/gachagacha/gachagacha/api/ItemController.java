@@ -63,7 +63,7 @@ public class ItemController {
     @GetMapping("/items/{nickname}")
     public ApiResponse<Page<UserItemsResponse>> readMyItems(@PathVariable String nickname, HttpServletRequest request, @PageableDefault(size = 10) Pageable pageable) {
         User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
-        if (!user.equals(nickname)) {
+        if (!user.getNickname().equals(nickname)) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
         }
 
@@ -84,7 +84,7 @@ public class ItemController {
     @GetMapping("/backgrounds/{nickname}")
     public ApiResponse<List<BackgroundResponse>> readAllBackgrounds(@PathVariable String nickname, HttpServletRequest request) {
         User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
-        if (!user.equals(nickname)) {
+        if (!user.getNickname().equals(nickname)) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
         }
 
