@@ -84,7 +84,7 @@ create table user_item
 create table users
 (
     coin        integer,
-    score       integer,용
+    score       integer,
     created_at  DATETIME(0) not null,
     login_id    bigint       not null,
     updated_at  DATETIME(0) not null,
