@@ -24,7 +24,7 @@ public class UserEntity extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private SocialType socialType;
 
-    @Column
+    @Column(nullable = false)
     private Long loginId;
 
     @Column(nullable = false, unique = true)
@@ -38,6 +38,7 @@ public class UserEntity extends BaseEntity {
     @Embedded
     private Score score;
 
+    @Column(nullable = false)
     @Enumerated(value = EnumType.STRING)
     private Profile profile;
 

@@ -27,4 +27,8 @@ public class UserItem {
                 userId
         );
     }
+
+    public boolean isOwnedBy(User user) {
+        return user.getId() == userId;
+    }
 }

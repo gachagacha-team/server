@@ -72,7 +72,7 @@ public class AuthController {
     @Operation(summary = "회원 탈퇴", description = "헤더에 refresh token을 포함시켜야 한다.")
     @DeleteMapping("/withdraw")
     public void withdraw(HttpServletRequest request) {
-        User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
+        User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         authService.withdraw(user, jwtUtils.getRefreshTokenFromHeader(request));
         oAuthService.unlink(user);
     }
@@ -80,7 +80,7 @@ public class AuthController {
     @Operation(summary = "회원 정보 수정")
     @PutMapping("/user_info")
     public ApiResponse updateUserInfo(@RequestBody UpdateUserInfoRequest requestDto, HttpServletRequest request) {
-        User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
+        User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         userService.updateUserInfo(user, requestDto.getNickname(), requestDto.getProfileId());
         return ApiResponse.success();
     }

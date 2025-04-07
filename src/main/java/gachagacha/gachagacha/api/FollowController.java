@@ -30,7 +30,7 @@ public class FollowController {
     @PostMapping("/users/follow")
     public ApiResponse follow(@RequestBody FollowRequest followRequest, HttpServletRequest request) {
         User followee = userService.readUserByNickname(followRequest.getFolloweeUserNickname());
-        User follower = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
+        User follower = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         followService.follow(followee, follower);
         return ApiResponse.success();
     }
@@ -39,7 +39,7 @@ public class FollowController {
     @DeleteMapping("/users/unfollow")
     public ApiResponse unfollow(@RequestBody UnfollowRequest unfollowRequest, HttpServletRequest request) {
         User followee = userService.readUserByNickname(unfollowRequest.getFolloweeUserNickname());
-        User follower = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
+        User follower = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         followService.removeFollow(followee, follower);
         return ApiResponse.success();
     }
@@ -48,7 +48,7 @@ public class FollowController {
     @DeleteMapping("/users/follower/{nickname}")
     public ApiResponse removeFollower(@PathVariable String nickname, HttpServletRequest request) {
         User follower = userService.readUserByNickname(nickname);
-        User followee = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
+        User followee = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         followService.removeFollow(followee, follower);
         return ApiResponse.success();
     }
@@ -58,7 +58,7 @@ public class FollowController {
     @GetMapping("/users/{nickname}/followers")
     public ApiResponse<Slice<FollowerResponse>> getFollowers(@PathVariable String nickname, HttpServletRequest request, Pageable pageable) {
         Slice<Follow> followers = followService.getFollowers(nickname, pageable);
-        User currentUser = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
+        User currentUser = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         User followee = userService.readUserByNickname(nickname);
         return ApiResponse.success(followers.map(follow -> {
             User follower = userService.readUserById(follow.getFollowerId());
@@ -72,7 +72,7 @@ public class FollowController {
     @GetMapping("/users/{nickname}/followings")
     public ApiResponse<Slice<FollowingResponse>> getFollowings(@PathVariable String nickname, HttpServletRequest request, Pageable pageable) {
         Slice<Follow> followers = followService.getFollowings(nickname, pageable);
-        User currentUser = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
+        User currentUser = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         return ApiResponse.success(followers.map(follow -> {
             User followee = userService.readUserById(follow.getFolloweeId());
             boolean isFollowing = followService.isFollowing(currentUser, followee);

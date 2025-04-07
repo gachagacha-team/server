@@ -27,7 +27,7 @@ public class NotificationController {
     @Operation(summary = "알림 내역 조회")
     @GetMapping("/notifications")
     public ApiResponse<NotificationsResponse> readNotifications(HttpServletRequest request) {
-        User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
+        User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         List<Notification> notifications = notificationService.readNotifications(user);
 
         boolean hasNewNotification = false;
@@ -43,7 +43,7 @@ public class NotificationController {
     @Operation(summary = "알림 읽음 처리")
     @PutMapping("/notifications/mark")
     public ApiResponse readOneNotification(@RequestBody NotificationReadMarkRequest requestDto, HttpServletRequest request) {
-        User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
+        User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         notificationService.markLastReadNotification(requestDto.getNotificationId(), user);
         return ApiResponse.success();
     }

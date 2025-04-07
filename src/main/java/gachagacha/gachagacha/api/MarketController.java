@@ -46,11 +46,13 @@ public class MarketController {
     @GetMapping("/products")
     public ApiResponse<List<ReadAllProductsResponse>> readAllProducts(@RequestParam(value = "grade", required = false) String grade) {
         List<Item> items = (grade == null) ? Arrays.asList(Item.values()) : Item.getItemsByGrade(ItemGrade.findByViewName(grade));
+
         return ApiResponse.success(items.stream()
                 .map(item -> {
                     int stock = tradeService.readOnSaleProductsByItem(item).size();
                     return ReadAllProductsResponse.of(item, stock, itemsImageApiEndpoint);
                 })
+                .sorted(Comparator.comparing(ReadAllProductsResponse::isHasStock).reversed())
                 .toList());
     }
 
@@ -67,7 +69,7 @@ public class MarketController {
     @Parameter(name = "itemId", description = "구매할 상품 아이템 id")
     @PostMapping("/items/{itemId}/purchase")
     public ApiResponse purchase(@PathVariable long itemId, HttpServletRequest request) {
-        User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
+        User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         Item purchaseItem = Item.findById(itemId);
         tradeService.purchase(user, purchaseItem);
         lottoProcessor.checkAndPublishLotteryEvent(user, purchaseItem);
@@ -79,7 +81,7 @@ public class MarketController {
     @Parameter(name = "pageable", description = "최신순(sort=createdAt,desc), 오래된순(sort=createdAt,asc)")
     @GetMapping("/products/me")
     public ApiResponse<Slice<ReadMyOneProductResponse>> readMyProducts(@RequestParam(value = "grade", required = false) String grade, Pageable pageable, HttpServletRequest request) {
-        User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
+        User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         Slice<Trade> tradesSlice = tradeService.readMyProducts(pageable, user);
         List<Trade> trades = tradesSlice.getContent();
         if (grade != null) {
@@ -101,7 +103,7 @@ public class MarketController {
     @Parameter(name = "productId", description = "취소할 상품 id")
     @DeleteMapping("/products/{productId}")
     public ApiResponse cancelTrade(@PathVariable long productId, HttpServletRequest request) {
-        User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
+        User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         Trade trade = tradeService.readById(productId);
         tradeService.cancelTrade(user, trade);
         return ApiResponse.success();
@@ -110,34 +112,34 @@ public class MarketController {
     @Operation(summary = "상품 등록 시 내가 가진 아이템 조회(페이지네이션)")
     @GetMapping("/items/me")
     public ApiResponse<Page<UserItemsForSaleResponse>> readMyItemsForSale(HttpServletRequest request, @PageableDefault(size = 10) Pageable pageable) {
-        User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
-        Map<Item, List<UserItem>> userItemsMap = Arrays.stream(Item.values())
-                .map(item -> {
-                    List<UserItem> userItems = itemService.readUserItemsByItem(user, item);
-                    if (userItems.size() == 0) return null;
-                    return Map.entry(item, userItems);
-                })
-                .filter(Objects::nonNull)
-                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+        User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
 
-        List<UserItemsForSaleResponse> data = userItemsMap.keySet().stream()
+        // 미니홈에 있는 아이템 제외하고 user item 리스트 조회
+        List<UserItem> userItems = itemService.readUserItemsExcludeDecorationItem(user);
+
+        // user item 리스트를 item 타입별로 그룹화
+        Map<Item, List<UserItem>> groupedByItem = userItems.stream()
+                .collect(Collectors.groupingBy(UserItem::getItem));
+
+        // 각 item마다 응답 생성
+        List<UserItemsForSaleResponse> responseDto = groupedByItem.keySet().stream()
                 .map(item -> {
                     int stock = tradeService.readOnSaleProductsByItem(item).size();
-                    return UserItemsForSaleResponse.of(item, userItemsMap.get(item), stock, itemsImageApiEndpoint);
+                    return UserItemsForSaleResponse.of(item, groupedByItem.get(item), stock, itemsImageApiEndpoint);
                 })
                 .toList();
 
         int start = (int) pageable.getOffset();
-        int end = Math.min(start + pageable.getPageSize(), data.size());
-        List<UserItemsForSaleResponse> pagedList = data.subList(start, end);
-        Page<UserItemsForSaleResponse> page = new PageImpl<>(pagedList, pageable, data.size());
+        int end = Math.min(start + pageable.getPageSize(), responseDto.size());
+        List<UserItemsForSaleResponse> pagedList = responseDto.subList(start, end);
+        Page<UserItemsForSaleResponse> page = new PageImpl<>(pagedList, pageable, responseDto.size());
         return ApiResponse.success(page);
     }
 
     @Operation(summary = "상품 등록")
     @PostMapping("/products")
     public ApiResponse addProduct(@RequestBody AddProductRequest addProductRequest, HttpServletRequest request) {
-        User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
+        User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         UserItem userItem = itemService.readById(addProductRequest.getUserItemId());
         tradeService.registerTrade(user, userItem);
         return ApiResponse.success();

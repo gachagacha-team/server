@@ -25,7 +25,7 @@ public class LottoController {
 
     @GetMapping("/lottos")
     public ApiResponse<List<ReadLottoResponse>> readLottos(HttpServletRequest request) {
-        User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
+        User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         List<ReadLottoResponse> data = lottoService.findUnusedLottos(user)
                 .stream()
                 .map(lotto -> ReadLottoResponse.of(lotto))
@@ -35,7 +35,7 @@ public class LottoController {
 
     @PutMapping("/lotto/use/{lottoId}")
     public ApiResponse useLotto(@PathVariable long lottoId, HttpServletRequest request) {
-        User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
+        User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         lottoService.useLotto(lottoId, user);
         return ApiResponse.success();
     }

@@ -33,6 +33,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	implementation 'io.micrometer:micrometer-registry-prometheus'
 
+	implementation 'org.flywaydb:flyway-core'
+	implementation 'org.flywaydb:flyway-mysql'
+
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
 
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'

@@ -30,7 +30,7 @@ public class GachaController {
     @Operation(summary = "아이템 뽑기")
     @PostMapping("/gacha")
     public ApiResponse<GachaResponse> gacha(HttpServletRequest request) {
-        User user = userService.readUserByNickname(jwtUtils.getUserNicknameFromHeader(request));
+        User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         Item addedItem = itemService.gacha(user);
         lottoProcessor.checkAndPublishLotteryEvent(user, addedItem);
         return ApiResponse.success(GachaResponse.of(addedItem, itemsImageApiEndpoint));
