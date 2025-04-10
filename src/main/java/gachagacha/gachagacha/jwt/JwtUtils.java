@@ -40,7 +40,8 @@ public class JwtUtils {
                 .setClaims(claims)
                 .setIssuedAt(Date.from(Instant.now()))
 //                .setExpiration(Date.from(Instant.now().plus(Duration.ofMinutes(30)))) // 만료: 30분
-                .setExpiration(Date.from(Instant.now().plus(Duration.ofDays(30)))) // 만료: 30일
+//                .setExpiration(Date.from(Instant.now().plus(Duration.ofDays(30)))) // 만료: 30일
+                .setExpiration(Date.from(Instant.now().plus(Duration.ofMinutes(2))))
 
                 .signWith(SignatureAlgorithm.HS256, signingKey)
                 .compact();
@@ -50,7 +51,8 @@ public class JwtUtils {
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(Date.from(Instant.now()))
-                .setExpiration(Date.from(Instant.now().plus(Duration.ofDays(30)))) // 만료: 30일
+//                .setExpiration(Date.from(Instant.now().plus(Duration.ofDays(30)))) // 만료: 30일
+                .setExpiration(Date.from(Instant.now().plus(Duration.ofMinutes(4))))
                 .signWith(SignatureAlgorithm.HS256, signingKey)
                 .compact();
     }
