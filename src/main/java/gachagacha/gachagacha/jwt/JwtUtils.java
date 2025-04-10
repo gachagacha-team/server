@@ -52,7 +52,7 @@ public class JwtUtils {
                 .setClaims(claims)
                 .setIssuedAt(Date.from(Instant.now()))
 //                .setExpiration(Date.from(Instant.now().plus(Duration.ofDays(30)))) // 만료: 30일
-                .setExpiration(Date.from(Instant.now().plus(Duration.ofMinutes(4))))
+                .setExpiration(Date.from(Instant.now().plus(Duration.ofSeconds(5))))
                 .signWith(SignatureAlgorithm.HS256, signingKey)
                 .compact();
     }
