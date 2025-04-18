@@ -53,18 +53,19 @@ public class LottoMessageListener implements StreamListener<String, MapRecord<St
     private void process(MapRecord<String, String, String> message) {
         Map<String, String> map = message.getValue();
 
-        Lotto lotto = Lotto.of(
-                Long.valueOf(map.get("userId")),
-                Boolean.valueOf(map.get("won")),
-                Integer.valueOf(map.get("rewardCoin")));
-        Lotto savedLotto = lottoProcessor.save(lotto);
-        User user = userReader.findById(savedLotto.getUserId());
+
+        Long userId = Long.valueOf(message.getValue().get("userId"));
+        Long lottoId = Long.valueOf(message.getValue().get("lottoId"));
+
+        Lotto lotto = lottoProcessor.findById(lottoId);
+        User user = userReader.findById(userId);
+        ItemGrade itemGrade = lotto.getItemGrade();
 
         Notification notification = Notification.of(
                 NotificationType.LOTTO_ISSUED,
-                new Notification.LottoIssuedNotification(savedLotto.getId(), map.get("itemGrade")));
-
+                new Notification.LottoIssuedNotification(lottoId, itemGrade.getViewName()));
         Long notificationId = notificationProcessor.saveNotification(notification, user);
+
         sseEmitters.issuedLotto(notification, user);
 
         redisTemplate.opsForStream().acknowledge(streamKey, CONSUMER_GROUP_NAME, message.getId());

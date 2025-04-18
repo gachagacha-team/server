@@ -1,5 +1,7 @@
 package gachagacha.gachagacha.domain.trade;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gachagacha.gachagacha.api.sse.SseEmitters;
 import gachagacha.gachagacha.domain.decoration.DecorationProcessor;
 import gachagacha.gachagacha.domain.item.Item;
@@ -7,6 +9,9 @@ import gachagacha.gachagacha.domain.item.UserItem;
 import gachagacha.gachagacha.domain.notification.Notification;
 import gachagacha.gachagacha.domain.notification.NotificationProcessor;
 import gachagacha.gachagacha.domain.notification.NotificationType;
+import gachagacha.gachagacha.domain.outbox.LottoIssuanceEvent;
+import gachagacha.gachagacha.domain.outbox.Outbox;
+import gachagacha.gachagacha.domain.outbox.OutboxProcessor;
 import gachagacha.gachagacha.domain.user.User;
 import gachagacha.gachagacha.domain.user.UserReader;
 import gachagacha.gachagacha.domain.user.UserUpdater;
@@ -17,6 +22,7 @@ import gachagacha.gachagacha.support.exception.ErrorCode;
 import gachagacha.gachagacha.support.exception.customException.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
@@ -41,6 +47,11 @@ public class TradeService {
     private final DecorationProcessor decorationProcessor;
     private final SseEmitters sseEmitters;
     private final NotificationProcessor notificationProcessor;
+    private final OutboxProcessor outboxProcessor;
+    private final ObjectMapper objectMapper;
+
+    @Value("${spring.data.redis.stream.lotto-issuance-requests}")
+    private String topic;
 
     public List<Trade> readOnSaleProductsByItem(Item item) {
         return tradeReader.findOnSaleProductsByItem(item);
@@ -86,7 +97,7 @@ public class TradeService {
     }
 
     @Transactional
-    public void purchase(User buyer, Item item) {
+    public void purchase(User buyer, Item item) throws JsonProcessingException {
         Trade trade = tradeReader.findOnSaleProductByItem(item);
         User seller = userReader.findById(trade.getSellerId());
 
@@ -104,6 +115,10 @@ public class TradeService {
         Notification notification = Notification.of(NotificationType.TRADE_COMPLETED, new Notification.TradeCompletedNotification(item.getViewName(), item.getItemGrade().getPrice()));
         Long notificationId = notificationProcessor.saveNotification(notification, seller);
         sseEmitters.tradeComplete(seller, trade.getItem(), notificationId);
+
+        LottoIssuanceEvent lottoIssuanceEvent = new LottoIssuanceEvent(buyer.getId(), item.getItemGrade());
+        String payload = objectMapper.writeValueAsString(lottoIssuanceEvent);
+        outboxProcessor.save(Outbox.create(topic, payload));
     }
 
     public Trade readById(long tradeId) {

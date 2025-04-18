@@ -1,10 +1,16 @@
 package gachagacha.gachagacha.domain.item;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gachagacha.gachagacha.domain.decoration.Decoration;
 import gachagacha.gachagacha.domain.decoration.DecorationProcessor;
+import gachagacha.gachagacha.domain.outbox.LottoIssuanceEvent;
+import gachagacha.gachagacha.domain.outbox.Outbox;
+import gachagacha.gachagacha.domain.outbox.OutboxProcessor;
 import gachagacha.gachagacha.domain.user.User;
 import gachagacha.gachagacha.domain.user.UserUpdater;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,15 +25,24 @@ public class ItemService {
     private final UserItemReader userItemReader;
     private final UserUpdater userUpdater;
     private final DecorationProcessor decorationProcessor;
+    private final OutboxProcessor outboxProcessor;
+    private final ObjectMapper objectMapper;
+
+    @Value("${spring.data.redis.stream.lotto-issuance-requests}")
+    private String topic;
 
     @Transactional
-    public Item gacha(User user) {
+    public Item gacha(User user) throws JsonProcessingException {
         user.deductCoinForGacha();
         Item item = Item.gacha();
         user.increaseScoreByItem(item, userItemReader.findAllByUser(user));
 
-        userItemAppender.save(UserItem.of(user, item));
         userUpdater.update(user);
+        userItemAppender.save(UserItem.of(user, item));
+
+        LottoIssuanceEvent lottoIssuanceEvent = new LottoIssuanceEvent(user.getId(), item.getItemGrade());
+        String payload = objectMapper.writeValueAsString(lottoIssuanceEvent);
+        outboxProcessor.save(Outbox.create(topic, payload));
         return item;
     }
 

@@ -1,5 +1,7 @@
 package gachagacha.gachagacha.domain.lotto;
 
+import gachagacha.gachagacha.domain.BaseEntity;
+import gachagacha.gachagacha.domain.item.ItemGrade;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +11,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LottoEntity {
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "item_grade"})})
+public class LottoEntity extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,6 +21,10 @@ public class LottoEntity {
 
     @Column(nullable = false)
     private long userId;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private ItemGrade itemGrade;
 
     @Column(nullable = false)
     private boolean used;
@@ -29,7 +36,7 @@ public class LottoEntity {
     private int rewardCoin;
 
     public Lotto toLotto() {
-        return new Lotto(id, userId, used, won, rewardCoin);
+        return new Lotto(id, userId, itemGrade, used, won, rewardCoin);
     }
 
     public void updateFromLotto(Lotto lotto) {

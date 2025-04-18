@@ -1,5 +1,6 @@
 package gachagacha.gachagacha.api;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import gachagacha.gachagacha.api.dto.response.UserItemsForSaleResponse;
 import gachagacha.gachagacha.api.dto.request.AddProductRequest;
 import gachagacha.gachagacha.api.dto.response.ReadAllProductsResponse;
@@ -68,11 +69,10 @@ public class MarketController {
     @Operation(summary = "상품 구매")
     @Parameter(name = "itemId", description = "구매할 상품 아이템 id")
     @PostMapping("/items/{itemId}/purchase")
-    public ApiResponse purchase(@PathVariable long itemId, HttpServletRequest request) {
+    public ApiResponse purchase(@PathVariable long itemId, HttpServletRequest request) throws JsonProcessingException {
         User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         Item purchaseItem = Item.findById(itemId);
         tradeService.purchase(user, purchaseItem);
-        lottoProcessor.checkAndPublishLotteryEvent(user, purchaseItem);
         return ApiResponse.success();
     }
 
