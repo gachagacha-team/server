@@ -1,7 +1,7 @@
 spring:
   config:
     import:
-      - application.yml
+      - application-common.yml
       - rdb-dev.yml
       - redis.yml
       - common.yml
