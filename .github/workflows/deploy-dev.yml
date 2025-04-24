@@ -73,7 +73,7 @@ jobs:
               sudo docker rm -f $existing_container
               sleep 3 
             fi
-              sudo docker run -d --name gacha-api --network host -p 8080:8080 \
+            sudo docker run -d --name gacha-api --network host -p 8080:8080 \
               -e SPRING_PROFILES_ACTIVE=dev \
               -e SSL_KEY_STORE=${{ secrets.SSL_KEY_STORE }} \
               -e SSL_KEY_STORE_TYPE=${{ secrets.SSL_KEY_STORE_TYPE }} \
