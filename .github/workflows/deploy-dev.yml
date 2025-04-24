@@ -34,9 +34,6 @@ jobs:
           oauth.kakao.redirect_url: ${{ secrets.KAKAO_REDIRECT_URL_DEV }}
           oauth.kakao.admin_key: ${{ secrets.KAKAO_ADMIN_KEY_DEV }}
           logging.discord.webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL_GACHA_DEV }}
-          spring.datasource.url: ${{ secrets.DATASOURCE_URL_DEV }}
-          spring.datasource.username: ${{ secrets.DATASOURCE_USERNAME_DEV }}
-          spring.datasource.password: ${{ secrets.DATASOURCE_PASSWORD_DEV }}
 
       - name: set yml for lotto-api server
         uses: microsoft/variable-substitution@v1
