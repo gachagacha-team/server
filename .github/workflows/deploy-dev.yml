@@ -79,16 +79,16 @@ jobs:
               -e SSL_KEY_STORE_TYPE=${{ secrets.SSL_KEY_STORE_TYPE }} \
               -e SSL_KEY_STORE_PASSWORD=${{ secrets.SSL_KEY_STORE_PASSWORD }} \
               -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
-              -e OAUTH_GITHUB_CLIENT_ID=${{ secrets.OAUTH_GITHUB_CLIENT_ID }} \
-              -e OAUTH_GITHUB_CLIENT_SECRET=${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }} \
-              -e KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }} \
-              -e KAKAO_REDIRECT_URL=${{ secrets.KAKAO_REDIRECT_URL }} \  
-              -e KAKAO_ADMIN_KEY=${{ secrets.KAKAO_ADMIN_KEY }} \  
-              -e DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL }} \  
-              -e DATASOURCE_URL=${{ secrets.DATASOURCE_URL }} \  
-              -e DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }} \
-              -e DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }} \
-            -v /var/log/gacha-api:/log \
+              -e OAUTH_GITHUB_CLIENT_ID=${{ secrets.OAUTH_GITHUB_CLIENT_ID_DEV }} \
+              -e OAUTH_GITHUB_CLIENT_SECRET=${{ secrets.OAUTH_GITHUB_CLIENT_SECRET_DEV }} \
+              -e KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID_DEV }} \
+              -e KAKAO_REDIRECT_URL=${{ secrets.KAKAO_REDIRECT_URL_DEV }} \  
+              -e KAKAO_ADMIN_KEY=${{ secrets.KAKAO_ADMIN_KEY_DEV }} \  
+              -e DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL_GACHA_DEV }} \  
+              -e DATASOURCE_URL=${{ secrets.DATASOURCE_URL_DEV }} \  
+              -e DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME_DEV }} \
+              -e DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD_DEV }} \
+              -v /var/log/gacha-api:/log \
               ${{ secrets.DOCKER_USERNAME }}/gacha-api:latest
 
       - name: deploy lotto-api to EC2
@@ -106,9 +106,9 @@ jobs:
             fi
               sudo docker run -d --name lotto-api --network host -p 8081:8081 \
               -e SPRING_PROFILES_ACTIVE=dev \
-              -e DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL }} \  
-              -e DATASOURCE_URL=${{ secrets.DATASOURCE_URL }} \  
-              -e DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }} \
-              -e DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }} \
+              -e DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL_LOTTO_DEV }} \  
+              -e DATASOURCE_URL=${{ secrets.DATASOURCE_URL_DEV }} \  
+              -e DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME_DEV }} \
+              -e DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD_DEV }} \
               -v /var/log/lotto-api:/log \
               ${{ secrets.DOCKER_USERNAME }}/lotto-api:latest
