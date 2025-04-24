@@ -3,7 +3,7 @@ spring:
     import:
       - rdb.yml
       - redis.yml
-      - common.yml
+#      - common.yml
 server:
   port: 8080
   ssl.key-store: ${SSL_KEY_STORE}
@@ -49,6 +49,8 @@ springdoc:
     display-request-duration: true
     operations-sorter: alph
     path: /
+discord:
+  webhook-url: test
 
 ---
 spring:
