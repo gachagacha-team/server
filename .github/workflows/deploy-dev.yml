@@ -82,10 +82,10 @@ jobs:
               -e OAUTH_GITHUB_CLIENT_ID=${{ secrets.OAUTH_GITHUB_CLIENT_ID_DEV }} \
               -e OAUTH_GITHUB_CLIENT_SECRET=${{ secrets.OAUTH_GITHUB_CLIENT_SECRET_DEV }} \
               -e KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID_DEV }} \
-              -e KAKAO_REDIRECT_URL=${{ secrets.KAKAO_REDIRECT_URL_DEV }} \  
-              -e KAKAO_ADMIN_KEY=${{ secrets.KAKAO_ADMIN_KEY_DEV }} \  
-              -e DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL_GACHA_DEV }} \  
-              -e DATASOURCE_URL=${{ secrets.DATASOURCE_URL_DEV }} \  
+              -e KAKAO_REDIRECT_URL=${{ secrets.KAKAO_REDIRECT_URL_DEV }} \
+              -e KAKAO_ADMIN_KEY=${{ secrets.KAKAO_ADMIN_KEY_DEV }} \
+              -e DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL_GACHA_DEV }} \
+              -e DATASOURCE_URL=${{ secrets.DATASOURCE_URL_DEV }} \
               -e DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME_DEV }} \
               -e DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD_DEV }} \
               -v /var/log/gacha-api:/log \
