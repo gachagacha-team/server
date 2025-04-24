@@ -11,15 +11,15 @@ jobs:
 
     env:
       # application-commom
-      SERVER_SSL.KEY-STORE: ${{ secrets.SSL_KEY_STORE }}
-      SERVER_SSL.KEY_STORE-TYPE: ${{ secrets.SSL_KEY_STORE_TYPE }}
-      SERVER_SSL.KEY-STORE-PASSWORD: ${{ secrets.SSL_KEY_STORE_PASSWORD }}
+      SSL_KEY_STORE: ${{ secrets.SSL_KEY_STORE }}
+      SSL_KEY_STORE_TYPE: ${{ secrets.SSL_KEY_STORE_TYPE }}
+      SSL_KEY_STORE_PASSWORD: ${{ secrets.SSL_KEY_STORE_PASSWORD }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       OAUTH_GITHUB_CLIENT_ID: ${{ secrets.OAUTH_GITHUB_CLIENT_ID }}
       OAUTH_GITHUB_CLIENT_SECRET: ${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }}
-      OAUTH_KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
-      OAUTH_KAKAO_REDIRECT_URL: ${{ secrets.KAKAO_REDIRECT_URL }}
-      OAUTH_KAKAO_ADMIN_KEY: ${{ secrets.KAKAO_ADMIN_KEY }}
+      KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
+      KAKAO_REDIRECT_URL: ${{ secrets.KAKAO_REDIRECT_URL }}
+      KAKAO_ADMIN_KEY: ${{ secrets.KAKAO_ADMIN_KEY }}
 
       # common
       DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL_GACHA_DEV }}
