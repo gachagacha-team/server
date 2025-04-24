@@ -1,0 +1,17 @@
+dependencies {
+    implementation project(':common')
+    implementation project(':domain')
+    implementation project(':storage:rdb')
+    implementation project(':storage:redis')
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-json'
+}
+
+bootJar {
+    enabled = true
+}
+
+jar {
+    enabled = false
+}

@@ -1,0 +1,8 @@
+spring:
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      stream:
+        lotto-issuance-requests: lotto-issuance-requests
+        lotto-issued: lotto-issued

@@ -1,0 +1,15 @@
+dependencies {
+    implementation project(':common')
+    implementation project(':domain')
+
+    api 'org.springframework.boot:spring-boot-starter-data-redis:3.4.0'
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}

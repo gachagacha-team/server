@@ -1,0 +1,12 @@
+dependencies {
+    implementation project(':common')
+    implementation 'org.springframework.data:spring-data-commons'
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
+}
