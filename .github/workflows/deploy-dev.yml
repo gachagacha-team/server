@@ -22,7 +22,7 @@ jobs:
       KAKAO_ADMIN_KEY: ${{ secrets.KAKAO_ADMIN_KEY }}
 
       # common
-      LOGGING.DISCORD.WEBHOOK-URL: ${{ secrets.DISCORD_WEBHOOK_URL_GACHA_DEV }}
+      LOGGING_DISCORD_WEBHOOK-URL: ${{ secrets.DISCORD_WEBHOOK_URL_GACHA_DEV }}
 
     steps:
       - name: checkout
