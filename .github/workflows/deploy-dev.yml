@@ -22,12 +22,11 @@ jobs:
       - name: set yml for gacha-api
         uses: microsoft/variable-substitution@v1
         with:
-          files: ./application-dev.yml
-#          files: ./gacha-api/src/main/resources/application-dev.yml
-#        env:
-#          server.ssl.key-store: ${{ secrets.SSL_KEY_STORE }}
-#          server.ssl.key-store-type: ${{ secrets.SSL_KEY_STORE_TYPE }}
-#          server.ssl.key-store-password: ${{ secrets.SSL_KEY_STORE_PASSWORD }}
+          files: ./gacha-api/src/main/resources/application-dev.yml
+        env:
+          server.ssl.key-store: ${{ secrets.SSL_KEY_STORE }}
+          server.ssl.key-store-type: ${{ secrets.SSL_KEY_STORE_TYPE }}
+          server.ssl.key-store-password: ${{ secrets.SSL_KEY_STORE_PASSWORD }}
 #          jwt.secret: ${{ secrets.JWT_SECRET }}
 #          oauth.github.client_id: ${{ secrets.OAUTH_GITHUB_CLIENT_ID_DEV }}
 #          oauth.github.client_secret: ${{ secrets.OAUTH_GITHUB_CLIENT_SECRET_DEV }}
