@@ -105,7 +105,7 @@
     <!--prod-->
     <springProfile name="prod">
         <property resource="application-prod.yml"/>
-        <springProperty name="DISCORD_WEBHOOK_URL" source="logging.discord.webhook-url"/>
+        <springProperty name="DISCORD_WEBHOOK_URL" source="discord.webhook-url"/>
 
         <appender name="DISCORD" class="com.github.napstr.logback.DiscordAppender">
             <webhookUri>${DISCORD_WEBHOOK_URL}</webhookUri>
