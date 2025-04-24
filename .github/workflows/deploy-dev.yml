@@ -9,6 +9,14 @@ jobs:
 
     runs-on: ubuntu-latest
 
+oauth:
+  github:
+    client_id: test #${OAUTH_GITHUB_CLIENT_ID}
+    client_secret: test #${OAUTH_GITHUB_CLIENT_SECRET}
+  kakao:
+    client_id: test #${KAKAO_CLIENT_ID}
+    redirect_url: test #${KAKAO_REDIRECT_URL}
+    admin_key: test #${KAKAO_ADMIN_KEY}
     env:
       # application-commom
       SSL_KEY_STORE: ${{ secrets.SSL_KEY_STORE }}
@@ -22,7 +30,7 @@ jobs:
       KAKAO_ADMIN_KEY: ${{ secrets.KAKAO_ADMIN_KEY }}
 
       # common
-      LOGGING_DISCORD_WEBHOOK-URL: ${{ secrets.DISCORD_WEBHOOK_URL_GACHA_DEV }}
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL_GACHA_DEV }}
 
     steps:
       - name: checkout
