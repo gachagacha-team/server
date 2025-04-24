@@ -71,7 +71,7 @@ jobs:
             fi
               sudo docker run -d --name gacha-api --network host -p 8080:8080 \
               -e SPRING_PROFILES_ACTIVE=dev \
-              -v /var/log/gacha-api:/log \
+#              -v /var/log/gacha-api:/log \
               ${{ secrets.DOCKER_USERNAME }}/gacha-api:latest
 
       - name: deploy lotto-api to EC2
@@ -89,5 +89,5 @@ jobs:
             fi
               sudo docker run -d --name lotto-api --network host -p 8081:8081 \
               -e SPRING_PROFILES_ACTIVE=dev \
-              -v /var/log/lotto-api:/log \
+#              -v /var/log/lotto-api:/log \
               ${{ secrets.DOCKER_USERNAME }}/lotto-api:latest
