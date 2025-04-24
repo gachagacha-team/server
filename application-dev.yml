@@ -1,0 +1,18 @@
+spring:
+  config:
+    import:
+      - application-common.yml
+      - rdb-dev.yml
+      - redis.yml
+      - common.yml
+client:
+  address: http://localhost:5173
+springdoc:
+  packages-to-scan: gachagacha.gachagacha
+  default-consumes-media-type: application/json;charset=UTF-8
+  default-produces-media-type: application/json;charset=UTF-8
+  swagger-ui:
+    disable-swagger-default-url: true
+    display-request-duration: true
+    operations-sorter: alph
+    path: /
