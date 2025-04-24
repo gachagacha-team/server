@@ -1,0 +1,9 @@
+spring:
+  config:
+    import:
+      - application-common.yml
+      - rdb-dev.yml
+      - redis.yml
+      - common.yml
+client:
+  address: https://gacha-ruddy.vercel.app
