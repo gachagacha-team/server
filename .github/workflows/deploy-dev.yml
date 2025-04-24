@@ -75,6 +75,7 @@ jobs:
             fi
               sudo docker run -d --name gacha-api --network host -p 8080:8080 \
               -e SPRING_PROFILES_ACTIVE=dev \
+              -e DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL_GACHA_DEV }} \
               -v /var/log/gacha-api:/log \
               ${{ secrets.DOCKER_USERNAME }}/gacha-api:latest
 
