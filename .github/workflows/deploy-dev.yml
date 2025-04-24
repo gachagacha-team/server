@@ -34,45 +34,6 @@ jobs:
           java-version: '23'
           distribution: 'temurin'
 
-#      - name: set yml for common.yml
-#        uses: microsoft/variable-substitution@v1
-#        with:
-#          files: ./common/src/main/resources/common.yml
-#        env:
-#          logging.discord.webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL_GACHA_DEV }}
-
-#      - name: set yml for gacha-api
-#        uses: microsoft/variable-substitution@v1
-#        with:
-#          files: ./gacha-api/src/main/resources/application-dev.yml
-#        env:
-#          server.ssl.key-store: ${{ secrets.SSL_KEY_STORE }}
-#          server.ssl.key-store-type: ${{ secrets.SSL_KEY_STORE_TYPE }}
-#          server.ssl.key-store-password: ${{ secrets.SSL_KEY_STORE_PASSWORD }}
-#          jwt.secret: ${{ secrets.JWT_SECRET }}
-#          oauth.github.client_id: ${{ secrets.OAUTH_GITHUB_CLIENT_ID_DEV }}
-#          oauth.github.client_secret: ${{ secrets.OAUTH_GITHUB_CLIENT_SECRET_DEV }}
-#          oauth.kakao.client_id: ${{ secrets.KAKAO_CLIENT_ID_DEV }}
-#          oauth.kakao.redirect_url: ${{ secrets.KAKAO_REDIRECT_URL_DEV }}
-#          oauth.kakao.admin_key: ${{ secrets.KAKAO_ADMIN_KEY_DEV }}
-#          logging.discord.webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL_GACHA_DEV }}
-
-#      - name: set yml for lotto-api server
-#        uses: microsoft/variable-substitution@v1
-#        with:
-#          files: ./lotto-api/src/main/resources/application.yml
-#        env:
-#          logging.discord.webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL_LOTTO_DEV }}
-#          spring.datasource.url: ${{ secrets.DATASOURCE_URL_DEV }}
-#          spring.datasource.username: ${{ secrets.DATASOURCE_USERNAME_DEV }}
-#          spring.datasource.password: ${{ secrets.DATASOURCE_PASSWORD_DEV }}
-
-      - name: build gacha-api
-        run: ./gradlew :gacha-api:bootJar
-
-      - name: build lotto-api
-        run: ./gradlew :lotto-api:bootJar
-
       - name: docker login
         uses: docker/login-action@v2
         with:
