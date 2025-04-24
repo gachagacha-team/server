@@ -30,7 +30,7 @@ jobs:
         uses: microsoft/variable-substitution@v1
         with:
           files: ./gacha-api/src/main/resources/application-dev.yml
-#        env:
+        env:
 #          server.ssl.key-store: ${{ secrets.SSL_KEY_STORE }}
 #          server.ssl.key-store-type: ${{ secrets.SSL_KEY_STORE_TYPE }}
 #          server.ssl.key-store-password: ${{ secrets.SSL_KEY_STORE_PASSWORD }}
@@ -40,7 +40,7 @@ jobs:
 #          oauth.kakao.client_id: ${{ secrets.KAKAO_CLIENT_ID_DEV }}
 #          oauth.kakao.redirect_url: ${{ secrets.KAKAO_REDIRECT_URL_DEV }}
 #          oauth.kakao.admin_key: ${{ secrets.KAKAO_ADMIN_KEY_DEV }}
-#          logging.discord.webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL_GACHA_DEV }}
+          logging.discord.webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL_GACHA_DEV }}
 
       - name: set yml for lotto-api server
         uses: microsoft/variable-substitution@v1
