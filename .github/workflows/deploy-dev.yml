@@ -31,7 +31,7 @@ jobs:
           KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
           KAKAO_REDIRECT_URL: ${{ secrets.KAKAO_REDIRECT_URL }}
           KAKAO_ADMIN_KEY: ${{ secrets.KAKAO_ADMIN_KEY }}
-#          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL_GACHA_DEV }}
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL_GACHA_DEV }}
           DATASOURCE_URL: ${{ secrets.DATASOURCE_URL_DEV }}
           DATASOURCE_USERNAME: ${{ secrets.DATASOURCE_USERNAME_DEV }}
           DATASOURCE_PASSWORD: ${{ secrets.DATASOURCE_PASSWORD_DEV }}
