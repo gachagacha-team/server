@@ -34,6 +34,12 @@ jobs:
           java-version: '23'
           distribution: 'temurin'
 
+      - name: build gacha-api
+        run: ./gradlew :gacha-api:bootJar
+
+      - name: build lotto-api
+        run: ./gradlew :lotto-api:bootJar
+
       - name: docker login
         uses: docker/login-action@v2
         with:
