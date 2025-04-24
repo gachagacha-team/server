@@ -4,4 +4,5 @@ ARG JAR_FILE=/build/libs/*.jar
 
 COPY ${JAR_FILE} gacha-api.jar
 
-ENTRYPOINT ["java","-jar","gacha-api.jar"]
+#ENTRYPOINT ["java","-jar","gacha-api.jar"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=dev", "-jar", "gacha-api.jar"]
