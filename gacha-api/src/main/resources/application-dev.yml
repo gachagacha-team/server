@@ -2,9 +2,9 @@ spring:
   config:
     import:
       - application-common.yml
-#      - rdb-dev.yml
+      - rdb-dev.yml
       - redis.yml
-#      - common.yml
+      - common.yml
 client:
   address: http://localhost:5173
 springdoc:
