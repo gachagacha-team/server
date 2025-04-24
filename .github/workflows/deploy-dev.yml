@@ -32,9 +32,17 @@ jobs:
           KAKAO_REDIRECT_URL: ${{ secrets.KAKAO_REDIRECT_URL }}
           KAKAO_ADMIN_KEY: ${{ secrets.KAKAO_ADMIN_KEY }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL_GACHA_DEV }}
+          DATASOURCE_URL: ${{ secrets.DATASOURCE_URL_DEV }}
+          DATASOURCE_USERNAME: ${{ secrets.DATASOURCE_USERNAME_DEV }}
+          DATASOURCE_PASSWORD: ${{ secrets.DATASOURCE_PASSWORD_DEV }}
 
       - name: build lotto-api
         run: ./gradlew :lotto-api:bootJar
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL_GACHA_DEV }}
+          DATASOURCE_URL: ${{ secrets.DATASOURCE_URL_DEV }}
+          DATASOURCE_USERNAME: ${{ secrets.DATASOURCE_USERNAME_DEV }}
+          DATASOURCE_PASSWORD: ${{ secrets.DATASOURCE_PASSWORD_DEV }}
 
       - name: docker login
         uses: docker/login-action@v2
