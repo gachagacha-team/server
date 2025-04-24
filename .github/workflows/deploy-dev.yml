@@ -8,23 +8,37 @@ jobs:
   build-and-deploy:
 
     runs-on: ubuntu-latest
-
-    env:
-      # application-commom
-      SSL_KEY_STORE: ${{ secrets.SSL_KEY_STORE }}
-      SSL_KEY_STORE_TYPE: ${{ secrets.SSL_KEY_STORE_TYPE }}
-      SSL_KEY_STORE_PASSWORD: ${{ secrets.SSL_KEY_STORE_PASSWORD }}
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}
-      OAUTH_GITHUB_CLIENT_ID: ${{ secrets.OAUTH_GITHUB_CLIENT_ID }}
-      OAUTH_GITHUB_CLIENT_SECRET: ${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }}
-      KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
-      KAKAO_REDIRECT_URL: ${{ secrets.KAKAO_REDIRECT_URL }}
-      KAKAO_ADMIN_KEY: ${{ secrets.KAKAO_ADMIN_KEY }}
-
-      # common
-      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL_GACHA_DEV }}
+#    env:
+#      # application-commom
+#      SSL_KEY_STORE: ${{ secrets.SSL_KEY_STORE }}
+#      SSL_KEY_STORE_TYPE: ${{ secrets.SSL_KEY_STORE_TYPE }}
+#      SSL_KEY_STORE_PASSWORD: ${{ secrets.SSL_KEY_STORE_PASSWORD }}
+#      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+#      OAUTH_GITHUB_CLIENT_ID: ${{ secrets.OAUTH_GITHUB_CLIENT_ID }}
+#      OAUTH_GITHUB_CLIENT_SECRET: ${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }}
+#      KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
+#      KAKAO_REDIRECT_URL: ${{ secrets.KAKAO_REDIRECT_URL }}
+#      KAKAO_ADMIN_KEY: ${{ secrets.KAKAO_ADMIN_KEY }}
+#
+#      # common
+#      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL_GACHA_DEV }}
 
     steps:
+      - name: set yml
+        uses: microsoft/variable-substitution@v1
+        with:
+          files: ./gacha-api/src/main/resources/application-dev.yml
+        env:
+          server.ssl.key-store: ${{ secrets.SSL_KEY_STORE }}
+          server.ssl.key-store-type: ${{ secrets.SSL_KEY_STORE_TYPE }}
+          server.ssl.key-store-password: ${{ secrets.SSL_KEY_STORE_PASSWORD }}
+          jwt.secret: ${{ secrets.JWT_SECRET }}
+          oauth.github.client_id: ${{ secrets.OAUTH_GITHUB_CLIENT_ID_DEV }}
+          oauth.github.client_secret: ${{ secrets.OAUTH_GITHUB_CLIENT_SECRET_DEV }}
+          oauth.kakao.client_id: ${{ secrets.KAKAO_CLIENT_ID_DEV }}
+          oauth.kakao.redirect_url: ${{ secrets.KAKAO_REDIRECT_URL_DEV }}
+          oauth.kakao.admin_key: ${{ secrets.KAKAO_ADMIN_KEY_DEV }}
+          discord.webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL_DEV }}
       - name: checkout
         uses: actions/checkout@v3
 
