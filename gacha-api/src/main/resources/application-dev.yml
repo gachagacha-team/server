@@ -6,7 +6,7 @@ spring:
       - application-common.yml
       - rdb-dev.yml
       - redis.yml
-#      - common.yml
+      - common.yml
 client:
   address: http://localhost:5173
 springdoc:
@@ -18,8 +18,3 @@ springdoc:
     display-request-duration: true
     operations-sorter: alph
     path: /
-#logging:
-#  discord:
-#    webhook-url: ${DISCORD_WEBHOOK_URL}
-discord:
-  webhook-url: ${DISCORD_WEBHOOK_URL}
