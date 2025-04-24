@@ -2,7 +2,8 @@ spring:
   config:
     import:
 #      - application-common.yml
-      - rdb-dev.yml
+      - ./storage/rdb/src/main/resources/rdb-dev.yml
+#      - rdb-dev.yml
 #      - redis.yml
       - common.yml
 client:
