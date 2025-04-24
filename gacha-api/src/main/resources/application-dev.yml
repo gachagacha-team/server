@@ -1,4 +1,6 @@
 spring:
+  activate:
+    on-profile: dev
   config:
     import:
       - application-common.yml
