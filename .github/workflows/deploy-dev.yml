@@ -21,20 +21,20 @@ jobs:
 
       - name: build gacha-api
         run: ./gradlew :gacha-api:bootJar
-        env:
-          SSL_KEY_STORE: ${{ secrets.SSL_KEY_STORE }}
-          SSL_KEY_STORE_TYPE: ${{ secrets.SSL_KEY_STORE_TYPE }}
-          SSL_KEY_STORE_PASSWORD: ${{ secrets.SSL_KEY_STORE_PASSWORD }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
-          OAUTH_GITHUB_CLIENT_ID: ${{ secrets.OAUTH_GITHUB_CLIENT_ID_DEV }}
-          OAUTH_GITHUB_CLIENT_SECRET: ${{ secrets.OAUTH_GITHUB_CLIENT_SECRET_DEV }}
-          KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID_DEV }}
-          KAKAO_REDIRECT_URL: ${{ secrets.KAKAO_REDIRECT_URL_DEV }}
-          KAKAO_ADMIN_KEY: ${{ secrets.KAKAO_ADMIN_KEY_DEV }}
-          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL_GACHA_DEV }}
-          DATASOURCE_URL: ${{ secrets.DATASOURCE_URL_DEV }}
-          DATASOURCE_USERNAME: ${{ secrets.DATASOURCE_USERNAME_DEV }}
-          DATASOURCE_PASSWORD: ${{ secrets.DATASOURCE_PASSWORD_DEV }}
+#        env:
+#          SSL_KEY_STORE: ${{ secrets.SSL_KEY_STORE }}
+#          SSL_KEY_STORE_TYPE: ${{ secrets.SSL_KEY_STORE_TYPE }}
+#          SSL_KEY_STORE_PASSWORD: ${{ secrets.SSL_KEY_STORE_PASSWORD }}
+#          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+#          OAUTH_GITHUB_CLIENT_ID: ${{ secrets.OAUTH_GITHUB_CLIENT_ID_DEV }}
+#          OAUTH_GITHUB_CLIENT_SECRET: ${{ secrets.OAUTH_GITHUB_CLIENT_SECRET_DEV }}
+#          KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID_DEV }}
+#          KAKAO_REDIRECT_URL: ${{ secrets.KAKAO_REDIRECT_URL_DEV }}
+#          KAKAO_ADMIN_KEY: ${{ secrets.KAKAO_ADMIN_KEY_DEV }}
+#          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL_GACHA_DEV }}
+#          DATASOURCE_URL: ${{ secrets.DATASOURCE_URL_DEV }}
+#          DATASOURCE_USERNAME: ${{ secrets.DATASOURCE_USERNAME_DEV }}
+#          DATASOURCE_PASSWORD: ${{ secrets.DATASOURCE_PASSWORD_DEV }}
 
       - name: build lotto-api
         run: ./gradlew :lotto-api:bootJar
