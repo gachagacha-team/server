@@ -47,13 +47,13 @@ jobs:
           host: ${{ secrets.EC2_HOST_DEV }}
           username: ubuntu
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          script: >
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/gacha-api &&
-            existing_container=$(docker ps -a -q -f name=gacha-api) &&
+          script: |
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/gacha-api
+            existing_container=$(docker ps -a -q -f name=gacha-api)
             if [ -n "$existing_container" ]; then
               sudo docker rm -f $existing_container
               sleep 3 
-            fi &&
+            fi
             sudo docker run -d --name gacha-api --network host -p 8080:8080 \
               -e SPRING_PROFILES_ACTIVE=dev \
               -e SSL_KEY_STORE=${{ secrets.SSL_KEY_STORE }} \
@@ -78,14 +78,14 @@ jobs:
           host: ${{ secrets.EC2_HOST_DEV }}
           username: ubuntu
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          script: >
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/lotto-api &&
-            existing_container=$(docker ps -a -q -f name=lotto-api) &&
+          script: |
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/lotto-api
+            existing_container=$(docker ps -a -q -f name=lotto-api)
             if [ -n "$existing_container" ]; then
               sudo docker rm -f $existing_container
               sleep 3 
-            fi &&
-            sudo docker run -d --name lotto-api --network host -p 8081:8081 \
+            fi
+              sudo docker run -d --name lotto-api --network host -p 8081:8081 \
               -e SPRING_PROFILES_ACTIVE=dev \
               -e DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL_LOTTO_DEV }} \
               -e DATASOURCE_URL=${{ secrets.DATASOURCE_URL_DEV }} \
