@@ -2,10 +2,10 @@ drop table if exists attendance;
 drop table if exists follow;
 drop table if exists guestbook;
 drop table if exists lotto;
-drop table if exists minihome;
 drop table if exists trade;
 drop table if exists user_item;
 drop table if exists users;
+drop table if exists minihome;
 drop table if exists outbox;
 
 create table attendance
@@ -80,8 +80,15 @@ create table users
     profile     varchar(255) not null,
     backgrounds varchar(255),
     created_at  datetime(0) not null,
-    updated_at datetime(0) not null,
+    updated_at  datetime(0) not null,
     constraint uq_social_login unique (social_type, login_id)
+);
+
+create table minihome
+(
+    minihome_id       bigint auto_increment primary key,
+    user_id           bigint not null,
+    total_visitor_cnt int    not null
 );
 
 create table outbox
