@@ -78,7 +78,7 @@ create table users
     coin        int          not null,
     score       int          not null,
     profile     varchar(255) not null,
-    backgrounds varchar(255),
+    backgrounds varbinary(255),
     created_at  datetime(0) not null,
     updated_at  datetime(0) not null,
     constraint uq_social_login unique (social_type, login_id)
