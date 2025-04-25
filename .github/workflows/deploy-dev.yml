@@ -87,7 +87,7 @@ jobs:
             fi
               sudo docker run -d --name lotto-api --network host -p 8081:8081 \
               -e SPRING_PROFILES_ACTIVE=dev \
-              -e DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL_LOTTO_DEV }} \ 
+              -e DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL_LOTTO_DEV }} \
               -e DATASOURCE_URL=${{ secrets.DATASOURCE_URL_DEV }} \
               -e DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME_DEV }} \
               -e DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD_DEV }} \
