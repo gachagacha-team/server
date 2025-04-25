@@ -1,0 +1,144 @@
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+
+    <property name="CONSOLE_LOG_PATTERN"
+              value="[%d{yyyy-MM-dd HH:mm:ss, Asia/Seoul}] [%thread] %clr(%5level) %cyan(%logger) [%X{traceId:-NoTraceId}] - %msg%n"/>
+    <property name="FILE_LOG_PATTERN"
+              value="[%d{yyyy-MM-dd HH:mm:ss, Asia/Seoul}] [%thread] %5level %logger [%X{traceId:-NoTraceId}] - %msg%n"/>
+    <property name="DISCORD_LOG_PATTERN"
+              value="[%d{yyyy-MM-dd HH:mm:ss, Asia/Seoul}] [%thread] %5level %logger [%X{traceId:-NoTraceId}] - %msg%n```%ex{full}```"/>
+
+    <!--local-->
+    <springProfile name="local">
+
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            </encoder>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="CONSOLE"/>
+        </root>
+    </springProfile>
+<!--    <springProfile name="local">-->
+<!--        <property resource="application-local.yml"/>-->
+<!--        <springProperty name="DISCORD_WEBHOOK_URL" source="logging.discord.webhook-url"/>-->
+
+<!--        <appender name="DISCORD" class="com.github.napstr.logback.DiscordAppender">-->
+<!--            <webhookUri>${DISCORD_WEBHOOK_URL}</webhookUri>-->
+<!--            <layout class="ch.qos.logback.classic.PatternLayout">-->
+<!--                <pattern>${DISCORD_LOG_PATTERN}</pattern>-->
+<!--            </layout>-->
+<!--            <tts>false</tts>-->
+<!--        </appender>-->
+
+<!--        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">-->
+<!--            <encoder>-->
+<!--                <Pattern>${CONSOLE_LOG_PATTERN}</Pattern>-->
+<!--            </encoder>-->
+<!--        </appender>-->
+
+<!--        <appender name="ASYNC_DISCORD" class="ch.qos.logback.classic.AsyncAppender">-->
+<!--            <appender-ref ref="DISCORD"/>-->
+<!--            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">-->
+<!--                <level>ERROR</level>-->
+<!--            </filter>-->
+<!--        </appender>-->
+
+<!--        <appender name="FILE" class="ch.qos.logback.core.FileAppender">-->
+<!--            <file>./log/application.log</file>-->
+<!--            <encoder>-->
+<!--                <pattern>${FILE_LOG_PATTERN}</pattern>-->
+<!--            </encoder>-->
+<!--        </appender>-->
+
+<!--        <root level="INFO">-->
+<!--            <appender-ref ref="ASYNC_DISCORD"/>-->
+<!--            <appender-ref ref="CONSOLE"/>-->
+<!--            <appender-ref ref="FILE"/>-->
+<!--        </root>-->
+<!--    </springProfile>-->
+
+    <!--dev-->
+    <springProfile name="dev">
+        <property resource="application.yml"/>
+        <springProperty name="DISCORD_WEBHOOK_URL" source="discord.webhook-url"/>
+
+        <appender name="DISCORD" class="com.github.napstr.logback.DiscordAppender">
+            <webhookUri>${DISCORD_WEBHOOK_URL}</webhookUri>
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern>${DISCORD_LOG_PATTERN}</pattern>
+            </layout>
+            <tts>false</tts>
+        </appender>
+
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <Pattern>${CONSOLE_LOG_PATTERN}</Pattern>
+            </encoder>
+        </appender>
+
+        <appender name="ASYNC_DISCORD" class="ch.qos.logback.classic.AsyncAppender">
+            <appender-ref ref="DISCORD"/>
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                <level>ERROR</level>
+            </filter>
+        </appender>
+
+        <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+            <file>./log/application.log</file>
+            <encoder>
+                <pattern>${FILE_LOG_PATTERN}</pattern>
+            </encoder>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="ASYNC_DISCORD"/>
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+        </root>
+    </springProfile>
+
+    <!--prod-->
+    <springProfile name="prod">
+        <property resource="application.yml"/>
+        <springProperty name="DISCORD_WEBHOOK_URL" source="discord.webhook-url"/>
+
+        <appender name="DISCORD" class="com.github.napstr.logback.DiscordAppender">
+            <webhookUri>${DISCORD_WEBHOOK_URL}</webhookUri>
+            <layout class="ch.qos.logback.classic.PatternLayout">
+                <pattern>${DISCORD_LOG_PATTERN}</pattern>
+            </layout>
+            <tts>false</tts>
+        </appender>
+
+        <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+            <encoder>
+                <Pattern>${CONSOLE_LOG_PATTERN}</Pattern>
+            </encoder>
+        </appender>
+
+        <appender name="ASYNC_DISCORD" class="ch.qos.logback.classic.AsyncAppender">
+            <appender-ref ref="DISCORD"/>
+            <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
+                <level>ERROR</level>
+            </filter>
+        </appender>
+
+        <appender name="FILE" class="ch.qos.logback.core.FileAppender">
+            <file>./log/application.log</file>
+            <encoder>
+                <pattern>${FILE_LOG_PATTERN}</pattern>
+            </encoder>
+        </appender>
+
+        <root level="INFO">
+            <appender-ref ref="ASYNC_DISCORD"/>
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+        </root>
+    </springProfile>
+</configuration>

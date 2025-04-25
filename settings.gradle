@@ -1,1 +1,9 @@
 rootProject.name = 'gachagacha'
+
+include 'gacha-api'
+include 'lotto-api'
+include 'common'
+include 'domain'
+include 'storage:rdb'
+include 'storage:redis'
+

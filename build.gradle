@@ -1,11 +1,9 @@
 plugins {
 	id 'java'
+	id 'java-library'
 	id 'org.springframework.boot' version '3.4.0'
 	id 'io.spring.dependency-management' version '1.1.6'
 }
-
-group = 'gachagacha'
-version = '0.0.1-SNAPSHOT'
 
 java {
 	toolchain {
@@ -13,48 +11,51 @@ java {
 	}
 }
 
-configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
+allprojects {
+	group = 'gachagacha'
+	version = '0.0.1-SNAPSHOT'
+
+	repositories {
+		mavenCentral()
+		maven { url 'https://jitpack.io' }
 	}
 }
 
-repositories {
-	mavenCentral()
-	maven { url 'https://jitpack.io' }
+
+subprojects {
+	apply plugin: 'java'
+	apply plugin: 'java-library'
+	apply plugin: 'org.springframework.boot'
+	apply plugin: 'io.spring.dependency-management'
+
+	dependencies {
+		compileOnly 'org.projectlombok:lombok'
+		annotationProcessor 'org.projectlombok:lombok'
+
+		implementation 'org.springframework.boot:spring-boot-starter'
+		testImplementation 'org.springframework.boot:spring-boot-starter-test'
+		testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+	}
+
+	sourceCompatibility = '17'
+
+	configurations {
+		compileOnly {
+			extendsFrom annotationProcessor
+		}
+	}
+
+	tasks.named('test') {
+		useJUnitPlatform()
+	}
+
+	tasks.register("prepareKotlinBuildScriptModel") {}
 }
 
-dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-aop'
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis:3.4.0'
-	implementation 'com.h2database:h2'
-	implementation 'org.springframework.boot:spring-boot-starter-actuator'
-	implementation 'io.micrometer:micrometer-registry-prometheus'
-
-	implementation 'org.flywaydb:flyway-core'
-	implementation 'org.flywaydb:flyway-mysql'
-
-	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.7.0'
-
-	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
-	runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
-	runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
-
-	compileOnly 'org.projectlombok:lombok'
-	runtimeOnly 'com.mysql:mysql-connector-j'
-	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-
-	testCompileOnly 'org.projectlombok:lombok'
-	testAnnotationProcessor 'org.projectlombok:lombok'
-
-	implementation 'com.github.napstr:logback-discord-appender:1.0.0'
-
-}
-
-tasks.named('test') {
-	useJUnitPlatform()
-}
+//bootJar {
+//	enabled = false
+//}
+//
+//jar {
+//	enabled = false
+//}

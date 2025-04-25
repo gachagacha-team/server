@@ -19,30 +19,11 @@ jobs:
           java-version: '23'
           distribution: 'temurin'
 
-      - name: set yml
-        uses: microsoft/variable-substitution@v1
-        with:
-          files: ./src/main/resources/application-prod.yml
-        env:
-          server.ssl.key-store: ${{ secrets.SSL_KEY_STORE }}
-          server.ssl.key-store-type: ${{ secrets.SSL_KEY_STORE_TYPE }}
-          server.ssl.key-store-password: ${{ secrets.SSL_KEY_STORE_PASSWORD }}
-          spring.datasource.url: ${{ secrets.DATASOURCE_URL }}
-          spring.datasource.username: ${{ secrets.DATASOURCE_USERNAME }}
-          spring.datasource.password: ${{ secrets.DATASOURCE_PASSWORD }}
-          jwt.secret: ${{ secrets.JWT_SECRET }}
-          oauth.github.client_id: ${{ secrets.OAUTH_GITHUB_CLIENT_ID }}
-          oauth.github.client_secret: ${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }}
-          oauth.kakao.client_id: ${{ secrets.KAKAO_CLIENT_ID }}
-          oauth.kakao.redirect_url: ${{ secrets.KAKAO_REDIRECT_URL }}
-          oauth.kakao.admin_key: ${{ secrets.KAKAO_ADMIN_KEY }}
-          logging.discord.webhook-url: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          client.address: ${{ secrets.CLIENT_ADDRESS }}
+      - name: build gacha-api
+        run: ./gradlew :gacha-api:bootJar
 
-      - name: build with gradle
-        run: |
-          chmod +x ./gradlew
-          ./gradlew build -x test
+      - name: build lotto-api
+        run: ./gradlew :lotto-api:bootJar
 
       - name: docker login
         uses: docker/login-action@v2
@@ -50,25 +31,65 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_TOKEN }}
 
-      - name: docker image build
+      - name: docker build for gacha-api
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/gachagacha .
-          docker push ${{ secrets.DOCKER_USERNAME }}/gachagacha
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/gacha-api ./gacha-api
+          docker push ${{ secrets.DOCKER_USERNAME }}/gacha-api
 
-      - name: deploy to EC2
+      - name: docker build for lotto-api
+        run: |
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/lotto-api ./lotto-api
+          docker push ${{ secrets.DOCKER_USERNAME }}/lotto-api
+
+      - name: deploy gacha-api to EC2
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.EC2_HOST_PROD }}
           username: ubuntu
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: |
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/gachagacha
-            existing_container=$(docker ps -a -q -f name=gachagacha)
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/gacha-api
+            existing_container=$(docker ps -a -q -f name=gacha-api)
             if [ -n "$existing_container" ]; then
               sudo docker rm -f $existing_container
               sleep 3 
             fi
-              sudo docker run -d --name gachagacha --network host -p 8080:8080 \
+            sudo docker run -d --name gacha-api --network host -p 8080:8080 \
               -e SPRING_PROFILES_ACTIVE=prod \
-              -v /var/log/gachagacha:/log \
-              ${{ secrets.DOCKER_USERNAME }}/gachagacha:latest
+              -e SSL_KEY_STORE=${{ secrets.SSL_KEY_STORE }} \
+              -e SSL_KEY_STORE_TYPE=${{ secrets.SSL_KEY_STORE_TYPE }} \
+              -e SSL_KEY_STORE_PASSWORD=${{ secrets.SSL_KEY_STORE_PASSWORD }} \
+              -e JWT_SECRET=${{ secrets.JWT_SECRET }} \
+              -e OAUTH_GITHUB_CLIENT_ID=${{ secrets.OAUTH_GITHUB_CLIENT_ID }} \
+              -e OAUTH_GITHUB_CLIENT_SECRET=${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }} \
+              -e KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }} \
+              -e KAKAO_REDIRECT_URL=${{ secrets.KAKAO_REDIRECT_URL }} \
+              -e KAKAO_ADMIN_KEY=${{ secrets.KAKAO_ADMIN_KEY }} \
+              -e DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL_GACHA }} \
+              -e DATASOURCE_URL=${{ secrets.DATASOURCE_URL }} \
+              -e DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }} \
+              -e DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }} \
+              -v /var/log/gacha-api:/log \
+              ${{ secrets.DOCKER_USERNAME }}/gacha-api:latest
+
+      - name: deploy lotto-api to EC2
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ secrets.EC2_HOST_DEV }}
+          username: ubuntu
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script: |
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/lotto-api
+            existing_container=$(docker ps -a -q -f name=lotto-api)
+            if [ -n "$existing_container" ]; then
+              sudo docker rm -f $existing_container
+              sleep 3 
+            fi
+              sudo docker run -d --name lotto-api --network host -p 8081:8081 \
+              -e SPRING_PROFILES_ACTIVE=prod \
+              -e DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL_LOTTO }} \
+              -e DATASOURCE_URL=${{ secrets.DATASOURCE_URL }} \
+              -e DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }} \
+              -e DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }} \
+              -v /var/log/lotto-api:/log \
+              ${{ secrets.DOCKER_USERNAME }}/lotto-api:latest
