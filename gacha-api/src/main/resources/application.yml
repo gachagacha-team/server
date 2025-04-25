@@ -30,14 +30,11 @@ oauth:
     admin_key: ${KAKAO_ADMIN_KEY}
 
 ---
-spring:
-  activate:
-    on-profile: local
+spring.config.activate.on-profile: local
 
 ---
-spring:
-  activate:
-    on-profile: dev
+spring.config.activate.on-profile: dev
+
 client:
   address: http://localhost:5173
 springdoc:
@@ -51,8 +48,7 @@ springdoc:
     path: /
 
 ---
-spring:
-  activate:
-    on-profile: prod
+spring.config.activate.on-profile: prod
+
 client:
   address: https://gacha-ruddy.vercel.app

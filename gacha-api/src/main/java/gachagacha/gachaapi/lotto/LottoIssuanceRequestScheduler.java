@@ -24,7 +24,6 @@ public class LottoIssuanceRequestScheduler {
 
     @Scheduled(fixedRate = 5000)
     public void publishOutboxMessage()  {
-        log.info("test!");
         outboxRepository.findAllByTopic(topic).stream()
                 .forEach(outbox -> {
                     LottoIssuanceEvent lottoIssuanceEvent = null;
