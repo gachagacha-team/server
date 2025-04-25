@@ -47,13 +47,13 @@ jobs:
           host: ${{ secrets.EC2_HOST_PROD }}
           username: ubuntu
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          script: >
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/gacha-api &&
-            existing_container=$(docker ps -a -q -f name=gacha-api) &&
+          script: |
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/gacha-api
+            existing_container=$(docker ps -a -q -f name=gacha-api)
             if [ -n "$existing_container" ]; then
               sudo docker rm -f $existing_container
               sleep 3 
-            fi &&
+            fi
             sudo docker run -d --name gacha-api --network host -p 8080:8080 \
               -e SPRING_PROFILES_ACTIVE=prod \
               -e SSL_KEY_STORE=${{ secrets.SSL_KEY_STORE }} \
@@ -66,30 +66,29 @@ jobs:
               -e KAKAO_REDIRECT_URL=${{ secrets.KAKAO_REDIRECT_URL }} \
               -e KAKAO_ADMIN_KEY=${{ secrets.KAKAO_ADMIN_KEY }} \
               -e DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL_GACHA }} \
-#              -e DATASOURCE_URL=${{ secrets.DATASOURCE_URL }} \
-#              -e DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }} \
-#              -e DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }} \
+              -e DATASOURCE_URL="${{ secrets.DATASOURCE_URL }}" \
+              -e DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }} \
+              -e DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }} \
               -v /var/log/gacha-api:/log \
               ${{ secrets.DOCKER_USERNAME }}/gacha-api:latest
-
 
       - name: deploy lotto-api to EC2
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.EC2_HOST_PROD }}
+          host: ${{ secrets.EC2_HOST_DEV }}
           username: ubuntu
           key: ${{ secrets.EC2_PRIVATE_KEY }}
-          script: >
-            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/lotto-api &&
-            existing_container=$(docker ps -a -q -f name=lotto-api) &&
+          script: |
+            sudo docker pull ${{ secrets.DOCKER_USERNAME }}/lotto-api
+            existing_container=$(docker ps -a -q -f name=lotto-api)
             if [ -n "$existing_container" ]; then
               sudo docker rm -f $existing_container
               sleep 3 
-            fi &&
-            sudo docker run -d --name lotto-api --network host -p 8081:8081 \
+            fi
+              sudo docker run -d --name lotto-api --network host -p 8081:8081 \
               -e SPRING_PROFILES_ACTIVE=prod \
               -e DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL_LOTTO }} \
-              -e DATASOURCE_URL=${{ secrets.DATASOURCE_URL }} \
+              -e DATASOURCE_URL="${{ secrets.DATASOURCE_URL }}" \
               -e DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }} \
               -e DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }} \
               -v /var/log/lotto-api:/log \
