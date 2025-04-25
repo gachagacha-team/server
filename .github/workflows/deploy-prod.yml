@@ -47,19 +47,6 @@ jobs:
           username: ubuntu
           key: ${{ secrets.EC2_PRIVATE_KEY }}
           script: >
-            echo "SSL_KEY_STORE=${{ secrets.SSL_KEY_STORE }}" &&
-            echo "SSL_KEY_STORE_TYPE=${{ secrets.SSL_KEY_STORE_TYPE }}" &&
-            echo "SSL_KEY_STORE_PASSWORD=${{ secrets.SSL_KEY_STORE_PASSWORD }}" &&
-            echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" &&
-            echo "OAUTH_GITHUB_CLIENT_ID=${{ secrets.OAUTH_GITHUB_CLIENT_ID }}" &&
-            echo "OAUTH_GITHUB_CLIENT_SECRET=${{ secrets.OAUTH_GITHUB_CLIENT_SECRET }}" &&
-            echo "KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}" &&
-            echo "KAKAO_REDIRECT_URL=${{ secrets.KAKAO_REDIRECT_URL }}" &&
-            echo "KAKAO_ADMIN_KEY=${{ secrets.KAKAO_ADMIN_KEY }}" &&
-            echo "DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL_GACHA }}" &&
-            echo "DATASOURCE_URL=${{ secrets.DATASOURCE_URL }}" &&
-            echo "DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }}" &&
-            echo "DATASOURCE_PASSWORD=${{ secrets.DATASOURCE_PASSWORD }}" &&
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/gacha-api &&
             existing_container=$(docker ps -a -q -f name=gacha-api) &&
             if [ -n "$existing_container" ]; then
