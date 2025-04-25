@@ -88,7 +88,9 @@ create table minihome
 (
     minihome_id       bigint auto_increment primary key,
     user_id           bigint not null,
-    total_visitor_cnt int    not null
+    total_visitor_cnt int    not null,
+    created_at   datetime(0) not null,
+    updated_at   datetime(0) not null
 );
 
 create table outbox
