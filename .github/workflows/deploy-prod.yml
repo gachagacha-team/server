@@ -55,7 +55,7 @@ jobs:
               sleep 3 
             fi
             sudo docker run -d --name gacha-api --network host -p 8080:8080 \
-              -e SPRING_PROFILES_ACTIVE=dev \
+              -e SPRING_PROFILES_ACTIVE=prod \
               -e SSL_KEY_STORE=${{ secrets.SSL_KEY_STORE }} \
               -e SSL_KEY_STORE_TYPE=${{ secrets.SSL_KEY_STORE_TYPE }} \
               -e SSL_KEY_STORE_PASSWORD=${{ secrets.SSL_KEY_STORE_PASSWORD }} \
@@ -86,7 +86,7 @@ jobs:
               sleep 3 
             fi
               sudo docker run -d --name lotto-api --network host -p 8081:8081 \
-              -e SPRING_PROFILES_ACTIVE=dev \
+              -e SPRING_PROFILES_ACTIVE=prod \
               -e DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL_LOTTO }} \
               -e DATASOURCE_URL=${{ secrets.DATASOURCE_URL }} \
               -e DATASOURCE_USERNAME=${{ secrets.DATASOURCE_USERNAME }} \

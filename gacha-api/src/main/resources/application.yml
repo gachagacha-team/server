@@ -38,7 +38,7 @@ spring.config.activate.on-profile: dev
 client:
   address: http://localhost:5173
 springdoc:
-  packages-to-scan: gachagacha.gachagacha
+  packages-to-scan: gachagacha.gachaapi
   default-consumes-media-type: application/json;charset=UTF-8
   default-produces-media-type: application/json;charset=UTF-8
   swagger-ui:
