@@ -65,6 +65,7 @@ jobs:
               -e KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }} \
               -e KAKAO_REDIRECT_URL=${{ secrets.KAKAO_REDIRECT_URL }} \
               -e KAKAO_ADMIN_KEY=${{ secrets.KAKAO_ADMIN_KEY }} \
+              -e DISCORD_WEBHOOK_URL=${{ secrets.DISCORD_WEBHOOK_URL_GACHA }} \
               -v /var/log/gacha-api:/log \
               ${{ secrets.DOCKER_USERNAME }}/gacha-api:latest
 
