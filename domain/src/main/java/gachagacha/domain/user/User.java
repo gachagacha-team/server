@@ -6,7 +6,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -20,7 +19,6 @@ public class User {
     private Coin coin;
     private Score score;
     private Profile profile;
-    private List<Background> backgrounds = new ArrayList<>();
 
     private static final int GACHA_COST = 1000;
 
@@ -32,12 +30,11 @@ public class User {
                 nickname,
                 new Coin(),
                 new Score(),
-                profile,
-                List.of(Background.WHITE, Background.SKYBLUE, Background.CLOUD_GROUND)
+                profile
         );
     }
 
-    public User(Long id, SocialType socialType, Long loginId, String nickname, int coin, int score, Profile profile, List<Background> backgrounds) {
+    public User(Long id, SocialType socialType, Long loginId, String nickname, int coin, int score, Profile profile) {
         this.id = id;
         this.socialType = socialType;
         this.loginId = loginId;
@@ -45,7 +42,6 @@ public class User {
         this.score = new Score(score);
         this.coin = new Coin(coin);
         this.profile = profile;
-        this.backgrounds = backgrounds;
     }
 
     public void deductCoinForGacha() {

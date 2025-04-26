@@ -4,15 +4,14 @@ import gachagacha.common.exception.ErrorCode;
 import gachagacha.common.exception.customException.BusinessException;
 import gachagacha.domain.attendance.Attendance;
 import gachagacha.domain.attendance.AttendanceRepository;
-import gachagacha.domain.user.Profile;
-import gachagacha.domain.user.User;
-import gachagacha.domain.user.UserRepository;
+import gachagacha.domain.user.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Random;
 
 @Slf4j
@@ -21,6 +20,7 @@ import java.util.Random;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserBackgroundRepository userBackgroundRepository;
     private final AttendanceRepository attendanceRepository;
 
     public User readUserByNickname(String nickname) {
@@ -60,5 +60,9 @@ public class UserService {
         }
         user.updateUserInfo(nickname, Profile.findById(profileId));
         userRepository.update(user);
+    }
+
+    public List<Background> readUserBackgrounds(User user) {
+        return userBackgroundRepository.findByUser(user);
     }
 }

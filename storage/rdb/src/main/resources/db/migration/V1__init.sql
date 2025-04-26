@@ -4,6 +4,7 @@ drop table if exists guestbook;
 drop table if exists lotto;
 drop table if exists trade;
 drop table if exists user_item;
+drop table if exists user_background;
 drop table if exists users;
 drop table if exists minihome;
 drop table if exists outbox;
@@ -69,6 +70,15 @@ create table user_item
     updated_at   datetime(0) not null
 );
 
+create table user_background
+(
+    user_background_id bigint auto_increment primary key,
+    background         varchar(255) not null,
+    user_id            bigint       not null,
+    created_at         datetime(0) not null,
+    updated_at         datetime(0) not null
+);
+
 create table users
 (
     user_id     bigint auto_increment primary key,
@@ -78,7 +88,6 @@ create table users
     coin        int          not null,
     score       int          not null,
     profile     varchar(255) not null,
-    backgrounds varbinary(255),
     created_at  datetime(0) not null,
     updated_at  datetime(0) not null,
     constraint uq_social_login unique (social_type, login_id)

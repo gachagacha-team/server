@@ -3,6 +3,7 @@ package gachagacha.gachaapi.service;
 import gachagacha.common.exception.ErrorCode;
 import gachagacha.common.exception.customException.BusinessException;
 import gachagacha.domain.attendance.AttendanceRepository;
+import gachagacha.domain.user.*;
 import gachagacha.gachaapi.jwt.Jwt;
 import gachagacha.gachaapi.jwt.JwtUtils;
 import gachagacha.domain.auth.TokenRepository;
@@ -14,10 +15,6 @@ import gachagacha.domain.item.UserItemRepository;
 import gachagacha.domain.minihome.Minihome;
 import gachagacha.domain.minihome.MinihomeRepository;
 import gachagacha.domain.trade.TradeRepository;
-import gachagacha.domain.user.Profile;
-import gachagacha.domain.user.SocialType;
-import gachagacha.domain.user.User;
-import gachagacha.domain.user.UserRepository;
 import lombok.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +35,7 @@ public class AuthService {
     private final FollowRepository followRepository;
     private final UserItemRepository userItemRepository;
     private final TradeRepository tradeRepository;
+    private final UserBackgroundRepository userBackgroundRepository;
 
     @Transactional
     public Jwt join(String nickname, SocialType socialType, Long loginId, Profile profile) {
@@ -46,6 +44,8 @@ public class AuthService {
 
         long userId = userRepository.save(User.of(nickname, socialType, loginId, profile));
         minihomeRepository.save(Minihome.of(userId));
+
+        userBackgroundRepository.saveBasicBackgrounds(userId);
 
         Decoration decoration = new Decoration(1l, null);
         decorationRepository.save(decoration, userId);
@@ -66,14 +66,6 @@ public class AuthService {
             throw new BusinessException(ErrorCode.DUPLICATED_NICKNAME);
         }
     }
-
-//    public Jwt renewTokens(HttpServletRequest request) {;
-//        tokenProcessor.delete(jwtUtils.getRefreshTokenFromHeader(request));
-//        User user = userReader.findById(jwtUtils.getUserIdFromHeader(request));
-//        Jwt jwt = jwtUtils.generateJwt(user);
-//        tokenProcessor.save(jwt.getRefreshToken());
-//        return jwt;
-//    }
 
     public Jwt renewTokens(String refreshToken, Long userId) {
         tokenRepository.delete(refreshToken);

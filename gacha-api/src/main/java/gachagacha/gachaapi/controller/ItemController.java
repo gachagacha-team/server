@@ -90,7 +90,8 @@ public class ItemController {
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
         }
 
-        List<Background> backgrounds = user.getBackgrounds();
+        List<Background> backgrounds = userService.readUserBackgrounds(user);
+
         return ApiResponse.success(backgrounds.stream()
                 .map(background -> BackgroundResponse.of(background, backgroundsImageApiEndpoint))
                 .toList());
