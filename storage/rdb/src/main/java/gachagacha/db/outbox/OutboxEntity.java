@@ -21,7 +21,6 @@ public class OutboxEntity {
     @Column(nullable = false)
     private String topic;
 
-    @Lob
     @Column(nullable = false)
     private String payload;
 
