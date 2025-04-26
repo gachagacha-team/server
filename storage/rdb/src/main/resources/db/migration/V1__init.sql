@@ -106,5 +106,5 @@ create table outbox
 (
     outbox_id bigint auto_increment primary key,
     topic     varchar(255) not null,
-    payload   clob     not null
+    payload   longtext     not null
 );
