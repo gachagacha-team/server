@@ -31,11 +31,14 @@ spring:
         web-allow-others: true
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
         format_sql: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
 
 ---
 spring.config.activate.on-profile: prod
@@ -47,8 +50,11 @@ spring:
     password: ${DATASOURCE_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true

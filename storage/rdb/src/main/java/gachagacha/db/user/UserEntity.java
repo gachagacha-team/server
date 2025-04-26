@@ -7,9 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Entity
 @Getter
 @Table(name = "users", uniqueConstraints = { @UniqueConstraint(columnNames = { "socialType", "loginId" }) })
@@ -41,18 +38,14 @@ public class UserEntity extends BaseEntity {
     @Enumerated(value = EnumType.STRING)
     private Profile profile;
 
-    private List<Background> backgrounds = new ArrayList<>();
-
     public User toUser() {
-        return new User(id, socialType, loginId, nickname,
-                coin, score, profile, backgrounds);
+        return new User(id, socialType, loginId, nickname, coin, score, profile);
     }
 
     public static UserEntity fromUser(User user) {
         return new UserEntity(
                 user.getId(), user.getSocialType(), user.getLoginId(),
-                user.getNickname(), user.getCoin().getCoin(), user.getScore().getScore(),
-                user.getProfile(), user.getBackgrounds()
+                user.getNickname(), user.getCoin().getCoin(), user.getScore().getScore(), user.getProfile()
         );
     }
 
@@ -61,6 +54,5 @@ public class UserEntity extends BaseEntity {
         this.coin = user.getCoin().getCoin();
         this.score = user.getScore().getScore();
         this.profile = user.getProfile();
-        this.backgrounds = user.getBackgrounds();
     }
 }

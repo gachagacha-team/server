@@ -29,6 +29,7 @@ public class TradeEntity extends BaseEntity {
     private Long buyerId;
 
     @Enumerated(value = EnumType.STRING)
+    @Column(nullable = false)
     private Item item;
 
     @Enumerated(value = EnumType.STRING)
