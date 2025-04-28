@@ -1,37 +1,22 @@
 package gachagacha.domain.decoration;
 
 import gachagacha.domain.user.Background;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
-@NoArgsConstructor
-public class Decoration implements Serializable {
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class Decoration {
 
-    private long backgroundId;
-    private List<DecorationItem> items = new ArrayList<>();
+    private Long userId;
+    private Background background;
+    private List<DecorationItem> decorationItems = new ArrayList<>();
 
-    public static Decoration of(Background background, List<DecorationItem> decorationItems) {
-        return new Decoration(background.getId(), decorationItems);
-    }
-
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class DecorationItem implements Serializable {
-        private long itemId;
-        private long userItemId;
-        private int x;
-        private int y;
-
-        public static DecorationItem of(long itemId, long userItemId, int x, int y) {
-            return new DecorationItem(itemId, userItemId, x, y);
-        }
+    public static Decoration of (Long userId, Background background, List<DecorationItem> decorationItems) {
+        return new Decoration(userId, background, decorationItems);
     }
 }
