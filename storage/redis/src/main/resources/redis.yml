@@ -6,3 +6,12 @@ spring:
       stream:
         lotto-issuance-requests: lotto-issuance-requests
         lotto-issued: lotto-issued
+
+---
+spring.config.activate.on-profile: local
+
+---
+spring.config.activate.on-profile: dev
+
+---
+spring.config.activate.on-profile: prod
