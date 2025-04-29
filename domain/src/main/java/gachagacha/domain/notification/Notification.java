@@ -4,42 +4,17 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
-
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 public class Notification {
 
     private Long id;
-    private NotificationType type;
-    private Object data;
+    private Long userId;
+    private String message;
+    private NotificationType notificationType;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public static Notification of(NotificationType type, Object data) {
-        return new Notification(
-                null,
-                type,
-                data
-        );
-    }
-
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class LottoIssuedNotification implements Serializable {
-        private long lottoId;
-        private String itemGrade;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class TradeCompletedNotification implements Serializable {
-        private String itemName;
-        private int coin;
+    public static Notification of(Long userId, String data, NotificationType notificationType) {
+        return new Notification(null, userId, data, notificationType);
     }
 }

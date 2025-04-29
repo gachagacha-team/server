@@ -1,8 +1,8 @@
 package gachagacha.gachaapi.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import gachagacha.domain.notification.Notification;
 import gachagacha.gachaapi.jwt.JwtUtils;
-import gachagacha.domain.NotificationDto;
 import gachagacha.gachaapi.SseEmitters;
 import gachagacha.domain.item.Item;
 import gachagacha.domain.item.ItemGrade;
@@ -73,9 +73,8 @@ public class MarketController {
     public ApiResponse purchase(@PathVariable long itemId, HttpServletRequest request) throws JsonProcessingException {
         User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         Item purchaseItem = Item.findById(itemId);
-        NotificationDto notificationDto = tradeService.purchase(user, purchaseItem);
-        sseEmitters.tradeComplete(notificationDto.getSeller(), notificationDto.getItem(), notificationDto.getNotificationId()); // todo: sse 알림 책임은 어느 모듈에서?
-
+        Notification notification = tradeService.purchase(user, purchaseItem);
+        sseEmitters.tradeComplete(notification); // todo: sse 알림 책임은 어느 모듈에서?
         return ApiResponse.success();
     }
 

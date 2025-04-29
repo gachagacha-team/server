@@ -1,45 +1,31 @@
 package gachagacha.gachaapi.dto.response;
 
 import gachagacha.domain.notification.Notification;
-import gachagacha.domain.notification.NotificationType;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class NotificationsResponse {
 
-    private boolean hasNewNotification;
     private int count;
     private List<NotificationDto> notifications;
 
-    public static NotificationsResponse of(boolean hasNewNotification, List<Notification> notifications) {
+    public static NotificationsResponse of(List<Notification> notifications) {
         List<NotificationsResponse.NotificationDto> notificationDtos = notifications.stream()
-                .map(notification -> new NotificationDto(notification.getId(), notification.getType(), notification.getData()))
+                .map(notification -> new NotificationDto(notification.getId(), notification.getMessage(), notification.getNotificationType().getViewName()))
                 .toList();
-        return new NotificationsResponse(hasNewNotification, notificationDtos.size(), notificationDtos);
+        return new NotificationsResponse(notificationDtos.size(), notificationDtos);
     }
 
     @Getter
     @AllArgsConstructor
     public static class NotificationDto {
         private long id;
-        private NotificationType type;
-        private Object data;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    public static class TradeCompletedNotification {
-        private String itemName;
-        private int coin;
-    }
-
-    @Getter
-    @AllArgsConstructor
-    public static class LottoIssuedNotification {
-        private String itemGrade;
+        private String data;
+        private String notificationType;
     }
 }

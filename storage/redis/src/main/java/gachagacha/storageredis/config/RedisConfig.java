@@ -1,6 +1,5 @@
 package gachagacha.storageredis.config;
 
-import gachagacha.domain.notification.Notification;
 import gachagacha.storageredis.decoration.DecorationRedisDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -43,15 +42,6 @@ public class RedisConfig {
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(DecorationRedisDto.class));
-        return redisTemplate;
-    }
-
-    @Bean
-    public RedisTemplate<String, Notification> redisTemplateForNotification() {
-        RedisTemplate<String, Notification> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setConnectionFactory(redisConnectionFactory());
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Notification.class));
         return redisTemplate;
     }
 

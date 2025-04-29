@@ -9,11 +9,13 @@ import java.util.Optional;
 @Repository
 public interface NotificationRepository {
 
-    List<Notification> readNotifications(User user);
+    List<Notification> readRecentNotifications(User user);
 
-    Long saveNotification(Notification notification, User user);
+    Long saveNotification(Notification notification);
 
-    Optional<Long> getLastReadNotificationId(User user);
+    boolean hasNewNotification(Long userId);
 
-    void markLastReadNotification(long lastReadNotificationId, User user);
+    void markLastReadNotification(User user);
+
+    Optional<Notification> findById(Long notificationId);
 }

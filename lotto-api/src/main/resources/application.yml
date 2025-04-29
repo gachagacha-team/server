@@ -1,8 +1,17 @@
-server:
-  port: 8081
 spring:
   config:
     import:
       - rdb.yml
       - redis.yml
       - common.yml
+server:
+  port: 8081
+
+---
+spring.config.activate.on-profile: local
+
+---
+spring.config.activate.on-profile: dev
+
+---
+spring.config.activate.on-profile: prod
