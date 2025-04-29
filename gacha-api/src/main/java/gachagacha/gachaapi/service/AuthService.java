@@ -2,12 +2,12 @@ package gachagacha.gachaapi.service;
 
 import gachagacha.common.exception.ErrorCode;
 import gachagacha.common.exception.customException.BusinessException;
+import gachagacha.domain.decoration.Decoration;
 import gachagacha.domain.attendance.AttendanceRepository;
 import gachagacha.domain.user.*;
 import gachagacha.gachaapi.jwt.Jwt;
 import gachagacha.gachaapi.jwt.JwtUtils;
 import gachagacha.domain.auth.TokenRepository;
-import gachagacha.domain.decoration.Decoration;
 import gachagacha.domain.decoration.DecorationRepository;
 import gachagacha.domain.follow.FollowRepository;
 import gachagacha.domain.guestbook.GuestbookRepository;
@@ -19,6 +19,7 @@ import lombok.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
@@ -47,7 +48,7 @@ public class AuthService {
 
         userBackgroundRepository.saveBasicBackgrounds(userId);
 
-        Decoration decoration = new Decoration(1l, null);
+        Decoration decoration = Decoration.of(userId, Background.WHITE, new ArrayList<>());
         decorationRepository.save(decoration, userId);
 
         Jwt jwt = jwtUtils.generateJwt(userId, profile.getId());

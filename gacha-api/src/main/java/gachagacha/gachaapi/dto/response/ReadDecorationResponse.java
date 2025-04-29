@@ -2,7 +2,6 @@ package gachagacha.gachaapi.dto.response;
 
 import gachagacha.domain.decoration.Decoration;
 import gachagacha.domain.item.Item;
-import gachagacha.domain.user.Background;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,10 +17,10 @@ public class ReadDecorationResponse {
     private DecorationBackgroundResponse background;
     private List<DecorationItemResponse> items;
 
-    public static ReadDecorationResponse of (Decoration decoration, Background background, String itemsImageApiEndpoint, String backgroundsImageApiEndpoint) {
+    public static ReadDecorationResponse of (Decoration decoration, String itemsImageApiEndpoint, String backgroundsImageApiEndpoint) {
         List<DecorationItemResponse> decorationItemResponses = new ArrayList<>();
-        if (decoration.getItems() != null) {
-            decorationItemResponses = decoration.getItems().stream()
+        if (decoration.getDecorationItems() != null) {
+            decorationItemResponses = decoration.getDecorationItems().stream()
                     .map(decorationItem -> {
                         Item item = Item.findById(decorationItem.getItemId());
                         return new ReadDecorationResponse.DecorationItemResponse(
@@ -34,7 +33,7 @@ public class ReadDecorationResponse {
                     })
                     .toList();
         }
-        DecorationBackgroundResponse decorationBackgroundResponse = new DecorationBackgroundResponse(background.getId(), backgroundsImageApiEndpoint + background.getImageFileName());
+        DecorationBackgroundResponse decorationBackgroundResponse = new DecorationBackgroundResponse(decoration.getBackground().getId(), backgroundsImageApiEndpoint + decoration.getBackground().getImageFileName());
         return new ReadDecorationResponse(decorationBackgroundResponse, decorationItemResponses);
     }
 

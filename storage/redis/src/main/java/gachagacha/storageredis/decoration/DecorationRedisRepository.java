@@ -1,4 +1,4 @@
-package gachagacha.storageredis;
+package gachagacha.storageredis.decoration;
 
 import gachagacha.domain.decoration.Decoration;
 import gachagacha.domain.decoration.DecorationRepository;
@@ -12,27 +12,28 @@ import org.springframework.stereotype.Repository;
 @RequiredArgsConstructor
 public class DecorationRedisRepository implements DecorationRepository {
 
-    private final RedisTemplate<String, Decoration> redisTemplate;
+    private final RedisTemplate<String, DecorationRedisDto> redisTemplate;
     private static final String DECORATION_PREFIX = "decoration:";
 
     @Override
     public void save(Decoration decoration, long userId) {
-        redisTemplate.opsForValue().set(DECORATION_PREFIX + userId, decoration);
+        DecorationRedisDto decorationRedisDto = DecorationRedisDto.fromDecoration(decoration);
+        redisTemplate.opsForValue().set(DECORATION_PREFIX + userId, decorationRedisDto);
     }
 
     @Override
     public Decoration read(User user) {
-        Decoration decoration = redisTemplate.opsForValue().get(DECORATION_PREFIX + user.getId());
-        return decoration;
+        DecorationRedisDto decorationRedisDto = redisTemplate.opsForValue().get(DECORATION_PREFIX + user.getId());
+        return decorationRedisDto.toDecoration(user);
     }
 
     @Override
     public boolean isUsedInMinihomeDecoration(UserItem userItem, User user) {
-        Decoration decoration = redisTemplate.opsForValue().get(DECORATION_PREFIX + user.getId());
-        if (decoration.getItems() == null) {
+        DecorationRedisDto decorationRedisDto = redisTemplate.opsForValue().get(DECORATION_PREFIX + user.getId());
+        if (decorationRedisDto.getItems() == null) {
             return false;
         }
-        return decoration.getItems().stream()
+        return decorationRedisDto.getItems().stream()
                 .anyMatch(decorationItem -> decorationItem.getUserItemId() == userItem.getId());
     }
 }

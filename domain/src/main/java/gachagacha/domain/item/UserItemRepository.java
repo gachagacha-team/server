@@ -12,16 +12,14 @@ import java.util.Optional;
 public interface UserItemRepository {
 
     Long save(UserItem userItem);
-    List<UserItem> findByUserId(long userId);
 
-    Page<UserItem> findByUserId(long userId, Pageable pageable);
+    List<UserItem> findByUserId(long userId);
 
     List<UserItem> findByUserAndItem(User user, Item item);
 
     void deleteAllByUserId(long userId);
 
     List<UserItem> findByUser(User user);
-
 
     Optional<UserItem> findById(long userItemId);
 

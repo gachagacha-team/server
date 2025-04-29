@@ -4,8 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gachagacha.common.exception.ErrorCode;
 import gachagacha.common.exception.customException.BusinessException;
-import gachagacha.db.trade.TradeEntityRepository;
-import gachagacha.domain.NotificationDto;
 import gachagacha.domain.decoration.DecorationRepository;
 import gachagacha.domain.item.*;
 import gachagacha.domain.lotto.LottoIssuanceEvent;
@@ -88,7 +86,7 @@ public class TradeService {
     }
 
     @Transactional
-    public NotificationDto purchase(User buyer, Item item) throws JsonProcessingException {
+    public Notification purchase(User buyer, Item item) throws JsonProcessingException {
         Trade trade = tradeRepository.findFirstProduct(item);
         User seller = userRepository.findById(trade.getSellerId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
@@ -104,15 +102,17 @@ public class TradeService {
         userRepository.update(seller);
         tradeRepository.update(trade);
 
-        Notification notification = Notification.of(NotificationType.TRADE_COMPLETED, new Notification.TradeCompletedNotification(item.getViewName(), item.getItemGrade().getPrice()));
-        Long notificationId = notificationRepository.saveNotification(notification, seller);
-//        sseEmitters.tradeComplete(seller, trade.getItem(), notificationId); // todo: sse 알림 책임은 어느 모듈에서?
+        String notificationMessage = NotificationType.TRADE_COMPLETED.generateNotificationMessageByTradeCompleted(item);
+        Notification notification = Notification.of(seller.getId(), notificationMessage, NotificationType.TRADE_COMPLETED);
+        Long notificationId = notificationRepository.saveNotification(notification);
+        Notification savedNotification = notificationRepository.findById(notificationId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_NOTIFICATION));
 
         LottoIssuanceEvent lottoIssuanceEvent = new LottoIssuanceEvent(buyer.getId(), item.getItemGrade());
         String payload = objectMapper.writeValueAsString(lottoIssuanceEvent);
         outboxRepository.save(Outbox.create(topic, payload));
 
-        return new NotificationDto(seller, trade.getItem(), notificationId);
+        return savedNotification;
     }
 
     public Trade readById(long tradeId) {

@@ -7,8 +7,6 @@ import gachagacha.domain.item.UserItem;
 import gachagacha.domain.item.UserItemRepository;
 import gachagacha.domain.user.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -28,13 +26,9 @@ public class UserItemEntityRepository implements UserItemRepository {
 
     @Override
     public List<UserItem> findByUserId(long userId) {
-
-        return null;
-    }
-
-    @Override
-    public Page<UserItem> findByUserId(long userId, Pageable pageable) {
-        return null;
+        return userItemJpaRepository.findByUserId(userId).stream()
+                .map(userItemEntity -> userItemEntity.toUserItem())
+                .toList();
     }
 
     @Override
@@ -47,7 +41,7 @@ public class UserItemEntityRepository implements UserItemRepository {
 
     @Override
     public void deleteAllByUserId(long userId) {
-
+        userItemJpaRepository.deleteAllByUserId(userId);
     }
 
     @Override

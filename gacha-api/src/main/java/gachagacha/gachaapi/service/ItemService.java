@@ -68,16 +68,16 @@ public class ItemService {
         List<UserItem> userItems = userItemRepository.findByUser(user);
         Decoration decoration = decorationRepository.read(user);
 
-        if (decoration.getItems() == null) {
+        if (decoration.getDecorationItems() == null) {
             return userItems;
         }
 
-        Set<Long> decorationUserItems = decoration.getItems().stream()
-                .map(Decoration.DecorationItem::getUserItemId)
+        Set<Long> decorationUserItemIds = decoration.getDecorationItems().stream()
+                .map(decorationItem -> decorationItem.getUserItemId())
                 .collect(Collectors.toSet());
 
         return userItems.stream()
-                .filter(userItem -> !decorationUserItems.contains(userItem.getId()))
+                .filter(userItem -> !decorationUserItemIds.contains(userItem.getId()))
                 .toList();
     }
 }

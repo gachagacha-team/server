@@ -26,6 +26,7 @@ public class LottoMessageListener implements StreamListener<String, MapRecord<St
 
     @Value("${spring.data.redis.stream.lotto-issued}")
     private String topic;
+
     @Override
     public void onMessage(MapRecord<String, String, String> message) {
         log.info("Redis Stream consume. stream = {}, message = {}", streamKey, message.toString());
@@ -35,11 +36,10 @@ public class LottoMessageListener implements StreamListener<String, MapRecord<St
             if (lottoIssuanceService.checkLottoIssuanceCondition(userId, itemGrade)) {
                 lottoIssuanceService.issueAndSaveLotto(userId, itemGrade, topic);
             }
-
             redisTemplate.opsForStream().acknowledge(streamKey, CONSUMER_GROUP_NAME, message.getId());
         } catch (Exception e) {
             // 중복된 복권 INSERT되면 유니크 제약 조건으로 인해 예외 발생하여 트랜잭션 롤백된 후 해당 구간이 실행됨
-            log.error("메시지 처리 중 예외 발생");
+            log.error("메시지 처리 중 예외 발생", e);
         }
     }
 

@@ -1,11 +1,12 @@
 package gachagacha.gachaapi.controller;
 
+import gachagacha.domain.decoration.Decoration;
+import gachagacha.domain.decoration.DecorationItem;
 import gachagacha.gachaapi.dto.response.ReadDecorationResponse;
 import gachagacha.gachaapi.response.ApiResponse;
 import gachagacha.common.exception.ErrorCode;
 import gachagacha.common.exception.customException.BusinessException;
 import gachagacha.gachaapi.jwt.JwtUtils;
-import gachagacha.domain.decoration.Decoration;
 import gachagacha.gachaapi.service.DecorationService;
 import gachagacha.gachaapi.service.ItemService;
 import gachagacha.domain.item.UserItem;
@@ -47,18 +48,18 @@ public class DecorationController {
 
         Background background = Background.findById(requestDto.getBackgroundId());
 
-        List<Decoration.DecorationItem> decorationItems = requestDto.getItems().stream()
+        List<DecorationItem> decorationItems = requestDto.getItems().stream()
                 .map(decorationItemRequest -> {
                     UserItem userItem = itemService.readById(decorationItemRequest.getSubId());
                     if (userItem.getItem().getItemId() != decorationItemRequest.getItemId()) {
                         throw new BusinessException(ErrorCode.INVALID_ITEM_ID);
                     }
                     userItem.isOwnedBy(user);
-                    return Decoration.DecorationItem.of(decorationItemRequest.getItemId(), decorationItemRequest.getSubId(), decorationItemRequest.getX(), decorationItemRequest.getY());
+                    return new DecorationItem(userItem.getId(), userItem.getItem().getItemId(), decorationItemRequest.getX(), decorationItemRequest.getY());
                 })
                 .toList();
 
-        Decoration decoration = Decoration.of(background, decorationItems);
+        Decoration decoration = Decoration.of(user.getId(), background, decorationItems);
         decorationService.save(decoration, user);
         return ApiResponse.success();
     }
@@ -68,8 +69,7 @@ public class DecorationController {
     public ApiResponse<ReadDecorationResponse> readDecoration(@PathVariable String nickname) {
         User user = userService.readUserByNickname(nickname);
         Decoration decoration = decorationService.read(user);
-        Background background = Background.findById(decoration.getBackgroundId());
-        ReadDecorationResponse readDecorationResponse = ReadDecorationResponse.of(decoration, background, itemsImageApiEndpoint, backgroundsImageApiEndpoint);
+        ReadDecorationResponse readDecorationResponse = ReadDecorationResponse.of(decoration, itemsImageApiEndpoint, backgroundsImageApiEndpoint);
         return ApiResponse.success(readDecorationResponse);
     }
 }

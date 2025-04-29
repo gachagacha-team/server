@@ -77,7 +77,7 @@ public class AuthController {
                     + "&refreshToken=" + jwt.getRefreshToken();
         } else {
             redirectUrl = clientAddress + "/join"
-                    + "?socialType=" + SocialType.GITHUB.getName()
+                    + "?socialType=" + SocialType.KAKAO.getName()
                     + "&loginId=" + loginId;
         }
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gachagacha.domain.item.Item;
 import gachagacha.domain.item.ItemGrade;
+import gachagacha.domain.item.UserItem;
 import gachagacha.domain.item.UserItemRepository;
 import gachagacha.domain.lotto.IssuedLotto;
 import gachagacha.domain.lotto.Lotto;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -28,8 +30,12 @@ public class LottoIssuanceService {
     private final ObjectMapper objectMapper;
 
     public boolean checkLottoIssuanceCondition(Long userId, ItemGrade itemGrade) {
-        Map<Item, Long> userItemsMap = userItemRepository.findByUserId(userId)
-                .stream()
+        List<UserItem> userItems = userItemRepository.findByUserId(userId);
+        if (userItems == null) {
+            return false;
+        }
+
+        Map<Item, Long> userItemsMap = userItems.stream()
                 .filter(userItem -> userItem.getItem().getItemGrade() == itemGrade)
                 .collect(Collectors.groupingBy(
                         userItem -> userItem.getItem(),
@@ -39,7 +45,6 @@ public class LottoIssuanceService {
         boolean hasAllItemsOfGrade = Item.getItemsByGrade(itemGrade)
                 .stream()
                 .allMatch(item -> userItemsMap.getOrDefault(item, 0L) > 0);
-
         return hasAllItemsOfGrade;
     }
 

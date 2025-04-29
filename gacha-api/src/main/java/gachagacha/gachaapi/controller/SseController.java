@@ -26,7 +26,7 @@ public class SseController {
     public ResponseEntity<SseEmitter> connect(HttpServletRequest request) {
         User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         SseEmitter emitter = new SseEmitter(300000l);
-        sseEmitters.put(user.getNickname(), emitter);
+        sseEmitters.put(user.getId(), emitter);
         try {
             emitter.send(SseEmitter.event()
                     .name("connect")
