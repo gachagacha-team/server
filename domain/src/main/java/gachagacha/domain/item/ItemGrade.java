@@ -26,7 +26,6 @@ public enum ItemGrade {
     private final int price;
 
     public static ItemGrade findByViewName(String viewName) {
-        System.out.println(viewName);
         return Arrays.stream(ItemGrade.values())
                 .filter(itemGrade -> itemGrade.viewName.equals(viewName))
                 .findAny()
