@@ -16,7 +16,7 @@ public class OutboxEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "outbox_id", nullable = false)
-    private long id;
+    private Long id;
 
     @Column(nullable = false)
     private String topic;
