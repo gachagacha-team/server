@@ -55,9 +55,9 @@ public class LottoIssuanceService {
         if (won) {
             rewardCoin = getRandomCoin();
         }
-        Long lottoId = lottoRepository.save(Lotto.create(userId, itemGrade, won, rewardCoin));
+        Long lottoId = lottoRepository.save(Lotto.of(userId, itemGrade, won, rewardCoin));
         String payload = objectMapper.writeValueAsString(new IssuedLotto(userId, lottoId));
-        outboxRepository.save(Outbox.create(topic, payload));
+        outboxRepository.save(Outbox.of(topic, payload));
     }
 
     private boolean won() {

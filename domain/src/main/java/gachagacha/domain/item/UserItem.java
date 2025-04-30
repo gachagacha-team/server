@@ -1,11 +1,12 @@
 package gachagacha.domain.item;
 
 import gachagacha.domain.user.User;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserItem {
 
     private Long id;

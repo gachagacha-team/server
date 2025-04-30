@@ -110,7 +110,7 @@ public class TradeService {
 
         LottoIssuanceEvent lottoIssuanceEvent = new LottoIssuanceEvent(buyer.getId(), item.getItemGrade());
         String payload = objectMapper.writeValueAsString(lottoIssuanceEvent);
-        outboxRepository.save(Outbox.create(topic, payload));
+        outboxRepository.save(Outbox.of(topic, payload));
 
         return savedNotification;
     }

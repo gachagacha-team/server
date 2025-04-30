@@ -2,13 +2,14 @@ package gachagacha.domain.trade;
 
 import gachagacha.domain.item.Item;
 import gachagacha.domain.user.User;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
-@AllArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Trade {
 
     private Long id;

@@ -1,5 +1,6 @@
 package gachagacha.domain.guestbook;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -7,8 +8,8 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class Guestbook {
 
     private Long id;
@@ -25,10 +26,6 @@ public class Guestbook {
                 content,
                 null
         );
-    }
-
-    public void setId(long id) {
-        this.id = id;
     }
 
     public void updateContent(String content) {

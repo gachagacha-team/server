@@ -2,6 +2,7 @@ package gachagacha.domain.user;
 
 import gachagacha.domain.item.Item;
 import gachagacha.domain.item.UserItem;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,8 +10,8 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class User {
     private Long id;
     private SocialType socialType;
@@ -28,20 +29,10 @@ public class User {
                 socialType,
                 loginId,
                 nickname,
-                new Coin(),
-                new Score(),
+                Coin.of(),
+                Score.of(),
                 profile
         );
-    }
-
-    public User(Long id, SocialType socialType, Long loginId, String nickname, int coin, int score, Profile profile) {
-        this.id = id;
-        this.socialType = socialType;
-        this.loginId = loginId;
-        this.nickname = nickname;
-        this.score = new Score(score);
-        this.coin = new Coin(coin);
-        this.profile = profile;
     }
 
     public void deductCoinForGacha() {

@@ -1,7 +1,6 @@
 package gachagacha.gachaapi.controller;
 
 import gachagacha.domain.decoration.Decoration;
-import gachagacha.domain.decoration.DecorationItem;
 import gachagacha.gachaapi.dto.response.ReadDecorationResponse;
 import gachagacha.gachaapi.response.ApiResponse;
 import gachagacha.common.exception.ErrorCode;
@@ -48,14 +47,14 @@ public class DecorationController {
 
         Background background = Background.findById(requestDto.getBackgroundId());
 
-        List<DecorationItem> decorationItems = requestDto.getItems().stream()
+        List<Decoration.DecorationItem> decorationItems = requestDto.getItems().stream()
                 .map(decorationItemRequest -> {
                     UserItem userItem = itemService.readById(decorationItemRequest.getSubId());
                     if (userItem.getItem().getItemId() != decorationItemRequest.getItemId()) {
                         throw new BusinessException(ErrorCode.INVALID_ITEM_ID);
                     }
                     userItem.isOwnedBy(user);
-                    return new DecorationItem(userItem.getId(), userItem.getItem().getItemId(), decorationItemRequest.getX(), decorationItemRequest.getY());
+                    return Decoration.DecorationItem.of(userItem.getId(), userItem.getItem().getItemId(), decorationItemRequest.getX(), decorationItemRequest.getY());
                 })
                 .toList();
 

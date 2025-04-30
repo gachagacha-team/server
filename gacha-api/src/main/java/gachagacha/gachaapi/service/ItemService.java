@@ -47,7 +47,7 @@ public class ItemService {
 
         LottoIssuanceEvent lottoIssuanceEvent = new LottoIssuanceEvent(user.getId(), item.getItemGrade());
         String payload = objectMapper.writeValueAsString(lottoIssuanceEvent);
-        outboxRepository.save(Outbox.create(topic, payload));
+        outboxRepository.save(Outbox.of(topic, payload));
         return item;
     }
 
