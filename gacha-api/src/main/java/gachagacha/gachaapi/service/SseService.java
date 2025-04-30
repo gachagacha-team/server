@@ -18,19 +18,22 @@ public class SseService {
     private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
 
     public SseEmitter put(Long userId, SseEmitter emitter) {
-        if (emitters.containsKey(userId)) {
-            emitters.get(userId).complete();
-        }
         this.emitters.put(userId, emitter);
         log.info("new emitter added: {}", emitter);
         log.info("emitter list size: {}", emitters.size());
-        emitter.onCompletion(() -> {
-            log.info("onCompletion callback");
-            this.emitters.remove(emitter);
-        });
+
         emitter.onTimeout(() -> {
             log.info("onTimeout callback");
             emitter.complete();
+            log.info("emitter list size: {}", emitters.size());
+
+        });
+
+        emitter.onCompletion(() -> {
+            log.info("onCompletion callback");
+            this.emitters.remove(userId);
+            log.info("emitter list size: {}", emitters.size());
+
         });
 
         return emitter;
