@@ -1,4 +1,4 @@
-package gachagacha.gachaapi;
+package gachagacha.gachaapi.service;
 
 import gachagacha.domain.user.User;
 import gachagacha.gachaapi.dto.response.NotificationsResponse;
@@ -13,11 +13,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
-public class SseEmitters {
+public class SseService {
 
     private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
 
     public SseEmitter put(Long userId, SseEmitter emitter) {
+        if (emitters.containsKey(userId)) {
+            emitters.get(userId).complete();
+        }
         this.emitters.put(userId, emitter);
         log.info("new emitter added: {}", emitter);
         log.info("emitter list size: {}", emitters.size());
