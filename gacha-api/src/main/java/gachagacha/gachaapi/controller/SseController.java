@@ -8,7 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
@@ -22,7 +22,7 @@ public class SseController {
     private final JwtUtils jwtUtils;
     private final UserService userService;
 
-    @GetMapping(value = "/connect", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
+    @PostMapping(value = "/sse/connect", produces = MediaType.TEXT_EVENT_STREAM_VALUE)
     public ResponseEntity<SseEmitter> connect(HttpServletRequest request) {
         User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         SseEmitter emitter = new SseEmitter(300000l);
@@ -35,5 +35,12 @@ public class SseController {
             throw new RuntimeException(e);
         }
         return ResponseEntity.ok(emitter);
+    }
+
+    @PostMapping(value = "/sse/test")
+    public String sseTest(HttpServletRequest request) {
+        User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
+        sseEmitters.test(user);
+        return "success!";
     }
 }
