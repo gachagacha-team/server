@@ -1,4 +1,4 @@
-package gachagacha.gachaapi.response;
+package gachagacha.gachaapi.common;
 
 import lombok.Getter;
 import lombok.ToString;

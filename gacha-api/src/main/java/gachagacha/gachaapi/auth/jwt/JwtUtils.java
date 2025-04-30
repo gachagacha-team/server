@@ -1,4 +1,4 @@
-package gachagacha.gachaapi.jwt;
+package gachagacha.gachaapi.auth.jwt;
 
 import gachagacha.common.exception.ErrorCode;
 import gachagacha.common.exception.customException.CustomJwtException;
@@ -27,7 +27,7 @@ public class JwtUtils {
         this.jwtParser = Jwts.parserBuilder().setSigningKey(signingKey).build();
     }
 
-    public Jwt generateJwt(Long userId, Long profileId) {
+    public gachagacha.gachaapi.auth.jwt.Jwt generateJwt(Long userId, Long profileId) {
         Claims claims = Jwts.claims();
         claims.put("id", userId);
         claims.put("profileId", profileId);

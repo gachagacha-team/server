@@ -2,8 +2,8 @@ package gachagacha.gachaapi.controller;
 
 import gachagacha.gachaapi.dto.response.HasNewNotificationResponse;
 import gachagacha.gachaapi.dto.response.NotificationsResponse;
-import gachagacha.gachaapi.response.ApiResponse;
-import gachagacha.gachaapi.jwt.JwtUtils;
+import gachagacha.gachaapi.common.ApiResponse;
+import gachagacha.gachaapi.auth.jwt.JwtUtils;
 import gachagacha.domain.notification.Notification;
 import gachagacha.gachaapi.service.NotificationService;
 import gachagacha.domain.user.User;

@@ -1,12 +1,12 @@
 package gachagacha.gachaapi.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import gachagacha.gachaapi.jwt.JwtUtils;
+import gachagacha.gachaapi.auth.jwt.JwtUtils;
 import gachagacha.domain.item.Item;
 import gachagacha.domain.user.User;
 import gachagacha.gachaapi.service.UserService;
 import gachagacha.gachaapi.dto.response.GachaResponse;
-import gachagacha.gachaapi.response.ApiResponse;
+import gachagacha.gachaapi.common.ApiResponse;
 import gachagacha.gachaapi.service.ItemService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.servlet.http.HttpServletRequest;

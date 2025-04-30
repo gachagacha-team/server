@@ -2,7 +2,7 @@ package gachagacha.gachaapi.controller;
 
 import gachagacha.common.exception.ErrorCode;
 import gachagacha.common.exception.customException.BusinessException;
-import gachagacha.gachaapi.jwt.JwtUtils;
+import gachagacha.gachaapi.auth.jwt.JwtUtils;
 import gachagacha.domain.item.Item;
 import gachagacha.domain.item.ItemGrade;
 import gachagacha.domain.item.UserItem;
@@ -13,7 +13,7 @@ import gachagacha.gachaapi.dto.response.UserItemResponse;
 import gachagacha.gachaapi.dto.response.UserItemsResponse;
 import gachagacha.gachaapi.service.ItemService;
 import gachagacha.gachaapi.service.UserService;
-import gachagacha.gachaapi.response.ApiResponse;
+import gachagacha.gachaapi.common.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.http.HttpServletRequest;

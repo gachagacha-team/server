@@ -1,9 +1,10 @@
-package gachagacha.gachaapi.lotto;
+package gachagacha.gachaapi.scheduler;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gachagacha.domain.lotto.LottoIssuanceEvent;
 import gachagacha.domain.outbox.OutboxRepository;
+import gachagacha.gachaapi.messaging.LottoMessagePublisher;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;

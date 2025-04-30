@@ -1,8 +1,8 @@
 package gachagacha.gachaapi.controller;
 
 import gachagacha.gachaapi.dto.response.ReadLottoResponse;
-import gachagacha.gachaapi.response.ApiResponse;
-import gachagacha.gachaapi.jwt.JwtUtils;
+import gachagacha.gachaapi.common.ApiResponse;
+import gachagacha.gachaapi.auth.jwt.JwtUtils;
 import gachagacha.gachaapi.service.LottoService;
 import gachagacha.domain.user.User;
 import gachagacha.gachaapi.service.UserService;

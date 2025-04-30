@@ -1,6 +1,6 @@
 package gachagacha.lotto.lotto;
 
-import gachagacha.domain.lotto.IssuedLotto;
+import gachagacha.lotto.dto.IssuedLotto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
