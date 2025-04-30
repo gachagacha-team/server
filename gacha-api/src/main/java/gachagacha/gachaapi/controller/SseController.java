@@ -1,5 +1,8 @@
 package gachagacha.gachaapi.controller;
 
+import gachagacha.domain.item.ItemGrade;
+import gachagacha.domain.notification.Notification;
+import gachagacha.domain.notification.NotificationType;
 import gachagacha.gachaapi.auth.jwt.JwtUtils;
 import gachagacha.gachaapi.service.SseService;
 import gachagacha.domain.user.User;
@@ -41,7 +44,9 @@ public class SseController {
     @PostMapping(value = "/sse/test")
     public String sseTest(HttpServletRequest request) {
         User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
-        sseService.test(user);
+        sseService.issuedLotto(new Notification(1l, user.getId(),
+                NotificationType.LOTTO_ISSUED.generateNotificationMessageByLottoIssued(ItemGrade.S),
+                NotificationType.LOTTO_ISSUED));
         return "success!";
     }
 }

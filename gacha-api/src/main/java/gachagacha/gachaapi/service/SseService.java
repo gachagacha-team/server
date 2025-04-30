@@ -1,6 +1,5 @@
 package gachagacha.gachaapi.service;
 
-import gachagacha.domain.user.User;
 import gachagacha.gachaapi.dto.response.NotificationsResponse;
 import gachagacha.domain.notification.Notification;;
 import lombok.extern.slf4j.Slf4j;
@@ -75,23 +74,6 @@ public class SseService {
                 sseEmitter.send(SseEmitter.event()
                         .name("trade_completed")
                         .data(notificationDto)
-                );
-                log.info("SSE transmission successful");
-            } catch (IOException e) {
-                log.error("SSE transmission failed: Error occurred during SSE transmission", e);
-            }
-        }
-    }
-
-    public void test(User user) {
-        SseEmitter sseEmitter = emitters.get(user.getId());
-        if (sseEmitter == null) {
-            log.info("SSE transmission failed: Could not find SSE emitter");
-        } else {
-            try {
-                sseEmitter.send(SseEmitter.event()
-                        .name("sold item")
-                        .data("알림 도착~~!!")
                 );
                 log.info("SSE transmission successful");
             } catch (IOException e) {
