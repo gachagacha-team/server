@@ -2,18 +2,17 @@ package gachagacha.domain.user;
 
 import gachagacha.common.exception.ErrorCode;
 import gachagacha.common.exception.customException.BusinessException;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class Coin {
 
     private int coin;
     private static final int INITIAL_COIN_AMOUNT = 20000;
 
-    public static Coin of() {
+    public static Coin createInitialCoin() {
         return new Coin(INITIAL_COIN_AMOUNT);
     }
 

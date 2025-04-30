@@ -2,7 +2,6 @@ package gachagacha.domain.user;
 
 import gachagacha.domain.item.Item;
 import gachagacha.domain.item.UserItem;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,8 +10,9 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class User {
+
     private Long id;
     private SocialType socialType;
     private Long loginId;
@@ -23,16 +23,8 @@ public class User {
 
     private static final int GACHA_COST = 1000;
 
-    public static User of(String nickname, SocialType socialType, Long loginId, Profile profile) {
-        return new User(
-                null,
-                socialType,
-                loginId,
-                nickname,
-                Coin.of(),
-                Score.of(),
-                profile
-        );
+    public static User createInitialUser(SocialType socialType, Long loginId, String nickname, Profile profile) {
+        return new User(null, socialType, loginId, nickname, Coin.createInitialCoin(), Score.createInitialScore(), profile);
     }
 
     public void deductCoinForGacha() {

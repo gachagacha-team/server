@@ -39,7 +39,7 @@ public class UserEntity extends BaseEntity {
     private Profile profile;
 
     public User toUser() {
-        return new User(id, socialType, loginId, nickname, coin, score, profile);
+        return new User(id, socialType, loginId, nickname, new Coin(coin), new Score(score), profile);
     }
 
     public static UserEntity fromUser(User user) {

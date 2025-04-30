@@ -1,12 +1,11 @@
 package gachagacha.domain.lotto;
 
 import gachagacha.domain.item.ItemGrade;
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class Lotto {
 
     private Long id;
@@ -16,11 +15,11 @@ public class Lotto {
     private boolean won;
     private int rewardCoin;
 
-    public void use() {
-        this.used = true;
+    public static Lotto createInitialLotto(Long userId, ItemGrade itemGrade, boolean won, int rewardCoin) {
+        return new Lotto(null, userId, itemGrade, false, won, rewardCoin);
     }
 
-    public static Lotto of(long userId, ItemGrade itemGrade, boolean won, int rewardCoin) {
-        return new Lotto(null, userId, itemGrade, false, won, rewardCoin);
+    public void use() {
+        this.used = true;
     }
 }

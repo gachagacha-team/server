@@ -2,10 +2,10 @@ package gachagacha.gachaapi.controller;
 
 import gachagacha.domain.decoration.Decoration;
 import gachagacha.gachaapi.dto.response.ReadDecorationResponse;
-import gachagacha.gachaapi.response.ApiResponse;
+import gachagacha.gachaapi.common.ApiResponse;
 import gachagacha.common.exception.ErrorCode;
 import gachagacha.common.exception.customException.BusinessException;
-import gachagacha.gachaapi.jwt.JwtUtils;
+import gachagacha.gachaapi.auth.jwt.JwtUtils;
 import gachagacha.gachaapi.service.DecorationService;
 import gachagacha.gachaapi.service.ItemService;
 import gachagacha.domain.item.UserItem;
@@ -54,11 +54,11 @@ public class DecorationController {
                         throw new BusinessException(ErrorCode.INVALID_ITEM_ID);
                     }
                     userItem.isOwnedBy(user);
-                    return Decoration.DecorationItem.of(userItem.getId(), userItem.getItem().getItemId(), decorationItemRequest.getX(), decorationItemRequest.getY());
+                    return new Decoration.DecorationItem(userItem.getId(), userItem.getItem().getItemId(), decorationItemRequest.getX(), decorationItemRequest.getY());
                 })
                 .toList();
 
-        Decoration decoration = Decoration.of(user.getId(), background, decorationItems);
+        Decoration decoration = new Decoration(user.getId(), background, decorationItems);
         decorationService.save(decoration, user);
         return ApiResponse.success();
     }

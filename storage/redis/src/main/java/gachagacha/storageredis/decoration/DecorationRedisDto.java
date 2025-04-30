@@ -33,9 +33,9 @@ public class DecorationRedisDto implements Serializable {
 
     public Decoration toDecoration(User user) {
         List<Decoration.DecorationItem> items = this.items.stream()
-                .map(decorationItemDto -> Decoration.DecorationItem.of(decorationItemDto.getUserItemId(), decorationItemDto.getItemId(), decorationItemDto.getX(), decorationItemDto.getY()))
+                .map(decorationItemDto -> new Decoration.DecorationItem(decorationItemDto.getUserItemId(), decorationItemDto.getItemId(), decorationItemDto.getX(), decorationItemDto.getY()))
                 .toList();
-        return Decoration.of(user.getId(), Background.findById(backgroundId), items);
+        return new Decoration(user.getId(), Background.findById(backgroundId), items);
     }
 
     @Getter

@@ -6,11 +6,11 @@ import gachagacha.domain.item.Item;
 import gachagacha.domain.item.ItemGrade;
 import gachagacha.domain.item.UserItem;
 import gachagacha.domain.item.UserItemRepository;
-import gachagacha.domain.lotto.IssuedLotto;
 import gachagacha.domain.lotto.Lotto;
 import gachagacha.domain.lotto.LottoRepository;
 import gachagacha.domain.outbox.Outbox;
 import gachagacha.domain.outbox.OutboxRepository;
+import gachagacha.lotto.dto.IssuedLotto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,9 +55,9 @@ public class LottoIssuanceService {
         if (won) {
             rewardCoin = getRandomCoin();
         }
-        Long lottoId = lottoRepository.save(Lotto.of(userId, itemGrade, won, rewardCoin));
+        Long lottoId = lottoRepository.save(Lotto.createInitialLotto(userId, itemGrade, won, rewardCoin));
         String payload = objectMapper.writeValueAsString(new IssuedLotto(userId, lottoId));
-        outboxRepository.save(Outbox.of(topic, payload));
+        outboxRepository.save(new Outbox(null, topic, payload));
     }
 
     private boolean won() {

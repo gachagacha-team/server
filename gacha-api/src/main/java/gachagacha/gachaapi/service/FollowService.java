@@ -21,7 +21,7 @@ public class FollowService {
     public long follow(User followee, User follower) {
         validateSelfFollow(followee, follower);
         validateDuplicatedFollow(followee, follower);
-        return followRepository.save(Follow.of(followee.getId(), follower.getId()));
+        return followRepository.save(new Follow(null, followee.getId(), follower.getId()));
     }
 
     private void validateSelfFollow(User followee, User follower) {

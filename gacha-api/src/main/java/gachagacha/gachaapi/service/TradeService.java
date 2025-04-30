@@ -14,6 +14,7 @@ import gachagacha.domain.outbox.Outbox;
 import gachagacha.domain.outbox.OutboxRepository;
 import gachagacha.domain.trade.Trade;
 import gachagacha.domain.trade.TradeRepository;
+import gachagacha.domain.trade.TradeStatus;
 import gachagacha.domain.user.User;
 import gachagacha.domain.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -60,7 +61,7 @@ public class TradeService {
         user.decreaseScoreForSaleItem(userItem.getItem(), userItemRepository.findByUser(user));
         userItemRepository.delete(userItem);
         userRepository.update(user);
-        tradeRepository.save(Trade.of(user, userItem.getItem()));
+        tradeRepository.save(new Trade(null, user.getId(), null, userItem.getItem(), TradeStatus.ON_SALE, null));
     }
 
     private void validateUserItemAuthorization(User user, UserItem userItem) {
@@ -74,7 +75,7 @@ public class TradeService {
         validateTradeAuthorization(user, trade);
 
         user.increaseScoreByItem(trade.getItem(), userItemRepository.findByUser(user));
-        userItemRepository.save(UserItem.of(user, trade.getItem()));
+        userItemRepository.save(new UserItem(null, trade.getItem(), user.getId()));
         userRepository.update(user);
         tradeRepository.delete(trade);
     }
@@ -97,20 +98,20 @@ public class TradeService {
         buyer.increaseScoreByItem(item, userItemRepository.findByUser(buyer));
         trade.processTrade(buyer);
 
-        userItemRepository.save(UserItem.of(buyer, item));
+        userItemRepository.save(new UserItem(null, item, buyer.getId()));
         userRepository.update(buyer);
         userRepository.update(seller);
         tradeRepository.update(trade);
 
         String notificationMessage = NotificationType.TRADE_COMPLETED.generateNotificationMessageByTradeCompleted(item);
-        Notification notification = Notification.of(seller.getId(), notificationMessage, NotificationType.TRADE_COMPLETED);
+        Notification notification = new Notification(null, seller.getId(), notificationMessage, NotificationType.TRADE_COMPLETED);
         Long notificationId = notificationRepository.saveNotification(notification);
         Notification savedNotification = notificationRepository.findById(notificationId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_NOTIFICATION));
 
         LottoIssuanceEvent lottoIssuanceEvent = new LottoIssuanceEvent(buyer.getId(), item.getItemGrade());
         String payload = objectMapper.writeValueAsString(lottoIssuanceEvent);
-        outboxRepository.save(Outbox.of(topic, payload));
+        outboxRepository.save(new Outbox(null, topic, payload));
 
         return savedNotification;
     }

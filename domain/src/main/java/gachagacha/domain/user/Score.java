@@ -1,17 +1,16 @@
 package gachagacha.domain.user;
 
-import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
-@AllArgsConstructor(access = AccessLevel.PRIVATE)
+@AllArgsConstructor
 public class Score {
 
     private int score;
     private static final int INITIAL_SCORE = 0;
 
-    public static Score of() {
+    public static Score createInitialScore() {
         return new Score(INITIAL_SCORE);
     }
 
