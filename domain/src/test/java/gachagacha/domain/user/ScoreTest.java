@@ -9,14 +9,14 @@ class ScoreTest {
 
     @Test
     void 최초_초기화되는_스코어는_0() {
-        Score score = Score.of();
+        Score score = Score.createInitialScore();
 
         assertThat(score.getScore()).isEqualTo(0);
     }
 
     @Test
     void 스코어_증가() {
-        Score score = Score.of();
+        Score score = Score.createInitialScore();
         int initialScoreAmount = score.getScore();
 
         score.increase(1000);
@@ -26,7 +26,7 @@ class ScoreTest {
 
     @Test
     void 스코어_감소() {
-        Score score = Score.of();
+        Score score = Score.createInitialScore();
         int initialScoreAmount = score.getScore();
 
         score.decrease(1000);

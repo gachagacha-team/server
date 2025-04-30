@@ -9,7 +9,7 @@ class LottoTest {
 
     @Test
     void 복권_사용() {
-        Lotto lotto = Lotto.of(1l, ItemGrade.A, true, 1000);
+        Lotto lotto = Lotto.createInitialLotto(1l, ItemGrade.A, true, 1000);
         assertThat(lotto.isUsed()).isFalse();
 
         lotto.use();

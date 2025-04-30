@@ -12,7 +12,7 @@ class UserTest {
 
     @Test
     void 가챠로_1000_코인_차감() {
-        User user = User.of("user", SocialType.KAKAO, 1l, Profile.BEAR);
+        User user = User.createInitialUser(SocialType.KAKAO, 1l, "user", Profile.COW);
         int coinBeforeGacha = user.getCoin().getCoin();
 
         user.deductCoinForGacha();
@@ -22,10 +22,8 @@ class UserTest {
 
     @Test
     void 판매하는_아이템의_종류가_더이상_없는_경우_스코어가_감소된다() {
-        User user = User.of("user", SocialType.GITHUB, 1l, Profile.BEAR);
-        List<UserItem> userItems = List.of(UserItem.of(user, Item.BUNNIES),
-                UserItem.of(user, Item.ANGEL_KIRBY),
-                UserItem.of(user, Item.CUPCAKE));
+        User user = User.createInitialUser(SocialType.KAKAO, 1l, "user", Profile.COW);
+        List<UserItem> userItems = List.of(new UserItem(1l, Item.BUNNIES, user.getId()));
         int scoreBeforeSale = user.getScore().getScore();
         Item saleItem = Item.BUNNIES;
 
@@ -36,11 +34,9 @@ class UserTest {
 
     @Test
     void 판매하는_아이템의_종류가_여전히_남은_경우_스코어가_감소되지_않는다() {
-        User user = User.of("user", SocialType.GITHUB, 1l, Profile.BEAR);
-        List<UserItem> userItems = List.of(UserItem.of(user, Item.BUNNIES),
-                UserItem.of(user, Item.BUNNIES),
-                UserItem.of(user, Item.ANGEL_KIRBY),
-                UserItem.of(user, Item.CUPCAKE));
+        User user = User.createInitialUser(SocialType.KAKAO, 1l, "user", Profile.COW);
+        List<UserItem> userItems = List.of(new UserItem(1l, Item.BUNNIES, user.getId()),
+                new UserItem(1l, Item.BUNNIES, user.getId()));
         int scoreBeforeSale = user.getScore().getScore();
         Item saleItem = Item.BUNNIES;
 
@@ -51,10 +47,9 @@ class UserTest {
 
     @Test
     void 아이템_추가시_추가된_아이템의_종류가_최초이면_스코어가_증가한다() {
-        User user = User.of("user", SocialType.GITHUB, 1l, Profile.BEAR);
-        List<UserItem> userItems = List.of(UserItem.of(user, Item.BLACK_CAT),
-                UserItem.of(user, Item.ANGEL_KIRBY),
-                UserItem.of(user, Item.CUPCAKE));
+        User user = User.createInitialUser(SocialType.KAKAO, 1l, "user", Profile.COW);
+        List<UserItem> userItems = List.of(new UserItem(1l, Item.CUPCAKE, user.getId()),
+                new UserItem(1l, Item.ANGEL_KIRBY, user.getId()));
         int scoreBeforeAddItem = user.getScore().getScore();
         Item addedItem = Item.BUNNIES;
 
@@ -65,11 +60,9 @@ class UserTest {
 
     @Test
     void 아이템_추가시_추가된_아이템의_종류가_이미_존재하면_스코어가_증가하지_않는다() {
-        User user = User.of("user", SocialType.GITHUB, 1l, Profile.BEAR);
-        List<UserItem> userItems = List.of(UserItem.of(user, Item.BUNNIES),
-                UserItem.of(user, Item.BLACK_CAT),
-                UserItem.of(user, Item.ANGEL_KIRBY),
-                UserItem.of(user, Item.CUPCAKE));
+        User user = User.createInitialUser(SocialType.KAKAO, 1l, "user", Profile.COW);
+        List<UserItem> userItems = List.of(new UserItem(1l, Item.BUNNIES, user.getId()),
+                new UserItem(1l, Item.ANGEL_KIRBY, user.getId()));
         int scoreBeforeAddItem = user.getScore().getScore();
         Item addedItem = Item.BUNNIES;
 
@@ -80,7 +73,7 @@ class UserTest {
 
     @Test
     void 사용자_정보_변경() {
-        User user = User.of("변경 전 닉네임", SocialType.GITHUB, 1l, Profile.BEAR);
+        User user = User.createInitialUser(SocialType.KAKAO, 1l, "user", Profile.COW);
         String nicknameAfterUpdate = "변경 후 닉네임";
         Profile profileAfterUpdate = Profile.COW;
 
