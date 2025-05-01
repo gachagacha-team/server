@@ -50,7 +50,7 @@ public class SseService {
                         notification.getNotificationType().getViewName()
                         );
                 sseEmitter.send(SseEmitter.event()
-                        .name("connect")
+                        .name("lotto_issued")
                         .data(notificationDto)
                 );
                 log.info("SSE transmission successful");
