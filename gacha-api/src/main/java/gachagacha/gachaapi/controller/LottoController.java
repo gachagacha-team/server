@@ -36,7 +36,7 @@ public class LottoController {
     }
 
     @PutMapping("/lotto/use/{lottoId}")
-    public ApiResponse useLotto(@PathVariable long lottoId, HttpServletRequest request) {
+    public ApiResponse<LottoUsageResponse> useLotto(@PathVariable long lottoId, HttpServletRequest request) {
         User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         Lotto usedLotto = lottoService.useLotto(lottoId, user);
         return ApiResponse.success(new LottoUsageResponse(user, usedLotto));
