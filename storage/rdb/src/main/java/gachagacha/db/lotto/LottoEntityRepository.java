@@ -2,6 +2,7 @@ package gachagacha.db.lotto;
 
 import gachagacha.common.exception.ErrorCode;
 import gachagacha.common.exception.customException.BusinessException;
+import gachagacha.domain.item.ItemGrade;
 import gachagacha.domain.lotto.Lotto;
 import gachagacha.domain.lotto.LottoRepository;
 import gachagacha.domain.user.User;
@@ -26,6 +27,13 @@ public class LottoEntityRepository implements LottoRepository {
     @Override
     public List<Lotto> findByUserAndUsed(User user, boolean used) {
         return lottoJpaRepository.findByUserIdAndUsed(user.getId(), used).stream()
+                .map(lottoEntity -> lottoEntity.toLotto())
+                .toList();
+    }
+
+    @Override
+    public List<Lotto> findByUserIdAndItemGrade(Long userId, ItemGrade itemGrade) {
+        return lottoJpaRepository.findByUserIdAndItemGrade(userId, itemGrade).stream()
                 .map(lottoEntity -> lottoEntity.toLotto())
                 .toList();
     }
