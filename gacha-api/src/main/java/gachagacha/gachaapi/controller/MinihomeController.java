@@ -41,11 +41,12 @@ public class MinihomeController {
     @GetMapping("/minihomes/{nickname}")
     public ApiResponse<MinihomeResponse> readMinihome(@PathVariable String nickname, HttpServletRequest request) {
         User minihomeUser = userService.readUserByNickname(nickname);
-        Minihome minihome = minihomeService.visitMinihome(minihomeUser);
+        Minihome minihome = minihomeService.readMinihome(minihomeUser);
         User currentUser = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         int followersCnt = followService.readFollowersCnt(minihomeUser);
         int followingsCnt = followService.readFollowingsCnt(minihomeUser);
         boolean isFollowing = followService.isFollowing(currentUser, minihomeUser);
+        minihomeService.visitMinihome(minihome.getId());
         return ApiResponse.success(MinihomeResponse.of(currentUser, minihomeUser, minihome, followersCnt, followingsCnt, isFollowing));
     }
 

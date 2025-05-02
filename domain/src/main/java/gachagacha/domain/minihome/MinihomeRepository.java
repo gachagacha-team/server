@@ -20,4 +20,6 @@ public interface MinihomeRepository {
     Long update(Minihome minihome);
 
     void delete(Minihome minihome);
+
+    void updateVisitorCount(Long minihomeId, int visitorCount);
 }

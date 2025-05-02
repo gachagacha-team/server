@@ -54,4 +54,9 @@ public class MinihomeEntityRepository implements MinihomeRepository {
     public void delete(Minihome minihome) {
         minihomeJpaRepository.delete(MinihomeEntity.fromMinihome(minihome));
     }
+
+    @Override
+    public void updateVisitorCount(Long minihomeId, int visitorCount) {
+        minihomeJpaRepository.updateVisitorCount(minihomeId, visitorCount);
+    }
 }
