@@ -1,5 +1,6 @@
 package gachagacha.db.notification;
 
+import gachagacha.db.BaseEntity;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "notification_read_marker")
 @NoArgsConstructor
 @AllArgsConstructor
-public class NotificationReadMarkerEntity {
+public class NotificationReadMarkerEntity extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "notification_read_marker_id", nullable = false)
