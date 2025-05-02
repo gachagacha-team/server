@@ -43,13 +43,13 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
-      ddl-auto: create
+      ddl-auto: validate
     properties:
       hibernate:
         dialect: org.hibernate.dialect.H2Dialect
         format_sql: true
   flyway:
-    enabled: false
+    enabled: true
     baseline-on-migrate: true
 
 ---
