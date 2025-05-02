@@ -1,3 +1,6 @@
+drop table if exists notification;
+drop table if exists notification_read_marker;
+
 create table notification
 (
     notification_id   bigint auto_increment primary key,
