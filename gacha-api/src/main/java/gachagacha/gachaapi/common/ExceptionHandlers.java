@@ -1,7 +1,7 @@
-package gachagacha.gachaapi;
+package gachagacha.gachaapi.common;
 
-import gachagacha.gachaapi.response.ApiResponse;
-import gachagacha.gachaapi.response.ErrorResponse;
+import gachagacha.gachaapi.common.ApiResponse;
+import gachagacha.gachaapi.common.ErrorResponse;
 import gachagacha.common.exception.ErrorCode;
 import gachagacha.common.exception.customException.BusinessException;
 import gachagacha.common.exception.customException.CustomJwtException;

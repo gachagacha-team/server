@@ -7,21 +7,12 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class Attendance {
 
     private Long id;
     private LocalDate date;
     private long userId;
     private int bonusCoin;
-
-    public static Attendance of(LocalDate date, long userId, int bonusCoin) {
-        return new Attendance(
-                null,
-                date,
-                userId,
-                bonusCoin
-        );
-    }
 }

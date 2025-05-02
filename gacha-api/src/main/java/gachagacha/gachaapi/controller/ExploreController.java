@@ -1,7 +1,7 @@
 package gachagacha.gachaapi.controller;
 
 import gachagacha.gachaapi.dto.response.ExploreMinihomeResponse;
-import gachagacha.gachaapi.response.ApiResponse;
+import gachagacha.gachaapi.common.ApiResponse;
 import gachagacha.gachaapi.service.MinihomeService;
 import gachagacha.domain.user.User;
 import gachagacha.gachaapi.service.UserService;

@@ -1,6 +1,6 @@
-package gachagacha.gachaapi.lotto;
+package gachagacha.gachaapi.messaging;
 
-import gachagacha.gachaapi.SseEmitters;
+import gachagacha.gachaapi.service.SseService;
 import gachagacha.common.exception.ErrorCode;
 import gachagacha.common.exception.customException.BusinessException;
 import gachagacha.domain.notification.Notification;
@@ -33,7 +33,7 @@ public class LottoMessageListener implements StreamListener<String, MapRecord<St
     private final RedisTemplate<String, String> redisTemplate;
     private final LottoRepository lottoRepository;
     private final UserRepository userRepository;
-    private final SseEmitters sseEmitters;
+    private final SseService sseService;
     private final NotificationRepository notificationRepository;
 
     @Value("${spring.data.redis.stream.lotto-issued}")
@@ -61,12 +61,12 @@ public class LottoMessageListener implements StreamListener<String, MapRecord<St
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
 
         String notificationMessage = NotificationType.LOTTO_ISSUED.generateNotificationMessageByLottoIssued(lotto.getItemGrade());
-        Notification notification = Notification.of(userId, notificationMessage, NotificationType.LOTTO_ISSUED);
+        Notification notification = new Notification(null, userId, notificationMessage, NotificationType.LOTTO_ISSUED);
         Long notificationId = notificationRepository.saveNotification(notification);
         Notification savedNotification = notificationRepository.findById(notificationId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_NOTIFICATION));
 
-        sseEmitters.issuedLotto(savedNotification);
+        sseService.issuedLotto(savedNotification);
 
         redisTemplate.opsForStream().acknowledge(streamKey, CONSUMER_GROUP_NAME, message.getId());
     }

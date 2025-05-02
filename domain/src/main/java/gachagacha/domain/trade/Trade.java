@@ -18,20 +18,13 @@ public class Trade {
     private TradeStatus tradeStatus;
     private LocalDateTime transactionDate;
 
-    public static Trade of(User seller, Item item) {
-        return new Trade(
-                null,
-                seller.getId(),
-                null,
-                item,
-                TradeStatus.ON_SALE,
-                null
-        );
-    }
-
     public void processTrade(User buyer) {
         this.buyerId = buyer.getId();
         this.tradeStatus = TradeStatus.COMPLETED;
         this.transactionDate = LocalDateTime.now().withNano(0);
+    }
+
+    public static Trade createInitialTrade(Long sellerId, Item item) {
+        return new Trade(null, sellerId, null, item, TradeStatus.ON_SALE, null);
     }
 }

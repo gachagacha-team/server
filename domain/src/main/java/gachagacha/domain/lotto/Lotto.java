@@ -15,11 +15,11 @@ public class Lotto {
     private boolean won;
     private int rewardCoin;
 
-    public void use() {
-        this.used = true;
+    public static Lotto createInitialLotto(Long userId, ItemGrade itemGrade, boolean won, int rewardCoin) {
+        return new Lotto(null, userId, itemGrade, false, won, rewardCoin);
     }
 
-    public static Lotto create(long userId, ItemGrade itemGrade, boolean won, int rewardCoin) {
-        return new Lotto(null, userId, itemGrade, false, won, rewardCoin);
+    public void use() {
+        this.used = true;
     }
 }

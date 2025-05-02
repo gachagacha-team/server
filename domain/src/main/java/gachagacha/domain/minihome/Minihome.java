@@ -11,12 +11,8 @@ public class Minihome {
     private Long userId;
     private int totalVisitorCnt;
 
-    public static Minihome of(long userId) {
-        return new Minihome(
-                null,
-                userId,
-                0
-        );
+    public static Minihome createInitialMinihome(Long userId) {
+        return new Minihome(null, userId, 0);
     }
 
     public void visit() {

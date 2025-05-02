@@ -39,7 +39,7 @@ public class UserService {
         validateDuplicatedAttendance(user, date);
 
         int bonusCoin = (new Random().nextInt(5) + 1) * 1000;
-        Attendance attendance = Attendance.of(date, user.getId(), bonusCoin);
+        Attendance attendance = new Attendance(null, date, user.getId(), bonusCoin);
         attendanceRepository.save(attendance);
 
         user.addCoin(bonusCoin);

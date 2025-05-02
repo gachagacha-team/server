@@ -1,4 +1,4 @@
-package gachagacha.gachaapi;
+package gachagacha.gachaapi.service;
 
 import gachagacha.gachaapi.dto.response.NotificationsResponse;
 import gachagacha.domain.notification.Notification;;
@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
-public class SseEmitters {
+public class SseService {
 
     private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
 
@@ -20,13 +20,19 @@ public class SseEmitters {
         this.emitters.put(userId, emitter);
         log.info("new emitter added: {}", emitter);
         log.info("emitter list size: {}", emitters.size());
-        emitter.onCompletion(() -> {
-            log.info("onCompletion callback");
-            this.emitters.remove(emitter);
-        });
+
         emitter.onTimeout(() -> {
             log.info("onTimeout callback");
             emitter.complete();
+            log.info("emitter list size: {}", emitters.size());
+
+        });
+
+        emitter.onCompletion(() -> {
+            log.info("onCompletion callback");
+            this.emitters.remove(userId);
+            log.info("emitter list size: {}", emitters.size());
+
         });
 
         return emitter;
@@ -44,7 +50,7 @@ public class SseEmitters {
                         notification.getNotificationType().getViewName()
                         );
                 sseEmitter.send(SseEmitter.event()
-                        .name("lotto")
+                        .name("lotto_issued")
                         .data(notificationDto)
                 );
                 log.info("SSE transmission successful");
@@ -66,7 +72,7 @@ public class SseEmitters {
                         notification.getNotificationType().getViewName()
                 );
                 sseEmitter.send(SseEmitter.event()
-                        .name("sold item")
+                        .name("trade_completed")
                         .data(notificationDto)
                 );
                 log.info("SSE transmission successful");

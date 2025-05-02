@@ -43,11 +43,11 @@ public class ItemService {
         user.increaseScoreByItem(item, userItemRepository.findByUser(user));
 
         userRepository.update(user);
-        userItemRepository.save(UserItem.of(user, item));
+        userItemRepository.save(new UserItem(null, item, user.getId()));
 
         LottoIssuanceEvent lottoIssuanceEvent = new LottoIssuanceEvent(user.getId(), item.getItemGrade());
         String payload = objectMapper.writeValueAsString(lottoIssuanceEvent);
-        outboxRepository.save(Outbox.create(topic, payload));
+        outboxRepository.save(new Outbox(null, topic, payload));
         return item;
     }
 

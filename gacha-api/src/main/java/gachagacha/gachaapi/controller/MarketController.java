@@ -2,8 +2,8 @@ package gachagacha.gachaapi.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import gachagacha.domain.notification.Notification;
-import gachagacha.gachaapi.jwt.JwtUtils;
-import gachagacha.gachaapi.SseEmitters;
+import gachagacha.gachaapi.auth.jwt.JwtUtils;
+import gachagacha.gachaapi.service.SseService;
 import gachagacha.domain.item.Item;
 import gachagacha.domain.item.ItemGrade;
 import gachagacha.domain.item.UserItem;
@@ -17,7 +17,7 @@ import gachagacha.gachaapi.dto.response.ReadMyOneProductResponse;
 import gachagacha.gachaapi.dto.response.ReadOneProductResponse;
 import gachagacha.gachaapi.service.ItemService;
 import gachagacha.gachaapi.service.TradeService;
-import gachagacha.gachaapi.response.ApiResponse;
+import gachagacha.gachaapi.common.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import jakarta.servlet.http.HttpServletRequest;
@@ -38,7 +38,7 @@ public class MarketController {
     private final UserService userService;
     private final ItemService itemService;
     private final JwtUtils jwtUtils;
-    private final SseEmitters sseEmitters;
+    private final SseService sseService;
 
     @Value("${image.api.endpoints.items}")
     private String itemsImageApiEndpoint;
@@ -74,7 +74,7 @@ public class MarketController {
         User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         Item purchaseItem = Item.findById(itemId);
         Notification notification = tradeService.purchase(user, purchaseItem);
-        sseEmitters.tradeComplete(notification); // todo: sse 알림 책임은 어느 모듈에서?
+        sseService.tradeComplete(notification); // todo: sse 알림 책임은 어느 모듈에서?
         return ApiResponse.success();
     }
 

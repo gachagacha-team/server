@@ -1,4 +1,4 @@
-package gachagacha.gachaapi.auth;
+package gachagacha.gachaapi.auth.oauth;
 
 import gachagacha.gachaapi.auth.oauth.client.GithubOAuthClient;
 import gachagacha.gachaapi.auth.oauth.client.KakaoOAuthClient;

@@ -1,4 +1,4 @@
-package gachagacha.gachaapi.lotto;
+package gachagacha.gachaapi.messaging;
 
 import gachagacha.domain.lotto.LottoIssuanceEvent;
 import lombok.RequiredArgsConstructor;

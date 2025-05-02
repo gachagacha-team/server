@@ -12,15 +12,16 @@ public class Coin {
     private int coin;
     private static final int INITIAL_COIN_AMOUNT = 20000;
 
-    public Coin() {
-        this.coin = INITIAL_COIN_AMOUNT;
+    public static Coin createInitialCoin() {
+        return new Coin(INITIAL_COIN_AMOUNT);
     }
 
-    public void addCoin(int bonusCoin) {
-        coin += bonusCoin;
+    public void addCoin(int amount) {
+        coin += amount;
     }
 
     public void deduct(int amount) {
+        System.out.println(coin + " , " + amount);
         if (coin < amount) {
             throw new BusinessException(ErrorCode.INSUFFICIENT_COIN);
         }

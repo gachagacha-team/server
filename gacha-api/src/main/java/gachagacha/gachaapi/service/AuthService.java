@@ -5,8 +5,8 @@ import gachagacha.common.exception.customException.BusinessException;
 import gachagacha.domain.decoration.Decoration;
 import gachagacha.domain.attendance.AttendanceRepository;
 import gachagacha.domain.user.*;
-import gachagacha.gachaapi.jwt.Jwt;
-import gachagacha.gachaapi.jwt.JwtUtils;
+import gachagacha.gachaapi.auth.jwt.Jwt;
+import gachagacha.gachaapi.auth.jwt.JwtUtils;
 import gachagacha.domain.auth.TokenRepository;
 import gachagacha.domain.decoration.DecorationRepository;
 import gachagacha.domain.follow.FollowRepository;
@@ -43,12 +43,12 @@ public class AuthService {
         validateDuplicatedUser(socialType, loginId);
         validateDuplicatedNickname(nickname);
 
-        long userId = userRepository.save(User.of(nickname, socialType, loginId, profile));
-        minihomeRepository.save(Minihome.of(userId));
+        long userId = userRepository.save(User.createInitialUser(socialType, loginId, nickname, profile));
+        minihomeRepository.save(new Minihome(null, userId, 0));
 
         userBackgroundRepository.saveBasicBackgrounds(userId);
 
-        Decoration decoration = Decoration.of(userId, Background.WHITE, new ArrayList<>());
+        Decoration decoration = new Decoration(userId, Background.WHITE, new ArrayList<>());
         decorationRepository.save(decoration, userId);
 
         Jwt jwt = jwtUtils.generateJwt(userId, profile.getId());

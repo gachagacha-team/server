@@ -1,8 +1,10 @@
 package gachagacha.gachaapi.controller;
 
+import gachagacha.domain.lotto.Lotto;
+import gachagacha.gachaapi.dto.response.LottoUsageResponse;
 import gachagacha.gachaapi.dto.response.ReadLottoResponse;
-import gachagacha.gachaapi.response.ApiResponse;
-import gachagacha.gachaapi.jwt.JwtUtils;
+import gachagacha.gachaapi.common.ApiResponse;
+import gachagacha.gachaapi.auth.jwt.JwtUtils;
 import gachagacha.gachaapi.service.LottoService;
 import gachagacha.domain.user.User;
 import gachagacha.gachaapi.service.UserService;
@@ -34,9 +36,9 @@ public class LottoController {
     }
 
     @PutMapping("/lotto/use/{lottoId}")
-    public ApiResponse useLotto(@PathVariable long lottoId, HttpServletRequest request) {
+    public ApiResponse<LottoUsageResponse> useLotto(@PathVariable long lottoId, HttpServletRequest request) {
         User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
-        lottoService.useLotto(lottoId, user);
-        return ApiResponse.success();
+        Lotto usedLotto = lottoService.useLotto(lottoId, user);
+        return ApiResponse.success(new LottoUsageResponse(user, usedLotto));
     }
 }

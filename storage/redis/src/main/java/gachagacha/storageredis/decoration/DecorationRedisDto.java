@@ -1,7 +1,6 @@
 package gachagacha.storageredis.decoration;
 
 import gachagacha.domain.decoration.Decoration;
-import gachagacha.domain.decoration.DecorationItem;
 import gachagacha.domain.user.Background;
 import gachagacha.domain.user.User;
 import lombok.AccessLevel;
@@ -33,10 +32,10 @@ public class DecorationRedisDto implements Serializable {
     }
 
     public Decoration toDecoration(User user) {
-        List<DecorationItem> items = this.items.stream()
-                .map(decorationItemDto -> new DecorationItem(decorationItemDto.getUserItemId(), decorationItemDto.getItemId(), decorationItemDto.getX(), decorationItemDto.getY()))
+        List<Decoration.DecorationItem> items = this.items.stream()
+                .map(decorationItemDto -> new Decoration.DecorationItem(decorationItemDto.getUserItemId(), decorationItemDto.getItemId(), decorationItemDto.getX(), decorationItemDto.getY()))
                 .toList();
-        return Decoration.of(user.getId(), Background.findById(backgroundId), items);
+        return new Decoration(user.getId(), Background.findById(backgroundId), items);
     }
 
     @Getter

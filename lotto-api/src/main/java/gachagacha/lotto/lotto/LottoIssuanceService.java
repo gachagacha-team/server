@@ -6,12 +6,14 @@ import gachagacha.domain.item.Item;
 import gachagacha.domain.item.ItemGrade;
 import gachagacha.domain.item.UserItem;
 import gachagacha.domain.item.UserItemRepository;
-import gachagacha.domain.lotto.IssuedLotto;
 import gachagacha.domain.lotto.Lotto;
 import gachagacha.domain.lotto.LottoRepository;
 import gachagacha.domain.outbox.Outbox;
 import gachagacha.domain.outbox.OutboxRepository;
+import gachagacha.lotto.dto.IssuedLotto;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,6 +22,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class LottoIssuanceService {
@@ -30,6 +33,10 @@ public class LottoIssuanceService {
     private final ObjectMapper objectMapper;
 
     public boolean checkLottoIssuanceCondition(Long userId, ItemGrade itemGrade) {
+        if (!lottoRepository.findByUserIdAndItemGrade(userId, itemGrade).isEmpty()) {
+            return false;
+        }
+
         List<UserItem> userItems = userItemRepository.findByUserId(userId);
         if (userItems == null) {
             return false;
@@ -55,9 +62,14 @@ public class LottoIssuanceService {
         if (won) {
             rewardCoin = getRandomCoin();
         }
-        Long lottoId = lottoRepository.save(Lotto.create(userId, itemGrade, won, rewardCoin));
-        String payload = objectMapper.writeValueAsString(new IssuedLotto(userId, lottoId));
-        outboxRepository.save(Outbox.create(topic, payload));
+
+        try {
+            Long lottoId = lottoRepository.save(Lotto.createInitialLotto(userId, itemGrade, won, rewardCoin));
+            String payload = objectMapper.writeValueAsString(new IssuedLotto(userId, lottoId));
+            outboxRepository.save(new Outbox(null, topic, payload));
+        } catch (ConstraintViolationException e) {
+            log.info("중복된 복권 저장으로 인해 ConstraintViolationException 예외 발생! catch: {}", e);
+        }
     }
 
     private boolean won() {

@@ -1,4 +1,4 @@
-package gachagacha.gachaapi.jwt;
+package gachagacha.gachaapi.auth.jwt;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

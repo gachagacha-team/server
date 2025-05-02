@@ -9,9 +9,10 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Getter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class User {
+
     private Long id;
     private SocialType socialType;
     private Long loginId;
@@ -22,26 +23,8 @@ public class User {
 
     private static final int GACHA_COST = 1000;
 
-    public static User of(String nickname, SocialType socialType, Long loginId, Profile profile) {
-        return new User(
-                null,
-                socialType,
-                loginId,
-                nickname,
-                new Coin(),
-                new Score(),
-                profile
-        );
-    }
-
-    public User(Long id, SocialType socialType, Long loginId, String nickname, int coin, int score, Profile profile) {
-        this.id = id;
-        this.socialType = socialType;
-        this.loginId = loginId;
-        this.nickname = nickname;
-        this.score = new Score(score);
-        this.coin = new Coin(coin);
-        this.profile = profile;
+    public static User createInitialUser(SocialType socialType, Long loginId, String nickname, Profile profile) {
+        return new User(null, socialType, loginId, nickname, Coin.createInitialCoin(), Score.createInitialScore(), profile);
     }
 
     public void deductCoinForGacha() {

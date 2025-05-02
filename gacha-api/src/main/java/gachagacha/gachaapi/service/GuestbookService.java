@@ -28,7 +28,7 @@ public class GuestbookService {
     }
 
     public Long addGuestbook(Minihome minihome, User author, String content) {
-        return guestbookRepository.save(Guestbook.of(minihome.getId(), author.getId(), content));
+        return guestbookRepository.save(Guestbook.createInitialGuestbook(minihome.getId(), author.getId(), content));
     }
 
     @Transactional

@@ -12,14 +12,6 @@ public class UserItem {
     private Item item;
     private Long userId;
 
-    public static UserItem of(User user, Item item) {
-        return new UserItem(
-                null,
-                item,
-                user.getId()
-        );
-    }
-
     public boolean isOwnedBy(User user) {
         return user.getId() == userId;
     }

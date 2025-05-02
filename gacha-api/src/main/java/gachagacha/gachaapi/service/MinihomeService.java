@@ -6,12 +6,15 @@ import gachagacha.domain.minihome.Minihome;
 import gachagacha.domain.minihome.MinihomeRepository;
 import gachagacha.domain.user.User;
 import gachagacha.domain.user.UserRepository;
+import gachagacha.storageredis.MinihomeRedisRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class MinihomeService {
@@ -19,18 +22,16 @@ public class MinihomeService {
     private final MinihomeRepository minihomeRepository;
     private final UserRepository userRepository;
 
-    public Minihome readMinihome(User user) {
-        return minihomeRepository.findByUser(user)
+    private final MinihomeRedisRepository minihomeRedisRepository;
+
+    public Minihome readMinihome(User minihomeUser) {
+        return minihomeRepository.findByUser(minihomeUser)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MINIHOME));
     }
 
-    @Transactional
-    public Minihome visitMinihome(User minihomeUser) {
-        Minihome minihome = minihomeRepository.findByUser(minihomeUser)
-                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MINIHOME));
-        minihome.visit();
-        minihomeRepository.update(minihome);
-        return minihome;
+    @Async
+    public void visitMinihome(Long minihomeId) {
+        minihomeRedisRepository.increaseVisitorCount(minihomeId);
     }
 
     public Slice<Minihome> explore(Pageable pageable) {
