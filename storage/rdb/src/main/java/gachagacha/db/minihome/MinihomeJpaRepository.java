@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -20,8 +19,7 @@ public interface MinihomeJpaRepository extends JpaRepository<MinihomeEntity, Lon
 
     @Modifying
     @Query("update MinihomeEntity m " +
-            "set m.totalVisitorCnt = :totalVisitorCount " +
+            "set m.totalVisitorCnt = m.totalVisitorCnt + 1 " +
             "where m.id = :id")
-    @Transactional
-    void updateVisitorCount(@Param("id") Long minihomeId, @Param("totalVisitorCount")int totalVisitorCount);
+    void increaseVisitorCount(@Param("id") Long minihomeId);
 }

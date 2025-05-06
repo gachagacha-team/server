@@ -21,5 +21,5 @@ public interface MinihomeRepository {
 
     void delete(Minihome minihome);
 
-    void updateVisitorCount(Long minihomeId, int visitorCount);
+    void increaseVisitorCount(Long minihomeId);
 }

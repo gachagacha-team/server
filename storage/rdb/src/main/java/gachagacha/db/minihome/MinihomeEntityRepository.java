@@ -56,7 +56,7 @@ public class MinihomeEntityRepository implements MinihomeRepository {
     }
 
     @Override
-    public void updateVisitorCount(Long minihomeId, int visitorCount) {
-        minihomeJpaRepository.updateVisitorCount(minihomeId, visitorCount);
+    public void increaseVisitorCount(Long minihomeId) {
+        minihomeJpaRepository.increaseVisitorCount(minihomeId);
     }
 }
