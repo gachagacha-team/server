@@ -50,6 +50,15 @@ public class MinihomeController {
         return ApiResponse.success(MinihomeResponse.of(currentUser, minihomeUser, minihome, followersCnt, followingsCnt, isFollowing));
     }
 
+    @Operation(summary = "미니홈 좋아요 등록/취소")
+    @PostMapping("/minihomes/{nickname}/like")
+    public ApiResponse like(@PathVariable String nickname, HttpServletRequest request) {
+        User minihomeUser = userService.readUserByNickname(nickname);
+        User currentUser = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
+        minihomeService.like(minihomeUser, currentUser);
+        return ApiResponse.success();
+    }
+
     @Operation(summary = "방명록 조회(페이지네이션)")
     @Parameter(name = "nickname", description = "미니홈 유저 닉네임")
     @Parameter(name = "pageable", description = "최신순(sort=createdAt,desc)")
