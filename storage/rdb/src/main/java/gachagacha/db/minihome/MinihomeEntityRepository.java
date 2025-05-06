@@ -59,4 +59,10 @@ public class MinihomeEntityRepository implements MinihomeRepository {
     public void increaseVisitorCount(Long minihomeId) {
         minihomeJpaRepository.increaseVisitorCount(minihomeId);
     }
+
+    @Override
+    public Optional<Minihome> findById(Long minihomeId) {
+        return minihomeJpaRepository.findById(minihomeId)
+                .map(minihomeEntity -> minihomeEntity.toMinihome());
+    }
 }

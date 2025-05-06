@@ -27,4 +27,8 @@ public class MinihomeMetaEntity {
     public static MinihomeMetaEntity fromMinihomeMeta(MinihomeMeta minihomeMeta) {
         return new MinihomeMetaEntity(minihomeMeta.getId(), minihomeMeta.getMinihomeId(), minihomeMeta.getLikeCount());
     }
+
+    public MinihomeMeta toMinihomeMeta() {
+        return new MinihomeMeta(id, minihomeId, likeCount);
+    }
 }

@@ -32,6 +32,7 @@ ErrorCode {
     NOT_FOUND_FOLLOW(306, HttpStatus.NOT_FOUND, "팔로우 내역을 찾을 수 없습니다."),
     NOT_FOUND_LOTTO(307, HttpStatus.NOT_FOUND, "복권을 찾을 수 없습니다."),
     NOT_FOUND_NOTIFICATION(308, HttpStatus.NOT_FOUND, "알림을 찾을 수 없습니다."),
+    NOT_FOUND_MINIHOME_META(308, HttpStatus.NOT_FOUND, "미니홈 메타 데이터를 찾을 수 없습니다."),
 
     // Business Error
     DUPLICATED_USER_REGISTRATION(401, HttpStatus.BAD_REQUEST, "이미 가입된 사용자입니다."),

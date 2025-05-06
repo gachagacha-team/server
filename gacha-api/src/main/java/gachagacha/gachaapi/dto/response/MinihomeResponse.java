@@ -36,7 +36,13 @@ public class MinihomeResponse {
     @JsonProperty(value = "isFollowing")
     private boolean isFollowing;
 
-    public static MinihomeResponse of(User currentUser, User minihomeUser, Minihome minihome, int followersCnt, int followingsCnt, boolean isFollowing) {
+    @JsonProperty(value = "isLike")
+    private boolean isLike;
+
+    @JsonProperty(value = "likeCount")
+    private long likeCount;
+
+    public static MinihomeResponse of(User currentUser, User minihomeUser, Minihome minihome, int followersCnt, int followingsCnt, boolean isFollowing, boolean isLike, long likeCount) {
         return new MinihomeResponse(
                 minihomeUser.getNickname().equals(currentUser.getNickname()),
                 minihomeUser.getNickname(),
@@ -45,7 +51,9 @@ public class MinihomeResponse {
                 followingsCnt,
                 minihome.getTotalVisitorCnt(),
                 minihomeUser.getProfile().getId(),
-                isFollowing
+                isFollowing,
+                isLike,
+                likeCount
         );
     }
 }

@@ -46,8 +46,10 @@ public class MinihomeController {
         int followersCnt = followService.readFollowersCnt(minihomeUser);
         int followingsCnt = followService.readFollowingsCnt(minihomeUser);
         boolean isFollowing = followService.isFollowing(currentUser, minihomeUser);
+        boolean isLike = minihomeService.isLike(currentUser, minihome);
+        long likeCount = minihomeService.readLikeCount(minihome);
         minihomeService.visitMinihome(minihome.getId());
-        return ApiResponse.success(MinihomeResponse.of(currentUser, minihomeUser, minihome, followersCnt, followingsCnt, isFollowing));
+        return ApiResponse.success(MinihomeResponse.of(currentUser, minihomeUser, minihome, followersCnt, followingsCnt, isFollowing, isLike, likeCount));
     }
 
     @Operation(summary = "미니홈 좋아요 등록/취소")

@@ -4,6 +4,7 @@ import gachagacha.common.exception.ErrorCode;
 import gachagacha.common.exception.customException.BusinessException;
 import gachagacha.domain.like.Like;
 import gachagacha.domain.like.LikeRepository;
+import gachagacha.domain.meta.MinihomeMeta;
 import gachagacha.domain.meta.MinihomeMetaRepository;
 import gachagacha.domain.minihome.Minihome;
 import gachagacha.domain.minihome.MinihomeRepository;
@@ -50,6 +51,11 @@ public class MinihomeService {
                         .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MINIHOME)));
     }
 
+    public Slice<Minihome> exploreByLikeCount(Pageable pageable) {
+        return minihomeMetaRepository.findAllBy(pageable)
+                .map(minihomeMeta -> minihomeRepository.findById(minihomeMeta.getMinihomeId()).get());
+    }
+
     public void like(User minihomeUser, User currentUser) {
         Minihome minihome = minihomeRepository.findByUser(minihomeUser)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MINIHOME));
@@ -61,5 +67,20 @@ public class MinihomeService {
             likeRepository.delete(optionalLike.get());
             minihomeMetaRepository.decreaseLikeCount(minihome.getId());
         }
+    }
+
+    public boolean isLike(User currentUser, Minihome minihome) {
+        return likeRepository.findByMinihomeIdAndAndUserId(minihome.getId(), currentUser.getId()).isPresent();
+    }
+
+    public MinihomeMeta readMinihomeMeta(Long minihomeId) {
+        return minihomeMetaRepository.findByMinihomeId(minihomeId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MINIHOME_META));
+    }
+
+    public long readLikeCount(Minihome minihome) {
+        MinihomeMeta minihomeMeta = minihomeMetaRepository.findByMinihomeId(minihome.getId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MINIHOME_META));
+        return minihomeMeta.getLikeCount();
     }
 }

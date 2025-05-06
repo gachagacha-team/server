@@ -22,4 +22,6 @@ public interface MinihomeRepository {
     void delete(Minihome minihome);
 
     void increaseVisitorCount(Long minihomeId);
+
+    Optional<Minihome> findById(Long minihomeId);
 }
