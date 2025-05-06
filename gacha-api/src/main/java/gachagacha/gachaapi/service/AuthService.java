@@ -4,8 +4,6 @@ import gachagacha.common.exception.ErrorCode;
 import gachagacha.common.exception.customException.BusinessException;
 import gachagacha.domain.decoration.Decoration;
 import gachagacha.domain.attendance.AttendanceRepository;
-import gachagacha.domain.meta.MinihomeMeta;
-import gachagacha.domain.meta.MinihomeMetaRepository;
 import gachagacha.domain.user.*;
 import gachagacha.gachaapi.auth.jwt.Jwt;
 import gachagacha.gachaapi.auth.jwt.JwtUtils;
@@ -33,7 +31,6 @@ public class AuthService {
     private final DecorationRepository decorationRepository;
     private final UserRepository userRepository;
     private final MinihomeRepository minihomeRepository;
-    private final MinihomeMetaRepository minihomeMetaRepository;
     private final GuestbookRepository guestbookRepository;
     private final AttendanceRepository attendanceRepository;
     private final FollowRepository followRepository;
@@ -47,8 +44,7 @@ public class AuthService {
         validateDuplicatedNickname(nickname);
 
         long userId = userRepository.save(User.createInitialUser(socialType, loginId, nickname, profile));
-        Long savedMinihomeId = minihomeRepository.save(new Minihome(null, userId, 0));
-        minihomeMetaRepository.save(MinihomeMeta.createInitialMinihomeMeta(savedMinihomeId));
+        minihomeRepository.save(new Minihome(null, userId, 0, 0));
 
         userBackgroundRepository.saveBasicBackgrounds(userId);
 
@@ -87,8 +83,7 @@ public class AuthService {
 
     @Transactional
     public void withdraw(User user, String refreshToken) {
-        Minihome minihome = minihomeRepository.findByUser(user)
-                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MINIHOME));
+        Minihome minihome = minihomeRepository.findByUserId(user.getId());
 
         // trade 엔티티 soft delete
         tradeRepository.softDeleteBySeller(user);

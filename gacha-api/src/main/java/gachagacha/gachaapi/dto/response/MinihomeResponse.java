@@ -42,7 +42,7 @@ public class MinihomeResponse {
     @JsonProperty(value = "likeCount")
     private long likeCount;
 
-    public static MinihomeResponse of(User currentUser, User minihomeUser, Minihome minihome, int followersCnt, int followingsCnt, boolean isFollowing, boolean isLike, long likeCount) {
+    public static MinihomeResponse of(User currentUser, User minihomeUser, Minihome minihome, int followersCnt, int followingsCnt, boolean isFollowing, boolean isLike) {
         return new MinihomeResponse(
                 minihomeUser.getNickname().equals(currentUser.getNickname()),
                 minihomeUser.getNickname(),
@@ -53,7 +53,7 @@ public class MinihomeResponse {
                 minihomeUser.getProfile().getId(),
                 isFollowing,
                 isLike,
-                likeCount
+                minihome.getLikeCount()
         );
     }
 }

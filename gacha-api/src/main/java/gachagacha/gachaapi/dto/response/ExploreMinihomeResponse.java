@@ -1,6 +1,5 @@
 package gachagacha.gachaapi.dto.response;
 
-import gachagacha.domain.meta.MinihomeMeta;
 import gachagacha.domain.minihome.Minihome;
 import gachagacha.domain.user.User;
 import lombok.AllArgsConstructor;
@@ -19,12 +18,12 @@ public class ExploreMinihomeResponse {
     private long profileId;
     private long likeCount;
 
-    public static ExploreMinihomeResponse of(Minihome minihome, User user, MinihomeMeta minihomeMeta) {
+    public static ExploreMinihomeResponse of(Minihome minihome, User user) {
         return new ExploreMinihomeResponse(
                 user.getNickname(),
                 minihome.getTotalVisitorCnt(),
                 user.getProfile().getId(),
-                minihomeMeta.getLikeCount()
+                minihome.getLikeCount()
         );
     }
 }

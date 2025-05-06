@@ -1,5 +1,7 @@
-package gachagacha.db.meta;
+package gachagacha.db.minihome;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -24,4 +26,6 @@ public interface MinihomeMetaJpaRepository extends JpaRepository<MinihomeMetaEnt
     void decreaseLikeCount(@Param("id") Long minihomeId);
 
     Optional<MinihomeMetaEntity> findByMinihomeId(Long minihomeId);
+
+    Slice<MinihomeMetaEntity> findAllBy(Pageable pageable);
 }

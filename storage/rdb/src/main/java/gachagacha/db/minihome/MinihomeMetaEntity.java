@@ -1,6 +1,5 @@
-package gachagacha.db.meta;
+package gachagacha.db.minihome;
 
-import gachagacha.domain.meta.MinihomeMeta;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,12 +22,4 @@ public class MinihomeMetaEntity {
 
     @Column(nullable = false)
     private Long likeCount;
-
-    public static MinihomeMetaEntity fromMinihomeMeta(MinihomeMeta minihomeMeta) {
-        return new MinihomeMetaEntity(minihomeMeta.getId(), minihomeMeta.getMinihomeId(), minihomeMeta.getLikeCount());
-    }
-
-    public MinihomeMeta toMinihomeMeta() {
-        return new MinihomeMeta(id, minihomeId, likeCount);
-    }
 }

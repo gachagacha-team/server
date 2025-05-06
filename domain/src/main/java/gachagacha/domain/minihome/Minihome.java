@@ -10,12 +10,5 @@ public class Minihome {
     private Long id;
     private Long userId;
     private int totalVisitorCnt;
-
-    public static Minihome createInitialMinihome(Long userId) {
-        return new Minihome(null, userId, 0);
-    }
-
-    public void visit() {
-        this.totalVisitorCnt++;
-    }
+    private long likeCount;
 }
