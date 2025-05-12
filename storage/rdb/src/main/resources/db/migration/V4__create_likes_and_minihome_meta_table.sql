@@ -5,6 +5,7 @@ create table likes
 (
     likes_id    bigint auto_increment primary key,
     minihome_id bigint not null,
+    user_id bigint not null,
     created_at  datetime(0) not null,
     updated_at  datetime(0) not null
 );
