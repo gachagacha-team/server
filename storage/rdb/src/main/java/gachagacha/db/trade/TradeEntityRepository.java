@@ -10,7 +10,6 @@ import gachagacha.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -26,31 +25,6 @@ public class TradeEntityRepository implements TradeRepository {
     public Long save(Trade trade) {
         TradeEntity tradeEntity = tradeJpaRepository.save(TradeEntity.fromTrade(trade));
         return tradeEntity.getId();
-    }
-
-    @Override
-    public List<Trade> findByItem(Item item) {
-        return null;
-    }
-
-    @Override
-    public Slice<Trade> findBySellerId(long sellerId, Pageable pageable) {
-        return null;
-    }
-
-    @Override
-    public List<Trade> findBySellerId(long sellerId) {
-        return null;
-    }
-
-    @Override
-    public List<Trade> findByBuyerId(long buyerId) {
-        return null;
-    }
-
-    @Override
-    public List<Trade> findByItemAndTradeStatus(Item item, TradeStatus tradeStatus) {
-        return null;
     }
 
     @Override
@@ -87,13 +61,6 @@ public class TradeEntityRepository implements TradeRepository {
         TradeEntity tradeEntity = tradeJpaRepository.findById(trade.getId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_PRODUCT));
         tradeJpaRepository.delete(tradeEntity);
-    }
-
-    @Override
-    public Trade findFirstProduct(Item item) {
-        return tradeJpaRepository.findFirstByItemAndTradeStatusAndSellerIdNotOrderByCreatedAtAsc(item, TradeStatus.ON_SALE, -1)
-                .orElseThrow(() -> new BusinessException(ErrorCode.INSUFFICIENT_PRODUCT))
-                .toTrade();
     }
 
     @Override
