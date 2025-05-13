@@ -17,6 +17,7 @@ import gachagacha.domain.trade.TradeRepository;
 import gachagacha.domain.trade.TradeStatus;
 import gachagacha.domain.user.User;
 import gachagacha.domain.user.UserRepository;
+import gachagacha.storageredis.TradeRedisRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 
@@ -39,6 +41,8 @@ public class TradeService {
     private final UserItemRepository userItemRepository;
     private final DecorationRepository decorationRepository;
     private final TradeRepository tradeRepository;
+    private final TradeRedisRepository tradeRedisRepository;
+    private final TransactionTemplate transactionTemplate;
 
     @Value("${spring.data.redis.stream.lotto-issuance-requests}")
     private String topic;
@@ -61,11 +65,13 @@ public class TradeService {
         user.decreaseScoreForSaleItem(userItem.getItem(), userItemRepository.findByUser(user));
         userItemRepository.delete(userItem);
         userRepository.update(user);
-        tradeRepository.save(new Trade(null, user.getId(), null, userItem.getItem(), TradeStatus.ON_SALE, null));
+        Long savedTradeId = tradeRepository.save(new Trade(null, user.getId(), null, userItem.getItem(), TradeStatus.ON_SALE, null));
+
+        tradeRedisRepository.saveTradeId(userItem.getItem().getItemId(), savedTradeId);
     }
 
     private void validateUserItemAuthorization(User user, UserItem userItem) {
-        if (userItem.getUserId() != user.getId()) {
+        if (!userItem.getUserId().equals(user.getId())) {
             throw new BusinessException(ErrorCode.UNAUTHORIZED);
         }
     }
@@ -86,34 +92,51 @@ public class TradeService {
         }
     }
 
-    @Transactional
-    public Notification purchase(User buyer, Item item) throws JsonProcessingException {
-        Trade trade = tradeRepository.findFirstProduct(item);
-        User seller = userRepository.findById(trade.getSellerId())
-                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
+    public Notification purchase(User buyer, Item item) {
+        Long tradeId = tradeRedisRepository.getTradeId(item.getItemId());
+        if (tradeId == null) {
+            throw new BusinessException(ErrorCode.INSUFFICIENT_PRODUCT);
+        }
 
-        buyer.deductCoin(item.getItemGrade().getPrice());
-        seller.addCoin(item.getItemGrade().getPrice());
+        try {
+            return transactionTemplate.execute(status -> {
+                Trade trade = tradeRepository.findById(tradeId)
+                        .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_PRODUCT));
+                User seller = userRepository.findById(trade.getSellerId())
+                        .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
 
-        buyer.increaseScoreByItem(item, userItemRepository.findByUser(buyer));
-        trade.processTrade(buyer);
+                buyer.deductCoin(item.getItemGrade().getPrice());
+                seller.addCoin(item.getItemGrade().getPrice());
 
-        userItemRepository.save(new UserItem(null, item, buyer.getId()));
-        userRepository.update(buyer);
-        userRepository.update(seller);
-        tradeRepository.update(trade);
+                buyer.increaseScoreByItem(item, userItemRepository.findByUser(buyer));
+                trade.processTrade(buyer);
 
-        String notificationMessage = NotificationType.TRADE_COMPLETED.generateNotificationMessageByTradeCompleted(item);
-        Notification notification = new Notification(null, seller.getId(), notificationMessage, NotificationType.TRADE_COMPLETED);
-        Long notificationId = notificationRepository.saveNotification(notification);
-        Notification savedNotification = notificationRepository.findById(notificationId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_NOTIFICATION));
+                userItemRepository.save(new UserItem(null, item, buyer.getId()));
+                userRepository.update(buyer);
+                userRepository.update(seller);
+                tradeRepository.update(trade);
 
-        LottoIssuanceEvent lottoIssuanceEvent = new LottoIssuanceEvent(buyer.getId(), item.getItemGrade());
-        String payload = objectMapper.writeValueAsString(lottoIssuanceEvent);
-        outboxRepository.save(new Outbox(null, topic, payload));
+                String notificationMessage = NotificationType.TRADE_COMPLETED.generateNotificationMessageByTradeCompleted(item);
+                Notification notification = new Notification(null, seller.getId(), notificationMessage, NotificationType.TRADE_COMPLETED);
+                Long notificationId = notificationRepository.saveNotification(notification);
+                Notification savedNotification = notificationRepository.findById(notificationId)
+                        .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_NOTIFICATION));
 
-        return savedNotification;
+                LottoIssuanceEvent lottoIssuanceEvent = new LottoIssuanceEvent(buyer.getId(), item.getItemGrade());
+                String payload = null;
+                try {
+                    payload = objectMapper.writeValueAsString(lottoIssuanceEvent);
+                } catch (JsonProcessingException e) {
+                    throw new RuntimeException(e);
+                }
+                outboxRepository.save(new Outbox(null, topic, payload));
+
+                return savedNotification;
+            });
+        } catch (RuntimeException e) {
+            tradeRedisRepository.saveTradeId(item.getItemId(), tradeId);
+            throw e;
+        }
     }
 
     public Trade readById(long tradeId) {

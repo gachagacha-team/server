@@ -51,6 +51,7 @@ public class RedisConfig {
         redisTemplate.setConnectionFactory(redisConnectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(Long.class));
+        redisTemplate.setEnableTransactionSupport(true);
         return redisTemplate;
     }
 
