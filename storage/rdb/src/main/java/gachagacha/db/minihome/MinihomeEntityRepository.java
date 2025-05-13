@@ -4,42 +4,44 @@ import gachagacha.common.exception.ErrorCode;
 import gachagacha.common.exception.customException.BusinessException;
 import gachagacha.domain.minihome.Minihome;
 import gachagacha.domain.minihome.MinihomeRepository;
-import gachagacha.domain.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
-
-import java.util.Optional;
+import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
 public class MinihomeEntityRepository implements MinihomeRepository {
 
     private final MinihomeJpaRepository minihomeJpaRepository;
+    private final MinihomeMetaJpaRepository minihomeMetaJpaRepository;
 
     @Override
     public Slice<Minihome> findAllBy(Pageable pageable) {
         return minihomeJpaRepository.findAllBy(pageable)
-                .map(minihomeEntity -> minihomeEntity.toMinihome());
+                .map(minihomeEntity -> {
+                    MinihomeMetaEntity minihomeMetaEntity = minihomeMetaJpaRepository.findByMinihomeId(minihomeEntity.getId())
+                            .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MINIHOME_META));
+                    return new Minihome(minihomeEntity.getId(), minihomeEntity.getUserId(), minihomeEntity.getTotalVisitorCnt(), minihomeMetaEntity.getLikeCount());
+                });
     }
 
     @Override
-    public Optional<Minihome> findByUserId(long userId) {
-        return minihomeJpaRepository.findByUserId(userId)
-                .map(minihomeEntity -> minihomeEntity.toMinihome());
+    public Minihome findByUserId(long userId) {
+        MinihomeEntity minihomeEntity = minihomeJpaRepository.findByUserId(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MINIHOME));
+        MinihomeMetaEntity minihomeMetaEntity = minihomeMetaJpaRepository.findByMinihomeId(minihomeEntity.getId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MINIHOME_META));
+        return new Minihome(minihomeEntity.getId(), minihomeEntity.getUserId(), minihomeEntity.getTotalVisitorCnt(), minihomeMetaEntity.getLikeCount());
     }
 
     @Override
     public Long save(Minihome minihome) {
         MinihomeEntity minihomeEntity = minihomeJpaRepository.save(MinihomeEntity.fromMinihome(minihome));
+        minihomeMetaJpaRepository.save(new MinihomeMetaEntity(null, minihomeEntity.getId(), minihome.getLikeCount()));
         return minihomeEntity.getId();
-    }
-
-    @Override
-    public Optional<Minihome> findByUser(User user) {
-        return minihomeJpaRepository.findByUserId(user.getId())
-                .map(minihomeEntity -> minihomeEntity.toMinihome());
     }
 
     @Override
@@ -56,7 +58,40 @@ public class MinihomeEntityRepository implements MinihomeRepository {
     }
 
     @Override
-    public void updateVisitorCount(Long minihomeId, int visitorCount) {
-        minihomeJpaRepository.updateVisitorCount(minihomeId, visitorCount);
+    public void increaseVisitorCount(Long minihomeId) {
+        minihomeJpaRepository.increaseVisitorCount(minihomeId);
+    }
+
+    @Override
+    public Minihome findById(Long minihomeId) {
+        MinihomeEntity minihomeEntity = minihomeJpaRepository.findById(minihomeId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MINIHOME));
+        MinihomeMetaEntity minihomeMetaEntity = minihomeMetaJpaRepository.findByMinihomeId(minihomeEntity.getId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MINIHOME_META));
+        return new Minihome(minihomeEntity.getId(), minihomeEntity.getUserId(), minihomeEntity.getTotalVisitorCnt(), minihomeMetaEntity.getLikeCount());
+    }
+
+    @Override
+    @Async
+    @Transactional
+    public void increaseLikeCount(Long minihomeId) {
+        minihomeMetaJpaRepository.increaseLikeCount(minihomeId);
+    }
+
+    @Override
+    @Async
+    @Transactional
+    public void decreaseLikeCount(Long minihomeId) {
+        minihomeMetaJpaRepository.decreaseLikeCount(minihomeId);
+    }
+
+    @Override
+    public Slice<Minihome> findAllByLikeCount(Pageable pageable) {
+        return minihomeMetaJpaRepository.findAllBy(pageable)
+                .map(minihomeMetaEntity -> {
+                    MinihomeEntity minihomeEntity = minihomeJpaRepository.findById(minihomeMetaEntity.getMinihomeId())
+                            .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MINIHOME));
+                    return new Minihome(minihomeEntity.getId(), minihomeEntity.getUserId(), minihomeEntity.getTotalVisitorCnt(), minihomeMetaEntity.getLikeCount());
+                });
     }
 }

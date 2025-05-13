@@ -28,10 +28,6 @@ public class MinihomeEntity extends BaseEntity {
         return new MinihomeEntity(minihome.getId(), minihome.getUserId(), minihome.getTotalVisitorCnt());
     }
 
-    public Minihome toMinihome() {
-        return new Minihome(id, userId, totalVisitorCnt);
-    }
-
     public void updateFromMinihome(Minihome minihome) {
         this.userId = minihome.getUserId();
         this.totalVisitorCnt = minihome.getTotalVisitorCnt();

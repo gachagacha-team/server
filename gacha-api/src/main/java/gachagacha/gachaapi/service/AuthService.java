@@ -44,7 +44,7 @@ public class AuthService {
         validateDuplicatedNickname(nickname);
 
         long userId = userRepository.save(User.createInitialUser(socialType, loginId, nickname, profile));
-        minihomeRepository.save(new Minihome(null, userId, 0));
+        minihomeRepository.save(new Minihome(null, userId, 0, 0));
 
         userBackgroundRepository.saveBasicBackgrounds(userId);
 
@@ -83,8 +83,7 @@ public class AuthService {
 
     @Transactional
     public void withdraw(User user, String refreshToken) {
-        Minihome minihome = minihomeRepository.findByUser(user)
-                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MINIHOME));
+        Minihome minihome = minihomeRepository.findByUserId(user.getId());
 
         // trade 엔티티 soft delete
         tradeRepository.softDeleteBySeller(user);

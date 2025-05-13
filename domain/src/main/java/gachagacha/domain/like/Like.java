@@ -1,14 +1,13 @@
-package gachagacha.domain.minihome;
+package gachagacha.domain.like;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class Minihome {
+public class Like {
 
     private Long id;
+    private Long minihomeId;
     private Long userId;
-    private int totalVisitorCnt;
-    private long likeCount;
 }

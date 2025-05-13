@@ -2,23 +2,16 @@ package gachagacha.db.trade;
 
 import gachagacha.domain.item.Item;
 import gachagacha.domain.trade.TradeStatus;
-import jakarta.persistence.LockModeType;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface TradeJpaRepository extends JpaRepository<TradeEntity, Long> {
-    List<TradeEntity> findByItem(Item item);
-
-    @Lock(value = LockModeType.PESSIMISTIC_WRITE)
-    Optional<TradeEntity> findFirstByItemAndTradeStatusAndSellerIdNotOrderByCreatedAtAsc(Item item, TradeStatus tradeStatus, long userId);
 
     Slice<TradeEntity> findBySellerId(long sellerId, Pageable pageable);
 

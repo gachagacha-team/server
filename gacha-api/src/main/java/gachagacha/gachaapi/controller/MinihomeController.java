@@ -46,8 +46,18 @@ public class MinihomeController {
         int followersCnt = followService.readFollowersCnt(minihomeUser);
         int followingsCnt = followService.readFollowingsCnt(minihomeUser);
         boolean isFollowing = followService.isFollowing(currentUser, minihomeUser);
+        boolean isLike = minihomeService.isLike(currentUser, minihome);
         minihomeService.visitMinihome(minihome.getId());
-        return ApiResponse.success(MinihomeResponse.of(currentUser, minihomeUser, minihome, followersCnt, followingsCnt, isFollowing));
+        return ApiResponse.success(MinihomeResponse.of(currentUser, minihomeUser, minihome, followersCnt, followingsCnt, isFollowing, isLike));
+    }
+
+    @Operation(summary = "미니홈 좋아요 등록/취소")
+    @PostMapping("/minihomes/{nickname}/like")
+    public ApiResponse like(@PathVariable String nickname, HttpServletRequest request) {
+        User minihomeUser = userService.readUserByNickname(nickname);
+        User currentUser = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
+        minihomeService.like(minihomeUser, currentUser);
+        return ApiResponse.success();
     }
 
     @Operation(summary = "방명록 조회(페이지네이션)")

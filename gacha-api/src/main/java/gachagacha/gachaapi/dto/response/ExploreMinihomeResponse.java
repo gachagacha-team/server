@@ -16,12 +16,14 @@ public class ExploreMinihomeResponse {
     private String nickname;
     private int totalVisitorCnt;
     private long profileId;
+    private long likeCount;
 
     public static ExploreMinihomeResponse of(Minihome minihome, User user) {
         return new ExploreMinihomeResponse(
                 user.getNickname(),
                 minihome.getTotalVisitorCnt(),
-               user.getProfile().getId()
+                user.getProfile().getId(),
+                minihome.getLikeCount()
         );
     }
 }
