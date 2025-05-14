@@ -1,4 +1,4 @@
-package gachagacha.gachaapi.service;
+package gachagacha.gachaapi.notification;
 
 import gachagacha.gachaapi.dto.response.NotificationsResponse;
 import gachagacha.domain.notification.Notification;;
@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Component
-public class SseService {
+public class SseProcessor {
 
     private final Map<Long, SseEmitter> emitters = new ConcurrentHashMap<>();
 

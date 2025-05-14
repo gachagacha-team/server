@@ -11,7 +11,7 @@ public interface NotificationRepository {
 
     List<Notification> readRecentNotifications(User user);
 
-    Long saveNotification(Notification notification);
+    Long save(Notification notification);
 
     boolean hasNewNotification(Long userId);
 
