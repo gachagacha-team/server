@@ -1,15 +1,11 @@
 package gachagacha.gachaapi.messaging;
 
-import gachagacha.gachaapi.service.SseService;
+import gachagacha.gachaapi.notification.NotificationProcessor;
+import gachagacha.gachaapi.notification.SseProcessor;
 import gachagacha.common.exception.ErrorCode;
 import gachagacha.common.exception.customException.BusinessException;
-import gachagacha.domain.notification.Notification;
 import gachagacha.domain.lotto.Lotto;
 import gachagacha.domain.lotto.LottoRepository;
-import gachagacha.domain.notification.NotificationRepository;
-import gachagacha.domain.user.User;
-import gachagacha.domain.user.UserRepository;
-import gachagacha.domain.notification.NotificationType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
@@ -32,9 +28,8 @@ public class LottoMessageListener implements StreamListener<String, MapRecord<St
     private final StreamMessageListenerContainer listenerContainer;
     private final RedisTemplate<String, String> redisTemplate;
     private final LottoRepository lottoRepository;
-    private final UserRepository userRepository;
-    private final SseService sseService;
-    private final NotificationRepository notificationRepository;
+    private final SseProcessor sseProcessor;
+    private final NotificationProcessor notificationProcessor;
 
     @Value("${spring.data.redis.stream.lotto-issued}")
     private String streamKey;
@@ -57,16 +52,9 @@ public class LottoMessageListener implements StreamListener<String, MapRecord<St
 
         Lotto lotto = lottoRepository.findById(lottoId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_LOTTO));
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_USER));
 
-        String notificationMessage = NotificationType.LOTTO_ISSUED.generateNotificationMessageByLottoIssued(lotto.getItemGrade());
-        Notification notification = new Notification(null, userId, notificationMessage, NotificationType.LOTTO_ISSUED);
-        Long notificationId = notificationRepository.saveNotification(notification);
-        Notification savedNotification = notificationRepository.findById(notificationId)
-                .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_NOTIFICATION));
-
-        sseService.issuedLotto(savedNotification);
+        Long notificationId = notificationProcessor.saveLottoIssuedNotification(userId, lotto.getItemGrade());
+        sseProcessor.issuedLotto(notificationProcessor.findById(notificationId));
 
         redisTemplate.opsForStream().acknowledge(streamKey, CONSUMER_GROUP_NAME, message.getId());
     }

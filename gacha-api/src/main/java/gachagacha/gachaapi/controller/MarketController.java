@@ -3,12 +3,12 @@ package gachagacha.gachaapi.controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import gachagacha.domain.notification.Notification;
 import gachagacha.gachaapi.auth.jwt.JwtUtils;
-import gachagacha.gachaapi.service.SseService;
 import gachagacha.domain.item.Item;
 import gachagacha.domain.item.ItemGrade;
 import gachagacha.domain.item.UserItem;
 import gachagacha.domain.trade.Trade;
 import gachagacha.domain.user.User;
+import gachagacha.gachaapi.notification.SseProcessor;
 import gachagacha.gachaapi.service.UserService;
 import gachagacha.gachaapi.dto.response.UserItemsForSaleResponse;
 import gachagacha.gachaapi.dto.request.AddProductRequest;
@@ -38,7 +38,7 @@ public class MarketController {
     private final UserService userService;
     private final ItemService itemService;
     private final JwtUtils jwtUtils;
-    private final SseService sseService;
+    private final SseProcessor sseProcessor;
 
     @Value("${image.api.endpoints.items}")
     private String itemsImageApiEndpoint;
@@ -74,7 +74,7 @@ public class MarketController {
         User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         Item purchaseItem = Item.findById(itemId);
         Notification notification = tradeService.purchase(user, purchaseItem);
-        sseService.tradeComplete(notification); // todo: sse 알림 책임은 어느 모듈에서?
+        sseProcessor.tradeComplete(notification);
         return ApiResponse.success();
     }
 

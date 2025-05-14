@@ -26,7 +26,7 @@ public class NotificationEntityRepository implements NotificationRepository {
     }
 
     @Override
-    public Long saveNotification(Notification notification) {
+    public Long save(Notification notification) {
         NotificationEntity notificationEntity = notificationJpaRepository.save(NotificationEntity.fromNotification(notification));
         return notificationEntity.getId();
     }

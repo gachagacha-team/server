@@ -5,7 +5,7 @@ import gachagacha.domain.item.ItemGrade;
 import gachagacha.domain.notification.Notification;
 import gachagacha.domain.notification.NotificationType;
 import gachagacha.gachaapi.auth.jwt.JwtUtils;
-import gachagacha.gachaapi.service.SseService;
+import gachagacha.gachaapi.notification.SseProcessor;
 import gachagacha.domain.user.User;
 import gachagacha.gachaapi.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,7 +25,7 @@ import java.io.IOException;
 @RequiredArgsConstructor
 public class SseController {
 
-    private final SseService sseService;
+    private final SseProcessor sseProcessor;
     private final JwtUtils jwtUtils;
     private final UserService userService;
 
@@ -33,7 +33,7 @@ public class SseController {
     public ResponseEntity<SseEmitter> connect(HttpServletRequest request) {
         User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         SseEmitter emitter = new SseEmitter(300000l);
-        sseService.put(user.getId(), emitter);
+        sseProcessor.put(user.getId(), emitter);
         try {
             emitter.send(SseEmitter.event()
                     .name("connect")
@@ -47,7 +47,7 @@ public class SseController {
     @PostMapping(value = "/sse/test")
     public String sseTest(HttpServletRequest request) {
         User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
-        sseService.issuedLotto(new Notification(1l, user.getId(),
+        sseProcessor.issuedLotto(new Notification(1l, user.getId(),
                 NotificationType.LOTTO_ISSUED.generateNotificationMessageByLottoIssued(ItemGrade.S),
                 NotificationType.LOTTO_ISSUED));
         return "success!";
@@ -56,7 +56,7 @@ public class SseController {
     @PostMapping(value = "/sse/test2")
     public String sseTest2(HttpServletRequest request) {
         User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
-        sseService.tradeComplete(new Notification(1l, user.getId(),
+        sseProcessor.tradeComplete(new Notification(1l, user.getId(),
                 NotificationType.TRADE_COMPLETED.generateNotificationMessageByTradeCompleted(Item.BLACK_CAT),
                 NotificationType.TRADE_COMPLETED));
         return "success!";
