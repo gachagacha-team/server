@@ -45,8 +45,9 @@ create table lotto
     used        boolean      not null,
     won         boolean      not null,
     reward_coin int          not null,
-    created_at       datetime(0) not null,
-    updated_at       datetime(0) not null
+    created_at  datetime(0) not null,
+    updated_at  datetime(0) not null,
+    constraint uq_lotto_user_itemgrade unique (user_id, item_grade);
 );
 
 create table trade
