@@ -1,6 +1,7 @@
 package gachagacha.db.pending_item_stock;
 
 import gachagacha.db.BaseEntity;
+import gachagacha.domain.item_stock.PendingItemStock;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,4 +24,8 @@ public class PendingItemStockEntity extends BaseEntity {
 
     @Column(nullable = false)
     private Long tradeId;
+
+    public static PendingItemStockEntity fromPendingItemStock(PendingItemStock pendingItemStock) {
+        return new PendingItemStockEntity(pendingItemStock.getId(), pendingItemStock.getItemId(), pendingItemStock.getTradeId());
+    }
 }

@@ -4,8 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gachagacha.common.exception.ErrorCode;
 import gachagacha.common.exception.customException.BusinessException;
-import gachagacha.db.pending_item_stock.PendingItemStockEntity;
-import gachagacha.db.pending_item_stock.PendingJpaRepository;
+import gachagacha.domain.item_stock.ItemStockProcessor;
 import gachagacha.domain.decoration.DecorationRepository;
 import gachagacha.domain.item.*;
 import gachagacha.domain.lotto.LottoIssuanceEvent;
@@ -18,7 +17,6 @@ import gachagacha.domain.trade.TradeStatus;
 import gachagacha.domain.user.User;
 import gachagacha.domain.user.UserRepository;
 import gachagacha.gachaapi.notification.NotificationProcessor;
-import gachagacha.storageredis.TradeRedisRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,10 +39,9 @@ public class TradeService {
     private final UserItemRepository userItemRepository;
     private final DecorationRepository decorationRepository;
     private final TradeRepository tradeRepository;
-    private final TradeRedisRepository tradeRedisRepository;
     private final TransactionTemplate transactionTemplate;
     private final NotificationProcessor notificationProcessor;
-    private final PendingJpaRepository pendingJpaRepository;
+    private final ItemStockProcessor itemStockProcessor;
 
     @Value("${spring.data.redis.stream.lotto-issuance-requests}")
     private String topic;
@@ -68,14 +65,7 @@ public class TradeService {
         userItemRepository.delete(userItem);
         userRepository.update(user);
         Long savedTradeId = tradeRepository.save(new Trade(null, user.getId(), null, userItem.getItem(), TradeStatus.ON_SALE, null));
-
-        try {
-            tradeRedisRepository.pushTradeId(userItem.getItem().getItemId(), savedTradeId);
-        } catch (RuntimeException e) {
-            log.info("Redis에 거래 등록 실패");
-            PendingItemStockEntity pendingItemStockEntity = new PendingItemStockEntity(null, userItem.getItem().getItemId(), savedTradeId);
-            pendingJpaRepository.save(pendingItemStockEntity);
-        }
+        itemStockProcessor.registerTradeToRedis(userItem.getItem().getItemId(), savedTradeId);
     }
 
     private void validateUserItemAuthorization(User user, UserItem userItem) {
@@ -101,30 +91,16 @@ public class TradeService {
     }
 
     public Notification purchase(User buyer, Item item) {
-        try {
-            while (true) {
-                Long tradeId = tradeRedisRepository.getTradeId(item.getItemId());
-                if (tradeId == null) { // 재고 없는 경우 -> 예외 응답 반환
-                    throw new BusinessException(ErrorCode.INSUFFICIENT_PRODUCT);
-                }
-                Trade trade = tradeRepository.findById(tradeId)
-                        .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_PRODUCT));
-                if (trade.getTradeStatus() == TradeStatus.ON_SALE) {
-                    try {
-                        return completeTrade(trade, buyer, item);
-                    } catch (RuntimeException e) { // 롤백시 -> 레디스에 trade id 다시 push 후 예외 응답 반환
-                        tradeRedisRepository.pushTradeId(item.getItemId(), trade.getId());
-                        throw new BusinessException(ErrorCode.SERVICE_UNAVAILABLE);
-                    }
+        while (true) {
+            Trade trade = itemStockProcessor.getTrade(item);
+            if (trade.getTradeStatus() == TradeStatus.ON_SALE) {
+                try {
+                    return completeTrade(trade, buyer, item);
+                } catch (RuntimeException e) { // 롤백시 -> 레디스에 trade id 다시 push 후 예외 응답 반환
+                    itemStockProcessor.pushItemStock(item.getItemId(), trade.getId());
+                    throw new BusinessException(ErrorCode.SERVICE_UNAVAILABLE);
                 }
             }
-        } catch (RuntimeException e) {
-            if (e instanceof BusinessException) {
-                throw e;
-            }
-            // 레디스 장애시 -> RDB에서 거래
-            Trade trade = tradeRepository.findFirstOnSaleProductWithLock(item);
-            return completeTrade(trade, buyer, item);
         }
     }
 
