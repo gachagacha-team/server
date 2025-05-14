@@ -75,4 +75,11 @@ public class TradeEntityRepository implements TradeRepository {
         return tradeJpaRepository.findById(tradeId)
                 .map(tradeEntity -> tradeEntity.toTrade());
     }
+
+    @Override
+    public Trade findFirstOnSaleProductWithLock(Item item) {
+        return tradeJpaRepository.findFirstByItemAndTradeStatusAndSellerIdNotOrderByCreatedAtAsc(item, TradeStatus.ON_SALE, -1)
+                        .map(tradeEntity -> tradeEntity.toTrade())
+                                .orElseThrow(() -> new BusinessException(ErrorCode.INSUFFICIENT_PRODUCT));
+    }
 }

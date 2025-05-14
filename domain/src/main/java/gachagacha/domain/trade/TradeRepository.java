@@ -27,4 +27,6 @@ public interface TradeRepository {
     void update(Trade trade);
 
     Optional<Trade> findById(long tradeId);
+
+    Trade findFirstOnSaleProductWithLock(Item item);
 }

@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 public enum
 ErrorCode {
 
+    SERVICE_UNAVAILABLE(001, HttpStatus.SERVICE_UNAVAILABLE, "서비스 문제로, 잠시후 다시 시도해주세요."),
+
     // JWT
     REQUIRED_JWT(101, HttpStatus.UNAUTHORIZED, "토큰은 필수입니다."),
     EXPIRED_JWT(102, HttpStatus.UNAUTHORIZED, "만료된 토큰입니다."),

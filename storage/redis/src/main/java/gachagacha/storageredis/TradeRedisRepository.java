@@ -11,7 +11,7 @@ public class TradeRedisRepository {
     private final RedisTemplate<String, Long> redisTemplate;
     private static final String ITEM_STOCK_PREFIX = "item:stock:";
 
-    public void saveTradeId(Long itemId, Long tradeId) {
+    public void pushTradeId(Long itemId, Long tradeId) {
         redisTemplate.opsForList().rightPush(ITEM_STOCK_PREFIX + itemId, tradeId);
     }
 
