@@ -3,6 +3,7 @@ package gachagacha.gachaapi.dto.response;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import gachagacha.domain.user.User;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -34,5 +35,9 @@ public class FollowingResponse {
 
     public String getNickname() {
         return nickname;
+    }
+
+    public long getProfileId() {
+        return profileId;
     }
 }

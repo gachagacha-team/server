@@ -14,6 +14,7 @@ public class FollowerResponse {
     private long userId;
     private String nickname;
     private long profileId;
+
     @JsonProperty("isFollowing")
     private boolean isFollowing; // 조회하는 사용자가 이 사용자를 팔로우하는지 여부
 
@@ -39,5 +40,9 @@ public class FollowerResponse {
 
     public String getNickname() {
         return nickname;
+    }
+
+    public long getProfileId() {
+        return profileId;
     }
 }
