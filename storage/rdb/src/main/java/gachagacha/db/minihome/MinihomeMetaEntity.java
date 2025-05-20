@@ -7,14 +7,13 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "minihome_meta")
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "minihome_meta", indexes = @Index(name = "idx_minihome_meta_like_count_minihome_id", columnList = "like_count, minihome_id"))
 public class MinihomeMetaEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "minihome_meta_id")
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)

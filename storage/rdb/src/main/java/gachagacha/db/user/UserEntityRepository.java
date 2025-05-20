@@ -19,12 +19,6 @@ public class UserEntityRepository implements UserRepository {
     private final UserJpaRepository userJpaRepository;
 
     @Override
-    public Slice<User> findAllBy(Pageable pageable) {
-        return userJpaRepository.findAllBy(pageable)
-                .map(userEntity -> userEntity.toUser());
-    }
-
-    @Override
     public Optional<User> findBySocialTypeAndLoginId(SocialType socialType, Long loginId) {
         return userJpaRepository.findBySocialTypeAndLoginId(socialType, loginId)
                 .map(userEntity -> userEntity.toUser());
@@ -70,5 +64,10 @@ public class UserEntityRepository implements UserRepository {
     public boolean existsByNickname(String nickname) {
         return userJpaRepository.findByNickname(nickname)
                 .isPresent();
+    }
+
+    @Override
+    public Slice<Long> findUserIdsOrderByScoreDescAndUserIdDesc(Pageable pageable, Integer score, Long userId) {
+        return userJpaRepository.findUserIdsOrderByScoreDescAndUserIdDesc(pageable, score, userId);
     }
 }

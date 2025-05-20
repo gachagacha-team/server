@@ -11,22 +11,14 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Repository
 @RequiredArgsConstructor
 public class MinihomeEntityRepository implements MinihomeRepository {
 
     private final MinihomeJpaRepository minihomeJpaRepository;
     private final MinihomeMetaJpaRepository minihomeMetaJpaRepository;
-
-    @Override
-    public Slice<Minihome> findAllBy(Pageable pageable) {
-        return minihomeJpaRepository.findAllBy(pageable)
-                .map(minihomeEntity -> {
-                    MinihomeMetaEntity minihomeMetaEntity = minihomeMetaJpaRepository.findByMinihomeId(minihomeEntity.getId())
-                            .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MINIHOME_META));
-                    return new Minihome(minihomeEntity.getId(), minihomeEntity.getUserId(), minihomeEntity.getTotalVisitorCnt(), minihomeMetaEntity.getLikeCount());
-                });
-    }
 
     @Override
     public Minihome findByUserId(long userId) {
@@ -86,12 +78,17 @@ public class MinihomeEntityRepository implements MinihomeRepository {
     }
 
     @Override
-    public Slice<Minihome> findAllByLikeCount(Pageable pageable) {
-        return minihomeMetaJpaRepository.findAllBy(pageable)
-                .map(minihomeMetaEntity -> {
-                    MinihomeEntity minihomeEntity = minihomeJpaRepository.findById(minihomeMetaEntity.getMinihomeId())
-                            .orElseThrow(() -> new BusinessException(ErrorCode.NOT_FOUND_MINIHOME));
-                    return new Minihome(minihomeEntity.getId(), minihomeEntity.getUserId(), minihomeEntity.getTotalVisitorCnt(), minihomeMetaEntity.getLikeCount());
-                });
+    public Slice<Long> findMinihomeIdsOrderByCreatedAtDescAndMinihomeIdDesc(Pageable pageable, LocalDateTime createdAt, Long minihomeId) {
+        return minihomeJpaRepository.findMinihomeIdsOrderByCreatedAtDescAndMinihomeIdDesc(pageable, createdAt, minihomeId);
+    }
+
+    @Override
+    public Slice<Long> findMinihomeIdsOrderByTotalVisitorCntDescAndMinihomeIdDesc(Pageable pageable, Integer totalVisitorCnt, Long minihomeId) {
+        return minihomeJpaRepository.findMinihomeIdsOrderByTotalVisitorCntDescAndMinihomeIdDesc(pageable, totalVisitorCnt, minihomeId);
+    }
+
+    @Override
+    public Slice<Long> findMinihomeIdsOrderByLikeCountDescAndMinihomeIdDesc(Pageable pageable, long likeCount, long minihomeId) {
+        return minihomeMetaJpaRepository.findMinihomeIdsOrderByLikeCountDescAndMinihomeIdDesc(pageable, likeCount, minihomeId);
     }
 }

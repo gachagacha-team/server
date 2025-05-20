@@ -9,13 +9,15 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "users", uniqueConstraints = { @UniqueConstraint(columnNames = { "socialType", "loginId" }) })
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "users",
+        uniqueConstraints = {@UniqueConstraint(columnNames = {"social_type", "login_id"})},
+        indexes = @Index(name = "idx_users_score_user_id", columnList = "score, user_id"))
 public class UserEntity extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
