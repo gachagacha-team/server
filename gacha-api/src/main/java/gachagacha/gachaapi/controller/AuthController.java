@@ -120,7 +120,7 @@ public class AuthController {
     }
 
     @Operation(summary = "회원 정보 수정")
-    @PutMapping("/user_info")
+    @PutMapping("/userInfo")
     public ApiResponse updateUserInfo(@RequestBody UpdateUserInfoRequest requestDto, HttpServletRequest request) {
         User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         userService.updateUserInfo(user, requestDto.getNickname(), requestDto.getProfileId());
@@ -128,7 +128,7 @@ public class AuthController {
     }
 
     @Operation(summary = "사용자 정보 조회")
-    @GetMapping("/user_info")
+    @GetMapping("/userInfo")
     public ApiResponse<UserInfoResponse> readUserInfo(HttpServletRequest request) {
         User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         return ApiResponse.success(UserInfoResponse.of(user));

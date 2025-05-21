@@ -65,7 +65,7 @@ public class ExploreController {
     @Parameter(name = "likeCount", description = "이전 likeCount")
     @Parameter(name = "minihomeId", description = "이전 minihomeId")
     @Parameter(name = "size", description = "한 페이지의 사이즈")
-    @GetMapping("/explore/minihome/like_count")
+    @GetMapping("/explore/minihome/likeCount")
     public ApiResponse<ExploreResponse> exploreByLikeCount(@RequestParam(required = false) Long likeCount,
                                                            @RequestParam(required = false) Long minihomeId,
                                                            Pageable pageable) {

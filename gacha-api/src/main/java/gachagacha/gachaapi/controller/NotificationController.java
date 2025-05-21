@@ -24,7 +24,7 @@ public class NotificationController {
     private final NotificationService notificationService;
 
     @Operation(summary = "새로운 알림 유무 조회")
-    @GetMapping("/notifications/has_new")
+    @GetMapping("/notifications/hasNew")
     public ApiResponse<HasNewNotificationResponse> hasNewNotification(HttpServletRequest request) {
         User user = userService.readUserById(jwtUtils.getUserIdFromHeader(request));
         boolean hasNewNotification = notificationService.hasNewNotification(user);
