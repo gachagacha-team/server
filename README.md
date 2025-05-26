@@ -1,8 +1,8 @@
-# 가챠가챠(GachaGacha)
+# 👾 가챠가챠 👾
 
 ## 프로젝트 소개
 
-- 가챠가챠(GachaGacha)는 아이템 뽑기 서비스로, 아이템 뽑기 및 거래, 미니홈 꾸미기 등의 기능을 제공합니다.
+- 가챠가챠(GachaGacha)는 아이템 뽑기 및 거래, 미니홈 꾸미기 등의 기능을 제공하는 커뮤니티 플랫폼입니다.
 
 ## 사용 기술
 
@@ -11,7 +11,6 @@
 - Java
 - Spring Boot
 - JPA/Hibernate
-- Kafka
 - Docker
 
 ### Database
@@ -25,5 +24,5 @@
 - Docker
 - Github Actions
 
-## Architecture
-<p align="center"><img src="https://github.com/user-attachments/assets/8f805c0d-d92a-4e58-842f-0865cba534a5" width="650" height="450"></p>
+## Backend Architecture
+<p align="center"><img src="https://github.com/user-attachments/assets/24ce7dd0-16bd-43b4-b590-062e5d7d4444" width="650" height="450"></p>
