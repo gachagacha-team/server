@@ -1,59 +1,77 @@
 package gachagacha.gachaapi.controller;
 
-import gachagacha.domain.minihome.Minihome;
-import gachagacha.gachaapi.dto.response.ExploreMinihomeResponse;
+import gachagacha.gachaapi.dto.response.ExploreResponse;
 import gachagacha.gachaapi.common.ApiResponse;
 import gachagacha.gachaapi.service.MinihomeService;
-import gachagacha.domain.user.User;
-import gachagacha.gachaapi.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Slice;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequiredArgsConstructor
 public class ExploreController {
 
     private final MinihomeService minihomeService;
-    private final UserService userService;
 
-    @Operation(summary = "미니홈 리스트 조회(가입순, 인기순)(무한스크롤)")
-    @Parameter(name = "pageable", description = "가입순(sort=createdAt,desc), 인기순(sort=totalVisitorCnt,desc)")
-    @GetMapping("/explore/minihome")
-    public ApiResponse<Slice<ExploreMinihomeResponse>> explore(Pageable pageable) {
-        Slice<ExploreMinihomeResponse> data = minihomeService.explore(pageable)
-                .map(minihome -> {
-                    User user = userService.readUserById(minihome.getUserId());
-                    return ExploreMinihomeResponse.of(minihome, user);
-                });
+    @Operation(summary = "가입순 둘러보기(무한스크롤)")
+    @Parameter(name = "createdAt", description = "이전 createdAt")
+    @Parameter(name = "minihomeId", description = "이전 minihomeId")
+    @Parameter(name = "size", description = "한 페이지의 사이즈")
+    @GetMapping("/explore/minihome/createdAt")
+    public ApiResponse<ExploreResponse> exploreByCreatedAt(@RequestParam(required = false) LocalDateTime createdAt,
+                                                           @RequestParam(required = false) Long minihomeId,
+                                                           Pageable pageable) {
+        createdAt = createdAt == null ? LocalDateTime.now() : createdAt;
+        minihomeId = minihomeId == null ? Long.MAX_VALUE : minihomeId;
+        ExploreResponse data = minihomeService.exploreByCreatedAt(pageable, createdAt, minihomeId);
         return ApiResponse.success(data);
     }
 
-    @Operation(summary = "미니홈 리스트 조회(스코어순)(무한스크롤)")
-    @Parameter(name = "pageable", description = "스코어순(sort=score,desc)")
+    @Operation(summary = "인기순 둘러보기(무한스크롤)")
+    @Parameter(name = "totalVisitorCnt", description = "이전 totalVisitorCnt")
+    @Parameter(name = "minihomeId", description = "이전 minihomeId")
+    @Parameter(name = "size", description = "한 페이지의 사이즈")
+    @GetMapping("/explore/minihome/totalVisitorCnt")
+    public ApiResponse<ExploreResponse> exploreByTotalVisitorCnt(@RequestParam(required = false) Integer totalVisitorCnt,
+                                                                 @RequestParam(required = false) Long minihomeId,
+                                                                 Pageable pageable) {
+        totalVisitorCnt = totalVisitorCnt == null ? Integer.MAX_VALUE : totalVisitorCnt;
+        minihomeId = minihomeId == null ? Long.MAX_VALUE : minihomeId;
+        ExploreResponse data = minihomeService.exploreByTotalVisitorCnt(pageable, totalVisitorCnt, minihomeId);
+        return ApiResponse.success(data);
+    }
+
+    @Operation(summary = "스코어순 둘러보기(무한스크롤)")
+    @Parameter(name = "score", description = "이전 score")
+    @Parameter(name = "userId", description = "이전 userId")
+    @Parameter(name = "size", description = "한 페이지의 사이즈")
     @GetMapping("/explore/minihome/score")
-    public ApiResponse<Slice<ExploreMinihomeResponse>> exploreByScore(Pageable pageable) {
-        Slice<ExploreMinihomeResponse> data = minihomeService.exploreByScore(pageable)
-                .map(minihome -> {
-                    User user = userService.readUserById(minihome.getUserId());
-                    return ExploreMinihomeResponse.of(minihome, user);
-                });
+    public ApiResponse<ExploreResponse> exploreByScore(@RequestParam(required = false) Integer score,
+                                                       @RequestParam(required = false) Long userId,
+                                                       Pageable pageable) {
+        score = score == null ? Integer.MAX_VALUE : score;
+        userId = userId == null ? Long.MAX_VALUE : userId;
+        ExploreResponse data = minihomeService.exploreByScore(pageable, score, userId);
         return ApiResponse.success(data);
     }
 
-    @Operation(summary = "미니홈 리스트 조회(좋아요순)(무한스크롤)")
-    @Parameter(name = "pageable", description = "좋아요순(sort=likeCount,desc)")
-    @GetMapping("/explore/minihome/like_count")
-    public ApiResponse<Slice<ExploreMinihomeResponse>> exploreByLikeCount(Pageable pageable) {
-        Slice<ExploreMinihomeResponse> data = minihomeService.exploreByLikeCount(pageable)
-                .map(minihome -> {
-                    User user = userService.readUserById(minihome.getUserId());
-                    return ExploreMinihomeResponse.of(minihome, user);
-                });
+    @Operation(summary = "좋아요순 둘러보기(무한스크롤)")
+    @Parameter(name = "likeCount", description = "이전 likeCount")
+    @Parameter(name = "minihomeId", description = "이전 minihomeId")
+    @Parameter(name = "size", description = "한 페이지의 사이즈")
+    @GetMapping("/explore/minihome/likeCount")
+    public ApiResponse<ExploreResponse> exploreByLikeCount(@RequestParam(required = false) Long likeCount,
+                                                           @RequestParam(required = false) Long minihomeId,
+                                                           Pageable pageable) {
+        likeCount = likeCount == null ? Long.MAX_VALUE : likeCount;
+        minihomeId = minihomeId == null ? Long.MAX_VALUE : minihomeId;
+        ExploreResponse data = minihomeService.exploreByLikeCount(pageable, likeCount, minihomeId);
         return ApiResponse.success(data);
     }
 }

@@ -9,8 +9,6 @@ import java.util.Optional;
 @Repository
 public interface UserRepository {
 
-    Slice<User> findAllBy(Pageable pageable);
-
     Optional<User> findBySocialTypeAndLoginId(SocialType socialType, Long loginId);
 
     Optional<User> findByNickname(String nickname);
@@ -26,4 +24,6 @@ public interface UserRepository {
     boolean existsBySocialTypeAndLoginId(SocialType socialType, long loginId);
 
     boolean existsByNickname(String nickname);
+
+    Slice<Long> findUserIdsOrderByScoreDescAndUserIdDesc(Pageable pageable, Integer score, Long userId);
 }

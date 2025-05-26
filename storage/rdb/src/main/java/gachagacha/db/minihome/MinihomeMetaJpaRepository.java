@@ -27,5 +27,9 @@ public interface MinihomeMetaJpaRepository extends JpaRepository<MinihomeMetaEnt
 
     Optional<MinihomeMetaEntity> findByMinihomeId(Long minihomeId);
 
-    Slice<MinihomeMetaEntity> findAllBy(Pageable pageable);
+    @Query("select mm.minihomeId " +
+            "from MinihomeMetaEntity mm " +
+            "where mm.likeCount < :likeCount or (mm.likeCount = :likeCount and mm.minihomeId < :minihomeId) " +
+            "order by mm.likeCount desc, mm.minihomeId desc")
+    Slice<Long> findMinihomeIdsOrderByLikeCountDescAndMinihomeIdDesc(Pageable pageable, long likeCount, long minihomeId);
 }

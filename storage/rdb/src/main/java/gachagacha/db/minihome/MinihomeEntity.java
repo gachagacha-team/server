@@ -9,13 +9,17 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
-@Table(name = "minihome")
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "minihome",
+        indexes = {
+                @Index(name = "idx_minihome_created_at_minihome_id", columnList = "created_at, minihome_id"),
+                @Index(name = "idx_minihome_total_visitor_cnt_minihome_id", columnList = "total_visitor_cnt, minihome_id")
+        })
 public class MinihomeEntity extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "minihome_id")
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)

@@ -4,10 +4,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
+
 @Repository
 public interface MinihomeRepository {
-
-    Slice<Minihome> findAllBy(Pageable pageable);
 
     Minihome findByUserId(long userId);
 
@@ -25,5 +25,9 @@ public interface MinihomeRepository {
 
     void decreaseLikeCount(Long minihomeId);
 
-    Slice<Minihome> findAllByLikeCount(Pageable pageable);
+    Slice<Long> findMinihomeIdsOrderByCreatedAtDescAndMinihomeIdDesc(Pageable pageable, LocalDateTime createdAt, Long minihomeId);
+
+    Slice<Long> findMinihomeIdsOrderByTotalVisitorCntDescAndMinihomeIdDesc(Pageable pageable, Integer totalVisitorCnt, Long minihomeId);
+
+    Slice<Long> findMinihomeIdsOrderByLikeCountDescAndMinihomeIdDesc(Pageable pageable, long likeCount, long minihomeId);
 }
