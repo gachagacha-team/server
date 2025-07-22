@@ -71,5 +71,5 @@ spring:
         dialect: org.hibernate.dialect.MySQLDialect
         format_sql: true
   flyway:
-    enabled: true
+    enabled: false
     baseline-on-migrate: true
