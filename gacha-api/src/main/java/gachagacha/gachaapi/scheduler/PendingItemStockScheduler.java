@@ -20,7 +20,7 @@ public class PendingItemStockScheduler {
     private final TransactionTemplate transactionTemplate;
     private final ItemStockProcessor itemStockProcessor;
 
-    @Scheduled(fixedRate = 5000)
+//    @Scheduled(fixedRate = 5000)
     public void pushPendingItemStock() {
         for (PendingItemStockEntity pendingItemStockEntity : pendingJpaRepository.findAll()) {
             transactionTemplate.execute(status -> {
