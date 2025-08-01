@@ -6,11 +6,15 @@ spring:
       - common.yml
 server:
   port: 8080
-  ssl.key-store: ${SSL_KEY_STORE}
-  ssl.key-store-type: ${SSL_KEY_STORE_TYPE}
-  ssl.key-store-password: ${SSL_KEY_STORE_PASSWORD}
+  ssl.key-store: classpath:keystore.p12 # ${SSL_KEY_STORE}
+  ssl.key-store-type: PKCS12 # ${SSL_KEY_STORE_TYPE}
+  ssl.key-store-password: gacha!*!* # ${SSL_KEY_STORE_PASSWORD}
+  tomcat:
+    threads:
+      max: 3
+    max-connections: 4
 jwt:
-  secret: ${JWT_SECRET}
+  secret: weinfeglinqelrgknerkgkrkrxsatbbdddzxiowklh # ${JWT_SECRET}
 file:
   profile: /uploads/profile/
 image:
@@ -33,7 +37,7 @@ oauth:
 spring.config.activate.on-profile: local
 
 client:
-  address: http://localhost:5173
+  address: http://localhost:3000
 
 ---
 spring.config.activate.on-profile: dev
